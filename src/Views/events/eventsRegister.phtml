@@ -1,0 +1,160 @@
+<div class="card">
+    <div class="row mt-4">
+        <div class="col">
+            <h5 class="title">Cadastro de Evento</h5>
+        </div>
+    </div>
+
+    <form id="form">
+        <input type="hidden" name="id" value="<?= $meetings ? $meetings->getId() : 0 ?>">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="start">Início</label>
+                    <input id="start" name="start" type="datetime-local" class="form-control"
+                           value="<?= $meetings ? $meetings->getStart()->format('Y-m-d').'T'.$meetings->getStart()->format('H:i') : '' ?>">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="end">Fim</label>
+                    <input id="end" name="end" type="datetime-local" class="form-control"
+                           value="<?= $meetings && $meetings->getEnd() ? $meetings->getEnd()->format('Y-m-d').'T'.$meetings->getEnd()->format('H:i') : '' ?>">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label for="contact">Contato</label>
+                    <input id="contact" placeholder="(__) ____-____" name="contact" data-mask="(99) 9999-9999"
+                           type="text" class="form-control" value="<?= $meetings ? $meetings->getContact() : '' ?>">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input id="email" placeholder="E-mail" name="email"
+                           type="email" class="form-control" value="<?= $meetings ? $meetings->getEmail() : '' ?>">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="adress">Local</label>
+                    <select id="adress" name="adress" class="form-control">
+                        <option value="0">Selecione</option>
+                        <option value="1" <?= $meetings && $meetings->getAdress() == 1 ? 'selected' : '' ?>>Gabinete
+                        </option>
+                        <option value="2" <?= $meetings && $meetings->getAdress() == 2 ? 'selected' : '' ?>>Câmara
+                        </option>
+                        <option value="3" <?= $meetings && $meetings->getAdress() == 3 ? 'selected' : '' ?>>Prefeitura
+                        </option>
+                        <option value="4" <?= $meetings && $meetings->getAdress() == 4 ? 'selected' : '' ?>>Externo
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="type">Tipo de Evento</label>
+                    <select id="type" name="type" class="form-control">
+                        <option value="0">Selecione</option>
+                        <option value="1" <?= $meetings && $meetings->getType() == 1 ? 'selected' : '' ?>>Reunião
+                        </option>
+                        <option value="2" <?= $meetings && $meetings->getType() == 2 ? 'selected' : '' ?>>Congresso
+                        </option>
+                        <option value="3" <?= $meetings && $meetings->getType() == 3 ? 'selected' : '' ?>>Sessão
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="theme">Pauta</label>
+                    <input id="theme" placeholder="Pauta" name="theme" type="text" class="form-control"
+                           value="<?= $meetings ? $meetings->getTheme() : '' ?>">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label for="description">Descrição</label>
+                    <textarea id="description" placeholder="Adicione uma Descrição" name="description" class="w-100"
+                              type="text" rows="15"><?= $meetings ? $meetings->getDescription() : '' ?></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-right">
+                <button type="submit" id="save" class="btn btn-success">Confirmar</button>
+            </div>
+        </div>
+    </form>
+    <div class="row">
+        <div class="col">
+            <div style="display: none" id="messageForm" class="alert" role="alert"></div>
+        </div>
+    </div>
+</div>
+
+<script src="<?= BASEURL ?>assets/js/plugins/tinymce/jquery.tinymce.min.js"></script>
+<script src="<?= BASEURL ?>assets/js/plugins/tinymce/tinymce.min.js"></script>
+<script>tinymce.init({
+        selector: "textarea",
+        menubar: false,
+        statusbar: false,
+        toolbar: 'styleselect | bold italic | fontsizeselect | alignleft aligncenter alignright alignjustify | bullist numlist | link image media | forecolor backcolor table',
+        plugins: ["lists link image media textcolor table"],
+        browser_spellcheck: true,
+        imagetools_cors_hosts: ['www.tinymce.com', 'codepen.io'],
+        setup: function (editor) {
+            editor.on('change', function () {
+                editor.save();
+            });
+        }
+    });
+</script>
+
+<script>
+
+    const formAdd = document.getElementById('form');
+    const divMessageForm = document.getElementById('messageForm');
+
+    formAdd.addEventListener('submit', e => {
+        $('#save').addClass('disabled');
+        e.preventDefault();
+        showLoading();
+        let method = 'POST';
+        let formData = formDataToJson('form');
+        if (formData.userId > 0) {
+            method = 'PUT';
+        }
+        fetch("<?= BASEURL ?>eventos/cadastro", {
+            method: method,
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        }).then(response => {
+            closeLoading();
+            divMessageForm.classList.add("alert-danger");
+            divMessageForm.classList.remove("alert-success");
+            $('#save').removeClass('disabled');
+            response.json().then(json => {
+                divMessageForm.textContent = json.message;
+                divMessageForm.style.display = 'block';
+                if (response.status === 201) {
+                    divMessageForm.classList.add("alert-success");
+                    divMessageForm.classList.remove("alert-danger");
+                    formAdd.reset();
+                    setTimeout(function () {
+                        window.location.href = "<?= BASEURL ?>eventos";
+                    }, 2000);
+                }
+            });
+        });
+    });
+</script>

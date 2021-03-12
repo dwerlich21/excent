@@ -1,0 +1,516 @@
+<div class="row">
+    <div class="col">
+        <div class="card">
+            <div class="card-header">
+                <div class="col">
+                    <h3 class="title">Atendimentos</h3>
+                </div>
+            </div>
+            <form id="filterAttendance">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="typeFilter">Tipo</label>
+                            <select id="typeFilter" name="type" class="form-control">
+                                <option value="0">Selecione</option>
+                                <?php foreach ($typeOfService as $service): ?>
+                                    <option value="<?= $service->getId() ?>"><?= $service->getName() ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="responsibleFilter">Responsável</label>
+                            <select class="form-control" id="responsibleFilter" name="responsible">
+                                <option value="0">Selecione</option>
+                                <?php foreach ($users as $user): ?>
+                                    <option value="<?= $user->getId() ?>"><?= $user->getName() ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="neighborhoodFilter">Bairro</label>
+                            <select class="form-control" id="neighborhoodFilter" name="neighborhood">
+                                <option value="0">Selecione</option>
+                                <?php foreach ($neighborhoods as $neighborhood): ?>
+                                    <option value="<?= $neighborhood->getId() ?>"><?= $neighborhood->getName() ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="institutionFilter">Instituição</label>
+                            <select class="form-control" id="institutionFilter" name="institution">
+                                <option value="0">Selecione</option>
+                                <?php foreach ($institutions as $institution): ?>
+                                    <option value="<?= $institution->getId() ?>"><?= $institution->getName() ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="statusFilter">Status</label>
+                            <select id="statusFilter" name="status" class="form-control">
+                                <option value="0">Selecione</option>
+                                <option value="1">Pendente</option>
+                                <option value="2">Resolvido</option>
+                                <option value="3">Respondido/Não Atendido</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="startFilter">Dê</label>
+                            <input id="startFilter" name="start" class="form-control" placeholder="dd/mm/AAAA" data-mask="99/99/9999">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="endFilter">Até</label>
+                            <input id="endFilter" name="end" class="form-control" placeholder="dd/mm/AAAA" data-mask="99/99/9999">
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col text-right">
+                        <button class="btn btn-danger" type="reset" onclick="resetAttendances()">Limpar</button>
+                        <button class="btn btn-primary" type="submit">Filtrar</button>
+                    </div>
+                </div>
+            </form>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <canvas height="300px" width="500px" id="graphicAttendance" class="chartjs"></canvas>
+                    </div>
+                    <div class="col-md-6">
+                        <canvas height="300px" width="500px" id="graphicAttendanceByInstitution" class="chartjs"></canvas>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <canvas height="300px" width="500px" id="graphicAttendanceByNeighborhood" class="chartjs"></canvas>
+                    </div>
+                    <div class="col-md-6">
+                        <canvas height="300px" width="500px" id="graphicAttendanceByStatus" class="chartjs"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div class="card">
+            <div class="card-header">
+                <div class="col">
+                    <h3 class="title">Projetos</h3>
+                </div>
+            </div>
+            <form id="filterProject">
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="startFilter">Dê</label>
+                            <input class="form-control" id="startFilter" name="start" type="text"
+                                   placeholder="dd/mm/AAAA" data-mask="99/99/9999">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="endFilter">Até</label>
+                            <input class="form-control" id="endFilter" name="end" type="text"
+                                   placeholder="dd/mm/AAAA" data-mask="99/99/9999">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="typeFilter">Tipo</label>
+                            <select class="form-control" id="typeFilter" name="typeProject">
+                                <option value="0">Selecione</option>
+                                <?php foreach ($typeOfProject as $service): ?>
+                                    <option value="<?= $service->getId() ?>" ><?= $service->getName() ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="responsibleFilter">Responsável</label>
+                            <select class="form-control" id="responsibleFilter" name="responsible">
+                                <option value="0">Selecione</option>
+                                <?php foreach ($users as $user): ?>
+                                    <option value="<?= $user->getId() ?>"><?= $user->getName() ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="statusFilter">Status</label>
+                            <select class="form-control" id="statusFilter" name="status">
+                                <option value="0">Selecione</option>
+                                <option value="1">Tramitando</option>
+                                <option value="2">Arquivado</option>
+                                <option value="3">Aprovado</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col text-right">
+                        <button class="btn btn-danger" type="reset" onclick="resetProjects()">Limpar</button>
+                        <button class="btn btn-primary" type="submit">Filtrar</button>
+                    </div>
+                </div>
+            </form>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <canvas height="300px" width="500px" id="graphicProjectByType" class="chartjs"></canvas>
+                    </div>
+                    <div class="col-md-6">
+                        <canvas height="300px" width="500px" id="graphicProjectByStatus" class="chartjs"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div class="card">
+            <div class="card-header">
+                <div class="col">
+                    <h3 class="title">Documentos</h3>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <canvas height="300px" width="500px" id="graphicNumberDocs" class="chartjs"></canvas>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript"></script>
+<script>
+
+    var date = 0;
+    var type = 0;
+    var responsible = 0;
+    var status = 0;
+    var institution = 0;
+    var neighborhood = 0;
+    var start = 0;
+    var end = 0;
+
+    google.charts.load('current', {'packages': ['corechart']});
+
+
+    var graphicNumberDocsEl = new Chart(document.getElementById("graphicNumberDocs"), {
+        type: 'horizontalBar',
+        options: {responsive: true}
+    });
+
+    var graphicProjectByTypeEl = new Chart(document.getElementById("graphicProjectByType"), {
+        type: 'horizontalBar',
+        options: {responsive: true}
+    });
+
+    var graphicProjectByStatusEl = new Chart(document.getElementById("graphicProjectByStatus"), {
+        type: 'pie',
+        options: {animateScale: true, responsive: true}
+    });
+
+    var graphicAttendanceEl = new Chart(document.getElementById("graphicAttendance"), {
+        type: 'bar',
+        options: {responsive: true}
+    });
+
+    var graphicAttendanceByInstitutionEl = new Chart(document.getElementById("graphicAttendanceByInstitution"), {
+        type: 'horizontalBar',
+        options: {responsive: true}
+    });
+
+    var graphicAttendanceByNeighborhoodEl = new Chart(document.getElementById("graphicAttendanceByNeighborhood"), {
+        type: 'bar',
+        options: {responsive: true}
+    });
+
+    var graphicAttendanceByStatusEl = new Chart(document.getElementById("graphicAttendanceByStatus"), {
+        type: 'pie',
+        options: {responsive: true}
+    });
+
+
+    function graphicNumberDocs() {
+        fetch(`<?= BASEURL ?>api/dashboard/numero_documentos`, {
+            method: "GET",
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => {
+            response.json().then(json => {
+                graphicNumberDocsEl.data = {
+                    "labels": json.keys,
+                    "datasets": [{
+                        "label": "Documentos Gerados",
+                        "data": json.values,
+                        "fill": false,
+                        "backgroundColor": json.rgb,
+                        "borderColor": json.rgb,
+                        "borderWidth": 1
+                    }]
+                };
+                graphicNumberDocsEl.update();
+            });
+        });
+    }
+
+    const formProject = document.getElementById('filterProject');
+
+    formProject.addEventListener('submit', e => {
+        e.preventDefault();
+        let formData = formDataToJson('filterProject');
+        date = formData.date;
+        type = formData.typeProject;
+        responsible = formData.responsible;
+        status = formData.status;
+        start = formData.start;
+        end = formData.end;
+        graphicProjectByType();
+        graphicProjectByStatus();
+    });
+
+    function resetProjects() {
+        index = 0;
+        partial = 0;
+        total = 1;
+        start = 0;
+        end = 0;
+        type = 0;
+        responsible = 0;
+        status = 0;
+        graphicProjectByType();
+        graphicProjectByStatus();
+    }
+
+    function graphicProjectByType() {
+        fetch(`<?= BASEURL ?>api/dashboard/numero_projeto_tipo/?&type=${type}&status=${status}&responsible=${responsible}&start=${start}&end=${end}`, {
+            method: "GET",
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => {
+            response.json().then(json => {
+                graphicProjectByTypeEl.data = {
+                    "labels": json.keys,
+                    "datasets": [{
+                        "label": "Projetos Realizados",
+                        "data": json.values,
+                        "fill": false,
+                        "backgroundColor": json.rgb,
+                        "borderColor": json.rgb,
+                        "borderWidth": 1
+                    }]
+                };
+                graphicProjectByTypeEl.update();
+            });
+        });
+    }
+
+    function graphicProjectByStatus() {
+        fetch(`<?= BASEURL ?>api/dashboard/numero_projeto_status/?&type=${type}&status=${status}&responsible=${responsible}&start=${start}&end=${end}`, {
+            method: "GET",
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => {
+            response.json().then(json => {
+                graphicProjectByStatusEl.data = {
+                    "labels": json.keys,
+                    "datasets": [{
+                        "title": "Status dos Projetos",
+                        "data": json.values,
+                        "fill": false,
+                        "backgroundColor": json.rgb,
+                        "borderColor": json.rgb,
+                        "borderWidth": 1
+                    }]
+                };
+                graphicProjectByStatusEl.update();
+            });
+        });
+    }
+
+    const formAttendance = document.getElementById('filterAttendance');
+
+    formAttendance.addEventListener('submit', e => {
+        e.preventDefault();
+        let formData = formDataToJson('filterAttendance');
+        institution = formData.institution;
+        type = formData.type;
+        responsible = formData.responsible;
+        status = formData.status;
+        neighborhood = formData.neighborhood;
+        start = formData.start;
+        end = formData.end;
+        graphicAttendance();
+        graphicAttendanceByInstitution();
+        graphicAttendanceByNeighborhood();
+        graphicAttendanceByStatus();
+    });
+
+    function resetAttendances() {
+        institution = 0;
+        type = 0;
+        responsible = 0;
+        status = 0;
+        neighborhood = 0;
+        start = 0;
+        end = 0;
+        graphicAttendance();
+        graphicAttendanceByInstitution();
+        graphicAttendanceByNeighborhood();
+        graphicAttendanceByStatus();
+    }
+
+    function graphicAttendance() {
+        fetch(`<?= BASEURL ?>api/dashboard/numero_atendimentos/?&type=${type}&responsible=${responsible}&status=${status}&institution=${institution}&neighborhood=${neighborhood}&start=${start}&end=${end}`, {
+            method: "GET",
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => {
+            response.json().then(json => {
+                graphicAttendanceEl.data = {
+                    "labels": json.keys,
+                    "datasets": [{
+                        "label": "Total de Atendimentos Realizados",
+                        "data": json.values,
+                        "fill": false,
+                        "backgroundColor": json.rgb,
+                        "borderColor": json.rgb,
+                        "borderWidth": 1
+                    }]
+                };
+                graphicAttendanceEl.update();
+            });
+        });
+    }
+
+    function graphicAttendanceByInstitution() {
+        fetch(`<?= BASEURL ?>api/dashboard/numero_atendimentos_instituicao/?&type=${type}&responsible=${responsible}&status=${status}&institution=${institution}&neighborhood=${neighborhood}&start=${start}&end=${end}`, {
+            method: "GET",
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => {
+            response.json().then(json => {
+                graphicAttendanceByInstitutionEl.data = {
+                    "labels": json.keys,
+                    "datasets": [{
+                        "label": "Atendimentos por Instituição",
+                        "data": json.values,
+                        "fill": false,
+                        "backgroundColor": json.rgb,
+                        "borderColor": json.rgb,
+                        "borderWidth": 1
+                    }]
+                };
+                graphicAttendanceByInstitutionEl.update();
+            });
+        });
+    }
+
+    function graphicAttendanceByNeighborhood() {
+        fetch(`<?= BASEURL ?>api/dashboard/numero_atendimentos_bairro/?&type=${type}&responsible=${responsible}&status=${status}&institution=${institution}&neighborhood=${neighborhood}&start=${start}&end=${end}`, {
+            method: "GET",
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => {
+            response.json().then(json => {
+                graphicAttendanceByNeighborhoodEl.data = {
+                    "labels": json.keys,
+                    "datasets": [{
+                        "label": "Atendimentos por Bairro",
+                        "data": json.values,
+                        "fill": false,
+                        "backgroundColor": json.rgb,
+                        "borderColor": json.rgb,
+                        "borderWidth": 1
+                    }]
+                };
+                graphicAttendanceByNeighborhoodEl.update();
+            });
+        });
+    }
+
+    function graphicAttendanceByStatus() {
+        fetch(`<?= BASEURL ?>api/dashboard/numero_atendimentos_status/?&type=${type}&responsible=${responsible}&status=${status}&institution=${institution}&neighborhood=${neighborhood}&start=${start}&end=${end}`, {
+            method: "GET",
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => {
+            response.json().then(json => {
+                graphicAttendanceByStatusEl.data = {
+                    "labels": json.keys,
+                    "datasets": [{
+                        "label": "Atendimentos por Bairro",
+                        "data": json.values,
+                        "fill": false,
+                        "backgroundColor": json.rgb,
+                        "borderColor": json.rgb,
+                        "borderWidth": 1
+                    }]
+                };
+                graphicAttendanceByStatusEl.update();
+            });
+        });
+    }
+
+    function graphicsData() {
+        graphicNumberDocs();
+        graphicProjectByType();
+        graphicProjectByStatus();
+        graphicAttendance();
+        graphicAttendanceByInstitution();
+        graphicAttendanceByNeighborhood();
+        graphicAttendanceByStatus();
+    }
+
+    $(document).ready(function () {
+        graphicsData();
+    });
+
+
+</script>

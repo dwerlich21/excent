@@ -1,0 +1,106 @@
+<div class="row">
+    <div class="col">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h5 class="title">Documentos</h5>
+                    </div>
+                    <div class="col-md-8 ">
+                        <a class="btn btn-primary float-right" href="<?= BASEURL ?>documentos/cadastro"><i
+                                class="fa fa-plus"></i> Documento
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+            <div class="card-body">
+                <p>Exibindo <span id="partial"></span> de <span id="total"></span> </p>
+                <table id="docsTable" class="table table-bordered table-striped">
+                    <thead>
+                    <tr>
+                        <th class="text-center">Número</th>
+                        <th class="text-center">Tipo</th>
+                        <th class="text-center">Assunto</th>
+                        <th class="text-center">Data</th>
+                        <th class="text-center">Responsável</th>
+                        <th class="text-center">Ações</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    var index = 0;
+    var partial = 0;
+    var total = 1;
+    var type = 0;
+    var date = 0;
+    var responsible = 0;
+
+    function docsEdit(id) {
+        return `<?= BASEURL ?>documentos/cadastro/${id}`;
+    }
+
+    function formatAttachment(doc) {
+
+        return `<?= BASEURL ?>uploads/documentos/${doc}`;
+    }
+
+    function generateDocsTable(docs) {
+        let pdf = `<a href="<?= BASEURL ?>documentos/pdf/${docs.id}" target="_blank">${docs.subjectMatter}</a>`;
+        let actions = '';
+        actions += `<a href="${docsEdit(docs.id)}"><i class="fa fa-pencil text-info" title="Editar"></i></a>`;
+        actions = `<td class="text-center">${actions} </td>`;
+        return `<tr>
+                    <td class="text-center">${docs.number}</td>
+                    <td class="text-center">${docs.type}</td>
+                    <td class="text-center">${pdf}</td>
+                    <td class="text-center">${docs.date}</td>
+                    <td class="text-center">${docs.user}</td>
+                    ${actions}
+                </tr>`;
+    }
+
+
+    function generateTable() {
+        if (total > partial) {
+            $('#loader').show();
+            fetch(`<?= BASEURL ?>api/documentos/?index=${index}&type=${type}&responsible=${responsible}`, {
+                method: "GET",
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                response.json().then(json => {
+                    $('#loader').hide();
+                    $('#total').text(json.total);
+                    $('#partial').text(json.partial);
+                    total = json.total;
+                    partial = json.partial;
+                    let options = json.message.map(generateDocsTable);
+                    $("#docsTable tbody").append(options);
+                });
+            });
+        }
+    }
+
+    $(document).ready(function () {
+        generateTable();
+        $(window).scroll(function () {
+            if ($(window).scrollTop() + $(window).height() >= $(document).height() - 1) {
+                index++;
+                generateTable();
+            }
+        });
+    });
+
+</script>

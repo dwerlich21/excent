@@ -1,0 +1,171 @@
+<div class="card">
+    <div class="row mt-4">
+        <div class="col">
+            <h5 class="title">Cadastro de Instituição</h5>
+        </div>
+    </div>
+
+    <form id="addInstitutions">
+        <div class="form-group">
+            <input type="hidden" name="institutionsId" id="institutionsId" value="<?= $institutions ? $institutions->getId() : '' ?>">
+            <div class="row">
+                <div class="col-md-4">
+                    <label for="name">Nome</label>
+                    <input id="name" name="name" class="form-control" type="text" placeholder="Nome"
+                           value="<?= $institutions ? $institutions->getName() : '' ?>">
+                </div>
+                <div class="col-md-4">
+                    <label for="responsible">Responsável</label>
+                    <input id="responsible" name="responsible" class="form-control" type="text"
+                           placeholder="Responsável"
+                           value="<?= $institutions ? $institutions->getResponsible() : '' ?>">
+                </div>
+                <div class="col-md-4">
+                    <label for="email">E-mail</label>
+                    <input id="email" name="email" class="form-control" type="email" placeholder="E-mail"
+                           value="<?= $institutions ? $institutions->getEmail() : '' ?>">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <label for="phone">Telefone</label>
+                    <input id="phone" name="phone" class="form-control" type="text" placeholder="(__) ____-____"
+                           data-mask="(99) 9999-9999" value="<?= $institutions ? $institutions->getPhone() : '' ?>">
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="zipCode">CEP</label>
+                        <input class="form-control" name="zipCode" data-mask="99999-999"
+                               type="text" id="zipCode" placeholder="CEP"
+                               value="<?= $institutions ? $institutions->getZipCode() : '' ?>"/>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="ufId">Estado</label>
+                        <input type="text" name="ufId" id="ufId" class="form-control" placeholder="Estado"
+                               value="<?= $institutions ? $institutions->getUfId() : '' ?>">
+                        <input type="hidden" name="ufIdHidden" id="ufIdHidden">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="cityId">Cidade</label>
+                        <input type="text" name="cityId" id="cityId" class="form-control" placeholder="Cidade"
+                               value="<?= $institutions ? $institutions->getCityId() : '' ?>">
+                        <input type="hidden" name="cityIdHidden" id="cityIdHidden">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="neighborhood">Bairro</label>
+                        <input type="text" name="neighborhood" id="neighborhood" class="form-control"
+                               placeholder="Bairro"
+                               value="<?= $institutions ? $institutions->getNeighborhood() : '' ?>">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="adress">Endereço</label>
+                        <input type="text" name="adress" id="adress" class="form-control" placeholder="Endereço"
+                               value="<?= $institutions ? $institutions->getAdress() : '' ?>">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col text-right">
+                    <button type="submit" id="save" class="btn btn-success">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="row">
+        <div class="col">
+            <div style="display: none" id="messageForm" class="alert" role="alert"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    const formAdd = document.getElementById('addInstitutions');
+    const divMessageForm = document.getElementById('messageForm');
+
+    formAdd.addEventListener('submit', e => {
+        $('#save').addClass('disabled');
+        e.preventDefault();
+        showLoading();
+        let method = 'POST';
+        let formData = formDataToJson('form');
+        fetch("<?= BASEURL ?>gerenciar/instituicoes/cadastro", {
+            method: method,
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+            },
+            body: new FormData(formAdd)
+        }).then(response => {
+            closeLoading();
+            divMessageForm.classList.add("alert-danger");
+            divMessageForm.classList.remove("alert-success");
+            $('#save').removeClass('disabled');
+            response.json().then(json => {
+                divMessageForm.textContent = json.message;
+                divMessageForm.style.display = 'block';
+                if (response.status === 201) {
+                    divMessageForm.classList.add("alert-success");
+                    divMessageForm.classList.remove("alert-danger");
+                    formAdd.reset();
+                    setTimeout(function () {
+                        window.location.href = "<?= BASEURL ?>gerenciar/instituicoes";
+                    }, 2000);
+                }
+            });
+        });
+    });
+
+    $(document).ready(function () {
+        $('input:file').change(function (e) {
+            let input = e.target;
+
+            if (input.files.length > 0) {
+                input.parentElement.classList.remove('btn-primary');
+                input.parentElement.classList.remove('btn-danger');
+                input.parentElement.classList.add('btn-success');
+                input.text = input.value;
+                let labelId = input.getAttribute('id') + 'Label';
+                document.getElementById(labelId).textContent = input.value;
+            } else {
+                input.parentElement.classList.remove('btn-success');
+                input.parentElement.classList.add('btn-danger');
+                let labelId = input.getAttribute('id') + 'Label';
+                document.getElementById(labelId).textContent = document.getElementById(labelId).getAttribute('default');
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        $("#zipCode").keyup(function () {
+            loadAddress();
+        });
+    });
+
+    function loadAddress() {
+        var cep = $('#zipCode').val().replace(/\D/g, '');
+        var validacep = /^[0-9]{8}$/;
+        if (validacep.test(cep)) {
+            $.getJSON("https://viacep.com.br/ws/" + cep + "/json/?callback=?", function (dados) {
+                if (!("erro" in dados)) {
+                    $("#uf").val(dados.uf);
+                    $("#ufId").val(dados.uf);
+                    $("#city").val(dados.localidade);
+                    $("#cityIdHidden").val(dados.localidade);
+                    $("#cityId").val(dados.localidade);
+                    $("#ufIdHidden").val(dados.uf);
+                }
+            });
+        }
+    }
+</script>

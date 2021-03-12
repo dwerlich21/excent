@@ -1,0 +1,29 @@
+.loader {
+    display: none;
+    position: relative;
+    text-align: center;
+    margin: 35px auto 35px auto;
+    z-index: 9999;
+    width: 80px;
+    height: 80px;
+    border: 10px solid rgba(0, 0, 0, .3);
+    border-radius: 50%;
+    border-top-color: #000;
+    animation: spin 1s ease-in-out infinite;
+    -webkit-animation: spin 1s ease-in-out infinite
+}
+
+@keyframes spin {
+    to {
+        -webkit-transform: rotate(360deg)
+    }
+}
+
+@-webkit-keyframes spin {
+    to {
+        -webkit-transform: rotate(360deg)
+    }
+}
+.nav li.active>a{
+    color: #EFA61B!important;
+}

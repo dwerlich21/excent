@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale = 1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="<?= BASEURL ?>assets/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="<?= BASEURL ?>assets/libs/font-awesome/css/font-awesome.min.css">
+    <link rel="icon" href="<?= BASEURL ?>assets/img/sisgg.png">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>SISGG</title>
+    <link href="<?= BASEURL ?>assets/css/paper-dashboard.css?v=2.0.0" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="<?= BASEURL ?>assets/css/style-admin.css?v=<?= time() ?>">
+    <script src="<?= BASEURL ?>assets/js/core/jquery.min.js"></script>
+    <link rel="icon" href="<?= BASEURL ?>assets/img/icon.png">
+</head>
+
+<body>
+<div class="wrapper">
+    <div class="sidebar" data-color="dark" data-active-color="success">
+        <div class="logo">
+            <a href="<?= BASEURL ?>" class="simple-text text-center logo-normal">
+                <img class="img-fluid" style="max-height: 50px" src="<?= BASEURL ?>assets/img/lifecode-white.png">
+            </a>
+        </div>
+        <div class="sidebar-wrapper">
+            <ul class="nav" style="overflow-x: hidden">
+
+                <li <?= in_array('dashboard', $menuActive) ? 'class="active"' : '' ?>>
+                    <a href="<?= BASEURL ?>">
+                        <i class="fa fa-dashboard"></i>Dashboard
+                    </a>
+                </li>
+                <?php if ($user->getType()) : ?>
+                    <li <?= in_array('edit', $menuActive) ? 'class="active"' : '' ?>>
+                        <a data-toggle="collapse" href="#edit" id="editMenu"
+                           aria-expanded="<?= in_array('edit', $menuActive) ? 'true' : 'false' ?>" aria-controls="edit">
+                            <i class="fa fa-cogs"></i>Gerenciar
+                        </a>
+                        <div class="collapse <?= in_array('edit', $menuActive) ? 'show' : '' ?>" id="edit">
+                            <ul class="nav pl-3">
+                                <li <?= in_array('users', $menuActive) ? 'class="active"' : '' ?>>
+                                    <a href="<?= BASEURL ?>gerenciar/usuarios">
+                                        <span class="sidebar-normal"><i class="fa fa-user"></i>Usuários</span>
+                                    </a>
+                                </li>
+                                <li <?= in_array('documentType', $menuActive) ? 'class="active"' : '' ?>>
+                                    <a href="<?= BASEURL ?>gerenciar/tipo_documento">
+                                        <span class="sidebar-normal"><i class="fa fa-file"></i>Tipo de Documento</span>
+                                    </a>
+                                </li>
+                                <li <?= in_array('typeOfService', $menuActive) ? 'class="active"' : '' ?>>
+                                    <a href="<?= BASEURL ?>gerenciar/tipo_atendimento">
+                                        <span class="sidebar-normal"><i class="fa fa-exclamation"></i>Tipo de Atendimento</span>
+                                    </a>
+                                </li>
+                                <li <?= in_array('typeOfProject', $menuActive) ? 'class="active"' : '' ?>>
+                                    <a href="<?= BASEURL ?>gerenciar/tipo_projeto">
+                                        <span class="sidebar-normal"><i class="fa fa-gavel"></i>Tipo de Projeto</span>
+                                    </a>
+                                </li>
+                                <li <?= in_array('neighborhoods', $menuActive) ? 'class="active"' : '' ?>>
+                                    <a href="<?= BASEURL ?>gerenciar/bairros">
+                                        <span class="sidebar-normal"><i class="fa fa-map-marker"></i>Bairros</span>
+                                    </a>
+                                </li>
+                                <li <?= in_array('cabinetDetails', $menuActive) ? 'class="active"' : '' ?>>
+                                    <a href="<?= BASEURL ?>gerenciar/detalhes_gabinete">
+                                        <span class="sidebar-normal"><i
+                                                    class="fa fa-pencil"></i>Detalhes Gabinete</span>
+                                    </a>
+                                </li>
+                                <li <?= in_array('institutions', $menuActive) ? 'class="active"' : '' ?>>
+                                    <a href="<?= BASEURL ?>gerenciar/instituicoes">
+                                        <i class="fa fa-building"></i>Instituições
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                <?php endif; ?>
+
+                <li <?= in_array('schedule', $menuActive) ? 'class="active"' : '' ?>>
+                    <a href="<?= BASEURL ?>agenda">
+                        <i class="fa fa-calendar"></i>Agenda
+                    </a>
+                </li>
+                <li <?= in_array('gallery', $menuActive) ? 'class="active"' : '' ?>>
+                    <a href="<?= BASEURL ?>galeria">
+                        <i class="fa fa-image"></i>Galeria
+                    </a>
+                </li>
+                <li <?= in_array('contacts', $menuActive) ? 'class="active"' : '' ?>>
+                    <a href="<?= BASEURL ?>contatos">
+                        <span class="sidebar-normal"><i class="fa fa-book"></i>Contatos</span>
+                    </a>
+                </li>
+                <li <?= in_array('attendance', $menuActive) ? 'class="active"' : '' ?>>
+                    <a href="<?= BASEURL ?>atendimentos">
+                        <span class="sidebar-normal"><i class="fa fa-exclamation-circle"></i>Atendimentos</span>
+                    </a>
+                </li>
+                <li <?= in_array('events', $menuActive) ? 'class="active"' : '' ?>>
+                    <a href="<?= BASEURL ?>eventos">
+                        <span class="sidebar-normal"><i class="fa fa-users"></i>Eventos</span>
+                    </a>
+                </li>
+                <li <?= in_array('docs', $menuActive) ? 'class="active"' : '' ?>>
+                    <a href="<?= BASEURL ?>documentos">
+                        <span class="sidebar-normal"><i class="fa fa-file-pdf-o"></i>Documentos</span>
+                    </a>
+                </li>
+                <li <?= in_array('projects', $menuActive) ? 'class="active"' : '' ?>>
+                    <a href="<?= BASEURL ?>projetos">
+                        <span class="sidebar-normal"><i class="fa fa-gavel"></i>Projetos</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="main-panel">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-absolute fixed-top navbar-transparent">
+            <div class="container-fluid">
+                <div class="navbar-wrapper">
+                    <div class="navbar-toggle">
+                        <button type="button" class="navbar-toggler">
+                            <span class="navbar-toggler-bar bar1"></span>
+                            <span class="navbar-toggler-bar bar2"></span>
+                            <span class="navbar-toggler-bar bar3"></span>
+                        </button>
+                    </div>
+                    <a class="navbar-brand" href="#">
+                        <?= $user->getName() ?>
+                    </a>
+                </div>
+                <button
+                        class="navbar-toggler"
+                        type="button"
+                        data-toggle="collapse"
+                        data-target="#navigation"
+                        aria-controls="navigation-index"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation"
+                >
+                    <span class="navbar-toggler-bar navbar-kebab"></span>
+                    <span class="navbar-toggler-bar navbar-kebab"></span>
+                    <span class="navbar-toggler-bar navbar-kebab"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-end" id="navigation">
+                    <ul class="navbar-nav">
+                        <li class="nav-item btn-rotate dropdown">
+                            <a class="nav-link btn btn-sm btn-danger" href="<?= BASEURL ?>logout">Sair</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- End Navbar -->
+
+        <div class="content">
+
+            <?php if (\App\Helpers\Session::get('errorMsg')): ?>
+            <div class="row">
+                <div class="col-md-3"></div>
+                <div class="col-md-6">
+                    <div class="alert alert-danger"><?= \App\Helpers\Session::get('errorMsg') ?></div>
+                </div>
+                <div class="col-md-3"></div>
+            </div>
+            <?php \App\Helpers\Session::forgot('errorMsg'); ?>
+<?php endif; ?>

@@ -1,0 +1,39 @@
+#header{
+    line-height: 10px
+}
+#info{
+    line-height: 25px;
+    text-align: justify;
+}
+
+#cityDate{
+    text-align: right;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+footer{
+    margin-top: 8px;
+    line-height: 5px;
+    font-size: 1px;
+    text-align: center;
+}
+
+#attachments {
+    text-align: center;
+}
+
+table, tr, td, th {
+    border: 1px solid black;
+    height: 40px;
+    text-align: center;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+h3 {
+    text-align: center;
+}

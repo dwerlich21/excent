@@ -1,0 +1,93 @@
+<?php
+
+namespace App\Models\Repository;
+
+use App\Models\Entities\User;
+use Doctrine\ORM\EntityRepository;
+
+class UserRepository extends EntityRepository
+{
+    public function save(User $entity): User
+    {
+        $this->getEntityManager()->persist($entity);
+        $this->getEntityManager()->flush();
+        return $entity;
+    }
+
+    public function login(string $email, string $password)
+    {
+        $user = $this->findOneBy(['email' => $email, 'active' => 1]);
+        if (!$user || !password_verify($password, $user->getPassword())) {
+            throw new \Exception('Usuário ou senha inválidos.');
+        }
+        return $user;
+    }
+
+    private function generateLimit($limit = null, $offset = null): string
+    {
+        $limitSql = '';
+        if ($limit) {
+            $limit = (int)$limit;
+            $offset = (int)$offset;
+            $limitSql = " LIMIT {$limit} OFFSET {$offset}";
+        }
+        return $limitSql;
+    }
+
+    private function generateWhere($id = 0, $name = null, $email = null, $type = null, $active = null, &$params): string
+    {
+        $where = '';
+        if ($id) {
+            $params[':id'] = $id;
+            $where .= " AND users.id = :id";
+        }
+        if ($name) {
+            $params[':name'] = "%$name%";
+            $where .= " AND users.name LIKE :name";
+        }
+        if ($email) {
+            $params[':email'] = "%$email%";
+            $where .= " AND users.email LIKE :email";
+        }
+        if ($type > -1) {
+            $params[':type'] = $type;
+            $where .= " AND users.type = :type";
+        }
+        if ($active > -1) {
+            $params[':active'] = $active;
+            $where .= " AND users.active = :active";
+        }
+        return $where;
+    }
+
+    public function list(User $user, $id = 0, $name = null, $email = null, $type = null, $active = null, $limit = null, $offset = null): array
+    {
+        $params = [];$params[':cabinet'] = $user->getCabinet()->getId();
+        $limitSql = $this->generateLimit($limit, $offset);
+        $where = $this->generateWhere($id, $name, $email, $type, $active, $params);
+        $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
+        $sql = "SELECT users.id, users.name, users.email, users.type, users.active               
+                FROM users
+                WHERE users.cabinet = :cabinet {$where}
+                ORDER BY name ASC {$limitSql}
+               ";
+        $sth = $pdo->prepare($sql);
+        $sth->execute($params);
+        return $sth->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function listTotal(User $user, $id = 0, $name = null, $email = null, $type = null, $active = null): array
+    {
+        $params = [];$params[':cabinet'] = $user->getCabinet()->getId();
+        $where = $this->generateWhere($id, $name, $email, $type, $active, $params);
+        $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
+        $sql = "SELECT COUNT(users.id) AS total                  
+                FROM users
+                WHERE users.cabinet = :cabinet {$where}
+               ";
+        $sth = $pdo->prepare($sql);
+        $sth->execute($params);
+        return $sth->fetch(\PDO::FETCH_ASSOC);
+    }
+
+}

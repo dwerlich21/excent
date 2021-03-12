@@ -1,0 +1,196 @@
+<div class="card">
+    <div class="row mt-4">
+        <div class="col">
+            <h5 class="title">Cadastro de Atendimento</h5>
+        </div>
+    </div>
+
+    <form id="form">
+        <input type="hidden" name="id" value="<?= $attendance ? $attendance->getId() : 0 ?>">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="type">Tipo do Problema</label>
+                    <select id="type" name="type" class="form-control">
+                        <option value="0">Selecione</option>
+                        <?php foreach ($typeOfService as $service): ?>
+                            <option value="<?= $service->getId() ?>" <?= $attendance && $attendance->getType()->getId() == $service->getId() ? 'selected' : '' ?> >
+                                <?= $service->getName() ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="institution">Orgão</label>
+                    <select id="institution" name="institution" class="form-control">
+                        <option value="">Selecione</option>
+                        <?php foreach ($institutions as $institution): ?>
+                            <option value="<?= $institution->getId() ?>" <?= $attendance && $attendance->getInstitution()->getId() == $institution->getId() ? 'selected' : '' ?> >
+                                <?= $institution->getName() ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="neighborhood">Bairro</label>
+                    <select id="neighborhood" name="neighborhood" class="form-control">
+                        <option value="">Selecione</option>
+                        <?php foreach ($neighborhoods as $neighborhood): ?>
+                            <option value="<?= $neighborhood->getId() ?>" <?= $attendance && $attendance->getNeighborhood() == $neighborhood->getId() ? 'selected' : '' ?>>
+                                <?= $neighborhood->getName() ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="reporting">Relatante</label>
+                    <input id="reporting" placeholder="Relatante" name="reporting"
+                           type="text" class="form-control"
+                           value="<?= $attendance ? $attendance->getReporting() : '' ?>">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input id="email" placeholder="E-mail" name="email"
+                           type="email" class="form-control" value="<?= $attendance ? $attendance->getEmail() : '' ?>">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label for="description">Descrição</label>
+                    <textarea id="description" placeholder="Adicione uma Descrição" name="description"
+                              type="text" class="w-100" rows="10"><?= $attendance ? $attendance->getDescription() : '' ?></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="status">Status</label>
+                    <select id="status" name="status" class="form-control">
+                        <option value="0">Selecione</option>
+                        <option value="1" <?= $attendance && $attendance->getStatus() == 1 ? 'selected' : '' ?>>
+                            Pendente
+                        </option>
+                        <option value="2" <?= $attendance && $attendance->getStatus() == 2 ? 'selected' : '' ?>>
+                            Resolvido
+                        </option>
+                        <option value="3" <?= $attendance && $attendance->getStatus() == 3 ? 'selected' : '' ?>>
+                            Respondido/Não Atendido
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4 mt-2">
+                <div class="form-group">
+                    <span class="fileselector">
+                        <label class="btn btn-block btn-danger text-white" style="margin-top: 5px" for="attendanceFile">
+                            <input class="upload-file-selector" id="attendanceFile" type="file"
+                                   name="attendanceFile">
+                            <i class="fa fa-paperclip margin-correction"></i>
+                                <span id="attendanceFileLabel" default="Anexar Arquivo">Anexar Arquivo</span>
+                        </label>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-right">
+                <button type="submit" id="save" class="btn btn-success">Confirmar</button>
+            </div>
+        </div>
+
+
+    </form>
+    <div class="row">
+        <div class="col">
+            <div style="display: none" id="messageForm" class="alert" role="alert"></div>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="<?= BASEURL ?>assets/js/plugins/tinymce/jquery.tinymce.min.js"></script>
+<script src="<?= BASEURL ?>assets/js/plugins/tinymce/tinymce.min.js"></script>
+<script>tinymce.init({
+        selector: "textarea",
+        menubar: false,
+        statusbar: false,
+        toolbar: 'styleselect | bold italic | fontsizeselect | alignleft aligncenter alignright alignjustify | bullist numlist | link image media | forecolor backcolor table',
+        plugins: ["lists link image media textcolor table"],
+        browser_spellcheck: true,
+        imagetools_cors_hosts: ['www.tinymce.com', 'codepen.io'],
+        setup: function (editor) {
+            editor.on('change', function () {
+                editor.save();
+            });
+        }
+    });
+</script>
+<script>
+
+    const formAdd = document.getElementById('form');
+    const divMessageForm = document.getElementById('messageForm');
+
+    formAdd.addEventListener('submit', e => {
+        $('#save').addClass('disabled');
+        e.preventDefault();
+        showLoading();
+        let method = 'POST';
+        let formData = formDataToJson('form');
+        fetch("<?= BASEURL ?>atendimentos/cadastro", {
+            method: method,
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json'
+            },
+            body: new FormData(formAdd)
+        }).then(response => {
+            closeLoading();
+            divMessageForm.classList.add("alert-danger");
+            divMessageForm.classList.remove("alert-success");
+            $('#save').removeClass('disabled');
+            response.json().then(json => {
+                divMessageForm.textContent = json.message;
+                divMessageForm.style.display = 'block';
+                if (response.status === 201) {
+                    divMessageForm.classList.add("alert-success");
+                    divMessageForm.classList.remove("alert-danger");
+                    formAdd.reset();
+                    setTimeout(function () {
+                        window.location.href = "<?= BASEURL ?>atendimentos";
+                    }, 2000);
+                }
+            });
+        });
+    });
+
+    $(document).ready(function () {
+        $('input:file').change(function (e) {
+            let input = e.target;
+
+            if (input.files.length > 0) {
+                input.parentElement.classList.remove('btn-primary');
+                input.parentElement.classList.remove('btn-danger');
+                input.parentElement.classList.add('btn-success');
+                input.text = input.value;
+                let labelId = input.getAttribute('id') + 'Label';
+                document.getElementById(labelId).textContent = input.value;
+            } else {
+                input.parentElement.classList.remove('btn-success');
+                input.parentElement.classList.add('btn-danger');
+                let labelId = input.getAttribute('id') + 'Label';
+                document.getElementById(labelId).textContent = document.getElementById(labelId).getAttribute('default');
+            }
+        });
+    });
+</script>

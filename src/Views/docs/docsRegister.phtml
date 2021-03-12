@@ -1,0 +1,179 @@
+<div class="card">
+    <div class="row mt-4">
+        <div class="col">
+            <h5 class="title">Cadastro de Novo Documento</h5>
+        </div>
+    </div>
+
+    <form id="form">
+        <input type="hidden" name="id" value="<?= $docs ? $docs->getId() : 0 ?>" >
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="type">Tipo</label>
+                    <select id="type" name="type" class="form-control" >
+                        <option value="0">Selecione</option>
+                        <?php foreach ($documentsType as $type): ?>
+                            <option value="<?= $type->getId() ?>" <?= $docs && $docs->getType()->getId() == $type->getId() ? 'selected' : '' ?>>
+                                <?= $type->getName() ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="form-group">
+                    <label for="subjectMatter">Assunto</label>
+                    <input id="subjectMatter" placeholder="Assunto" name="subjectMatter" type="text"
+                           class="form-control" value="<?= $docs ? $docs->getSubjectMatter() : ''?>" >
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-5">
+                <div class="form-group">
+                    <label for="meeting">Reunião</label>
+                    <select id="meeting" name="meeting" class="form-control">
+                        <option value="0">Selecione</option>
+                        <?php foreach ($meetings as $meeting): ?>
+                            <option value="<?= $meeting->getId() ?>" <?= $docs && $docs->getMeeting() && $docs->getMeeting()->getId() == $meeting->getId() ? 'selected' : '' ?>>
+                                <?= $meeting->getStart()->format('d/m/Y') ?> - <?= $meeting->getTheme() ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-7">
+                <div class="form-group">
+                    <label for="attendance">Atendimento</label>
+                    <select id="attendance" name="attendance" class="form-control">
+                        <option value="0">Selecione</option>
+                        <?php foreach ($attendances as $attendance): ?>
+                            <option value="<?= $attendance->getId() ?>" <?= $docs && $docs->getAttendance() && $docs->getAttendance()->getId() == $attendance->getId() ? 'selected' : '' ?>>
+                                <?= $attendance->getInstitution()->getName() ?> - <?= $attendance->getNeighborhood()->getName() ?> -
+                                <?= $attendance->getStatusStr() ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="institution">Instituição</label>
+                    <select id="institution" name="institution" class="form-control" >
+                        <option value="0">Selecione</option>
+                        <?php foreach ($institutions as $institution): ?>
+                            <option value="<?= $institution->getId() ?>" <?= $docs && $docs->getInstitution() && $docs->getInstitution()->getId() == $institution->getId() ? 'selected' : '' ?>>
+                                <?= $institution->getName() ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="recipient">Destinatário</label>
+                    <input id="recipient" placeholder="Destinatário" name="recipient"
+                           type="text" class="form-control" value="<?= $docs ? $docs->getRecipient() : ''?>" >
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label for="description">Descrição</label>
+                    <textarea id="description" placeholder="Adicione uma Descrição" name="description"
+                              type="text" rows="15" ><?= $docs ? $docs->getDescription() : ''?></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-right">
+                <button type="submit" id="save" class="btn btn-success">Confirmar</button>
+            </div>
+        </div>
+
+
+
+    </form>
+    <div class="row">
+        <div class="col">
+            <div style="display: none" id="messageForm" class="alert" role="alert"></div>
+        </div>
+    </div>
+</div>
+
+<script src="<?= BASEURL ?>assets/js/plugins/tinymce/jquery.tinymce.min.js"></script>
+<script src="<?= BASEURL ?>assets/js/plugins/tinymce/tinymce.min.js"></script>
+<script>tinymce.init({
+        selector: "textarea",
+        menubar: false,
+        statusbar: false,
+        toolbar: 'styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | link image media | forecolor backcolor table',
+        plugins: ["lists link image media textcolor table"],
+        browser_spellcheck: true,
+        imagetools_cors_hosts: ['www.tinymce.com', 'codepen.io'],
+        setup: function (editor) {
+            editor.on('change', function () {
+                editor.save();
+            });
+        }
+    });
+</script>
+
+<script>
+
+    const formAdd = document.getElementById('form');
+    const divMessageForm = document.getElementById('messageForm');
+
+    formAdd.addEventListener('submit', e => {
+        $('#save').addClass('disabled');
+        e.preventDefault();
+        showLoading();
+        let method = 'POST';
+        let formData = formDataToJson('form');
+        fetch("<?= BASEURL ?>documentos/cadastro", {
+            method: method,
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json'
+            },
+            body: new FormData(formAdd)
+        }).then(response => {
+            closeLoading();
+            divMessageForm.classList.add("alert-danger");
+            divMessageForm.classList.remove("alert-success");
+            $('#save').removeClass('disabled');
+            response.json().then(json => {
+                divMessageForm.textContent = json.message;
+                divMessageForm.style.display = 'block';
+                if (response.status === 201) {
+                    divMessageForm.classList.add("alert-success");
+                    divMessageForm.classList.remove("alert-danger");
+                    formAdd.reset();
+                    setTimeout(function () {
+                        window.location.href = "<?= BASEURL ?>documentos";
+                    }, 2000);
+                }
+            });
+        });
+    });
+
+    $(document).ready(function () {
+        $('input:file').change(function (e) {
+            let input = e.target;
+
+            if (input.files.length > 0) {
+                input.parentElement.classList.remove('btn-primary');
+                input.parentElement.classList.remove('btn-danger');
+                input.parentElement.classList.add('btn-success');
+                input.text = input.value;
+                let labelId = input.getAttribute('id') + 'Label';
+                document.getElementById(labelId).textContent = input.value;
+            } else {
+                input.parentElement.classList.remove('btn-success');
+                input.parentElement.classList.add('btn-danger');
+                let labelId = input.getAttribute('id') + 'Label';
+                document.getElementById(labelId).textContent = document.getElementById(labelId).getAttribute('default');
+            }
+        });
+    });
+</script>

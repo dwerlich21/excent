@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <title>SISGG - Login</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale = 1, shrink-to-fit=no">
+    <link rel="icon" href="<?= BASEURL ?>assets/img/sisgg.png">
+    <link rel="stylesheet" href="<?= BASEURL ?>assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="<?= BASEURL ?>assets/libs/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="<?= BASEURL ?>assets/css/login.css">
+    <link rel="stylesheet" href="<?= BASEURL ?>assets/css/style.css">
+    <script src="<?= BASEURL ?>assets/js/core/jquery.min.js"></script>
+    <script src="<?= BASEURL ?>assets/js/core/bootstrap.min.js"></script>
+    <script src="<?= BASEURL ?>assets/js/functions.js"></script>
+    <link rel="icon" href="<?= BASEURL ?>assets/img/icon.png">
+</head>
+<body class="bg-dark">
+
+<div class="container">
+    <div class="card card-login mx-auto mt-5">
+        <div class="card-header text-center">
+            <img src="<?= BASEURL ?>assets/img/lifecode-black.png" style="height: 100px">
+        </div>
+        <div class="card-body">
+            <form id="recover">
+                <div id="message" class="alert" style="display: none"></div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input name="email" type="email" required id="email" class="form-control" placeholder="Email">
+                </div>
+                <button class="btn btn-primary btn-block" id="recoverButton">Recuperar</button>
+                <div class="text-center">
+                    <a href="<?= BASEURL?>login" class="d-block small">Login</a>
+                </div>
+            </form>
+            <div id="loader" class="loader"></div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    const form = document.getElementById('recover');
+    const message = document.getElementById('message');
+
+    form.addEventListener('submit', e => {
+        $('#recoverButton').addClass('disabled');
+        $('#loader').show();
+        e.preventDefault();
+        let formData = formDataToJson('recover');
+        fetch('<?= BASEURL ?>recuperar/', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        }).then(response => {
+            $('#loader').hide();
+            $('#recoverButton').removeClass('disabled');
+            response.json().then(json => {
+                message.textContent = json.message;
+                message.style.display = 'block';
+                if (response.status === 201) {
+                    message.classList.add("alert-success");
+                    message.classList.remove("alert-danger");
+                    formAdd.reset();
+                } else {
+                    message.classList.add("alert-danger");
+                    message.classList.remove("alert-success");
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

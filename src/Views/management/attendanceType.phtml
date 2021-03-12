@@ -1,0 +1,224 @@
+<div class="row">
+    <div class="col">
+        <div class="card p-3">
+            <div class="row">
+                <div class="col-md-8">
+                    <h5 class="title">Tipos de Atendimentos</h5>
+                </div>
+                <div class="col-md-4">
+                    <a class="float-right btn btn-primary text-white" href="#" onclick="openModal()"> Tipo de Atendimento
+                        <i
+                                class="fa fa-plus"></i></a>
+                </div>
+            </div>
+            <p>Exibindo <span id="partial"></span> de <span id="total"></span> </p>
+            <table class="table table-bordered table-striped" id="attendanceTypeTable" width="100%" cellspacing="0">
+                <thead>
+                <tr>
+                    <th class="text-center">Tipo</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Ações</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <div style="display: none" id="message" class="alert alert-danger" role="alert"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Cadastro-->
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="subscriptionModal"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Cadastro de Tipo de Atendimento</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form class="form-control" id="addAttendanceType" method="post">
+                <div class="form-group">
+                    <input type="hidden" name="attendanceTypeId" id="attendanceTypeId">
+                    <div class="row">
+                        <div class="col">
+                            <label for="name">Nome</label>
+                            <input id="name" name="name" class="form-control" type="text" placeholder="Nome" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="active">Status</label>
+                        <select id="active" name="active" class="form-control" required>
+                            <option value="1">Ativo</option>
+                            <option value="0">Inativo</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col text-right">
+                        <button type="submit" class="btn btn-primary">Salvar Tipo de Atendimento</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function openModal() {
+        $('#modal').modal('show');
+        $('#message').hide();
+        document.getElementById('addAttendanceType').reset();
+    }
+
+    function openModalEdit(id) {
+
+        document.getElementById('addAttendanceType').reset();
+        document.getElementById('attendanceTypeId').value = id;
+        $('#modal').modal('show');
+        $('#message').hide();
+        if (id > 0) {
+            showLoading();
+            fetch(`<?= BASEURL ?>api/tipo_atendimento/${id}`, {
+                method: "GET",
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                response.json().then(json => {
+                    json = json.message[0];
+                    closeLoading();
+                    document.getElementById('name').value = json.name;
+                    document.getElementById('active').value = json.active;
+                });
+            });
+        }
+    }
+
+    const formAdd = document.getElementById('addAttendanceType');
+    const divMessage = document.getElementById('message');
+
+    formAdd.addEventListener('submit', e => {
+        e.preventDefault();
+        showLoading();
+        let formData = formDataToJson('addAttendanceType');
+        fetch("<?= BASEURL ?>gerenciar/tipo_atendimento/cadastro", {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        }).then(response => {
+            closeLoading();
+            divMessage.classList.add("alert-danger");
+            divMessage.classList.remove("alert-success");
+            response.json().then(json => {
+                divMessage.textContent = json.message;
+                divMessage.style.display = 'block';
+                if (response.status === 201) {
+                    $('#modal').modal('hide');
+                    divMessage.classList.add("alert-success");
+                    divMessage.classList.remove("alert-danger");
+                    formAdd.reset();
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1500);
+                }
+            });
+        });
+    });
+
+    function changeStatus(id, status) {
+        showLoading();
+        let method = 'DELETE';
+        if (status == 1) {
+            method = 'PUT';
+        }
+        fetch("<?= BASEURL ?>gerenciar/tipo_atendimento/" + id, {
+            method: method,
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => {
+            response.json().then(json => {
+                closeLoading();
+                divMessage.textContent = json.message;
+                divMessage.style.display = 'block';
+                divMessage.classList.add("alert-danger");
+                divMessage.classList.remove("alert-success");
+                if (response.status === 201) {
+                    divMessage.classList.add("alert-success");
+                    divMessage.classList.remove("alert-danger");
+                    location.reload();
+                }
+            });
+        });
+    }
+
+    var index = 0;
+    var partial = 0;
+    var total = 1;
+
+    function generateAttendanceTypeTable(attendanceType) {
+        let actions = '';
+        actions += `<i class="fa fa-pencil text-info" title="Editar" onclick="openModalEdit(${attendanceType.id})"></i> `;
+        actions = `<td class="text-center">${actions} </td>`;
+        return `<tr>
+                    <td class="text-center">${attendanceType.name}</td>
+                    <td class="text-center">${activeStr(attendanceType.active)}</td>
+                    ${actions}
+                </tr>`;
+    }
+
+    function activeStr(active) {
+        if (active == 1) {
+            return 'Ativo';
+        } else {
+            return 'Inativo';
+        }
+    }
+
+    function generateTable() {
+        if (total > partial) {
+            $('#loader').show();
+            fetch(`<?= BASEURL ?>api/tipo_atendimento/?index=${index}`, {
+                method: "GET",
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                response.json().then(json => {
+                    $('#loader').hide();
+                    $('#total').text(json.total);
+                    $('#partial').text(json.partial);
+                    total = json.total;
+                    partial = json.partial;
+                    let options = json.message.map(generateAttendanceTypeTable);
+                    $("#attendanceTypeTable tbody").append(options);
+                });
+            });
+        }
+    }
+
+    $(document).ready(function () {
+        generateTable();
+        $(window).scroll(function () {
+            if ($(window).scrollTop() + $(window).height() >= $(document).height() - 1) {
+                index++;
+                generateTable();
+            }
+        });
+    });
+
+</script>
+

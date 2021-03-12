@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <title>SISGG - Login</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale = 1, shrink-to-fit=no">
+    <link rel="icon" href="<?= BASEURL ?>assets/img/sisgg.png">
+    <link rel="stylesheet" href="<?= BASEURL ?>assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="<?= BASEURL ?>assets/libs/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="<?= BASEURL ?>assets/css/login.css">
+    <script src="<?= BASEURL ?>assets/js/core/jquery.min.js"></script>
+    <link rel="icon" href="<?= BASEURL ?>assets/img/icon.png">
+</head>
+
+<body class="bg-dark">
+
+<div class="container">
+    <div class="card card-login mx-auto mt-5">
+        <div class="card-header text-center">
+            <img src="<?= BASEURL?>assets/img/lifecode-black.png" style="height: 100px" alt="logo SISGG">
+        </div>
+        <div class="card-body">
+           <form method="post">
+               <?php if (\App\Helpers\Session::get('errorMsg')): ?>
+                   <div class="alert alert-danger"><?= \App\Helpers\Session::get('errorMsg') ?></div>
+                   <?php \App\Helpers\Session::forgot('errorMsg'); ?>
+               <?php endif; ?>
+               <div class="form-group">
+                   <label for="email">Email</label>
+                   <input id="email" name="email" type="email" class="form-control"
+                            placeholder="Email" required>
+               </div>
+               <div class="form-group">
+                   <label for="password">Senha</label>
+                   <input id="password" name="password" type="password" required
+                            placeholder="Senha" class="form-control">
+               </div>
+               <button class="btn btn-primary btn-block">Entrar</button>
+               <div class="text-center">
+                   <a href="<?= BASEURL?>recuperar/" class="d-block small">Esqueceu a Senha</a>
+               </div>
+           </form>
+        </div>
+    </div>
+</div>
+
+
+
+</body>
