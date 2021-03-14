@@ -1,0 +1,238 @@
+<div class="row">
+    <div class="col">
+        <div class="card p-3">
+            <div class="row">
+                <div class="col-md-8">
+                    <h5 class="title">Documents</h5>
+                </div>
+                <div class="col-md-4">
+                    <a class="float-right btn btn-primary text-white" href="#" onclick="openModal()"><i
+                                class="fa fa-plus"></i> Document</a>
+                </div>
+            </div>
+            <!--            <form id="filter">-->
+            <!--                <div class="row">-->
+            <!--                    <div class="col-md-4">-->
+            <!--                        <div class="form-group">-->
+            <!--                            <label for="nameFilter">Name</label>-->
+            <!--                            <input class="form-control" id="nameFilter" name="name" type="text" placeholder="Name">-->
+            <!--                        </div>-->
+            <!--                    </div>-->
+            <!--                    <div class="col-md-4">-->
+            <!--                        <div class="form-group">-->
+            <!--                            <label for="companyFilter">Company</label>-->
+            <!--                            <input class="form-control" id="companyFilter" name="company" type="text" placeholder="Company">-->
+            <!--                        </div>-->
+            <!--                    </div>-->
+            <!--                    <div class="col-md-4">-->
+            <!--                        <div class="form-group">-->
+            <!--                            <label for="statusFilter">Status</label>-->
+            <!--                            <select name="status" id="statusFilter" class="form-control">-->
+            <!--                                <option value="-1">Select</option>-->
+            <!--                            </select>-->
+            <!--                        </div>-->
+            <!--                    </div>-->
+            <!--                </div>-->
+            <!--                <div class="row mb-3">-->
+            <!--                    <div class="col text-right">-->
+            <!--                        <button class="btn btn-danger" type="reset" onclick="resetTable()">Cancel</button>-->
+            <!--                        <button class="btn btn-primary" type="submit">Search</button>-->
+            <!--                    </div>-->
+            <!--                </div>-->
+            <!--            </form>-->
+            <p>Showing off <span id="partial"></span> of <span id="total"></span></p>
+            <table class="table table-bordered table-striped" id="documentsTable" width="100%" cellspacing="0">
+                <thead>
+                <tr>
+                    <th class="text-center"></th>
+                    <th class="text-center">Description</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <div style="display: none" id="message" class="alert alert-danger" role="alert"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Cadastro-->
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="subscriptionModal"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Document registration</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form class="form-control" id="addDocument" method="post">
+                <div class="form-group">
+                    <input type="hidden" name="documentId" id="documentId">
+                    <div class="row">
+                        <div class="col">
+                            <label for="title">Title</label>
+                            <input id="title" name="title" class="form-control" type="text" placeholder="Title">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="description">Description</label>
+                            <textarea id="description" name="description" class="form-control" type="text"
+                                      placeholder="Description"></textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mt-1">
+                            <label for="type">Type</label>
+                            <select id="type" name="type" class="form-control">
+                                <option value="0">Selecione</option>
+                                <option value=""></option>
+                                <option value=""></option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mt-4">
+                            <div class="form-group mt-3">
+                                <span class="fileselector">
+                                    <label class="btn btn-block btn-danger text-white" style="margin-top: 5px" for="projectFile">
+                                        <input class="upload-file-selector" id="projectFile" type="file"
+                                               name="projectFile">
+                                        <i class="fa fa-paperclip margin-correction"></i>
+                                            <span id="projectFileLabel" default="Attach File">Attach File</span>
+                                    </label>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col text-right">
+                        <button type="submit" class="btn btn-primary">Save Document</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function openModal() {
+        $('#modal').modal('show');
+        $('#message').hide();
+        document.getElementById('addDocument').reset();
+    }
+
+    const formAdd = document.getElementById('addDocument');
+    const divMessage = document.getElementById('message');
+
+    formAdd.addEventListener('submit', e => {
+        var teste = document.getElementById('projectFile');
+        console.log(teste);
+        e.preventDefault();
+        showLoading();
+        let method = 'POST';
+        let formData = formDataToJson('addDocument');
+        fetch("<?= BASEURL ?>documents/register", {
+            method: method,
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+            },
+            body: new FormData(formAdd)
+        }).then(response => {
+            closeLoading();
+            divMessage.classList.add("alert-danger");
+            divMessage.classList.remove("alert-success");
+            $('#save').removeClass('disabled');
+            response.json().then(json => {
+                divMessage.textContent = json.message;
+                divMessage.style.display = 'block';
+                if (response.status === 201) {
+                    divMessage.classList.add("alert-success");
+                    divMessage.classList.remove("alert-danger");
+                    formAdd.reset();
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1500);
+                }
+            });
+        });
+    });
+
+    var index = 0;
+    var partial = 0;
+    var total = 1;
+
+    function generateClientsTable(document) {
+        let actions = '';
+        actions += `<i class="fa fa-times text-danger" title="Delete" onclick="openModalEdit()"></i> `;
+        actions = `<td class="text-center">${actions} </td>`;
+        return `<tr>
+                    <td class="text-center"><a href="${documentView(document.documentFile)}" target="_blank"><i class="fa fa-3x fa-file-pdf-o"></i><a></td>
+                    <td ><b>${document.title}</b><br>${document.description}</td>
+                    ${actions}
+                </tr>`;
+    }
+
+    function documentView(id) {
+
+        return `<?= BASEURL ?>uploads/${id}`;
+
+    }
+
+    function generateTable() {
+        if (total > partial) {
+            $('#loader').show();
+            fetch(`<?= BASEURL ?>documents/api/?index=${index}`, {
+                method: "GET",
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                response.json().then(json => {
+                    $('#loader').hide();
+                    $('#total').text(json.total);
+                    $('#partial').text(json.partial);
+                    total = json.total;
+                    partial = json.partial;
+                    let options = json.message.map(generateClientsTable);
+                    $("#documentsTable tbody").append(options);
+                });
+            });
+        }
+    }
+
+    $(document).ready(function () {
+        generateTable();
+        $(window).scroll(function () {
+            if ($(window).scrollTop() + $(window).height() >= $(document).height() - 1) {
+                index++;
+                generateTable();
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        $('input:file').change(function (e) {
+            let input = e.target;
+
+            if (input.files.length > 0) {
+                input.parentElement.classList.remove('btn-primary');
+                input.parentElement.classList.remove('btn-danger');
+                input.parentElement.classList.add('btn-success');
+                input.text = input.value;
+                let labelId = input.getAttribute('id') + 'Label';
+                document.getElementById(labelId).textContent = input.value;
+            } else {
+                input.parentElement.classList.remove('btn-success');
+                input.parentElement.classList.add('btn-danger');
+                let labelId = input.getAttribute('id') + 'Label';
+                document.getElementById(labelId).textContent = document.getElementById(labelId).getAttribute('default');
+            }
+        });
+    });
+</script>

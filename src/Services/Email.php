@@ -43,7 +43,7 @@ class Email
                 'allow_self_signed' => true
             )
         );
-        $mail->setFrom(self::$LOGIN, 'Life Code - SISGG');
+        $mail->setFrom(self::$LOGIN, 'Excent');
         $mail->Subject = $subject;
         $mail->Body = $message;
         $mail->IsHTML(true);

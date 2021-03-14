@@ -23,9 +23,9 @@ class User
     private bool $active;
 
     /**
-     * @Column(type="boolean")
+     * @Column(type="integer")
      */
-    private bool $type;
+    private int $type;
 
     /**
      * @Column(type="string")
@@ -42,18 +42,12 @@ class User
      */
     private string $email;
 
-    /**
-     * @ManyToOne(targetEntity="Cabinet")
-     * @JoinColumn(name="cabinet", referencedColumnName="id")
-     */
-    private Cabinet $cabinet;
-
     public function getId(): int
     {
         return $this->id;
     }
 
-    public function isActive(): bool
+    public function isActive(): int
     {
         return $this->active;
     }
@@ -73,12 +67,12 @@ class User
         return $this;
     }
 
-    public function getType(): bool
+    public function getType(): int
     {
         return $this->type;
     }
 
-    public function setType(bool $type): User
+    public function setType(int $type): User
     {
         $this->type = $type;
         return $this;
@@ -116,17 +110,4 @@ class User
         $this->email = $email;
         return $this;
     }
-
-    public function getCabinet(): Cabinet
-    {
-        return $this->cabinet;
-    }
-
-    public function setCabinet(Cabinet $cabinet): User
-    {
-        $this->cabinet = $cabinet;
-        return $this;
-    }
-
-
 }

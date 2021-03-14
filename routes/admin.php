@@ -7,23 +7,47 @@ $app->get('/', function (Request $request, Response $response) {
     return $this->AdminController->index($request, $response);
 });
 
-$app->get('/agenda/', function (Request $request, Response $response) {
-    return $this->AdminController->schedule($request, $response);
-});
-
-$app->get('/agenda/visualizar/', function (Request $request, Response $response) {
-    return $this->AdminController->getSchedule($request, $response);
-});
-
-
-$app->group('/galeria', function () use ($app) {
+$app->group('/users', function () use ($app) {
 
     $app->get('/', function (Request $request, Response $response) {
-        return $this->AdminController->gallery($request, $response);
+        return $this->AdminController->user($request, $response);
     });
 
-    $app->post('/cadastro/', function (Request $request, Response $response) {
-        return $this->AdminController->saveImage($request, $response);
+    $app->post('/register/', function (Request $request, Response $response) {
+        return $this->AdminController->saveUser($request, $response);
     });
 
+    $app->get('/api/[{id}/]', function (Request $request, Response $response) {
+        return $this->ApiController->usersTable($request, $response);
+    });
+});
+
+$app->group('/clients', function () use ($app) {
+
+    $app->get('/', function (Request $request, Response $response) {
+        return $this->AdminController->client($request, $response);
+    });
+
+    $app->post('/register/', function (Request $request, Response $response) {
+        return $this->AdminController->saveClient($request, $response);
+    });
+
+    $app->get('/api/[{id}/]', function (Request $request, Response $response) {
+        return $this->ApiController->clientsTable($request, $response);
+    });
+});
+
+$app->group('/documents', function () use ($app) {
+
+    $app->get('/', function (Request $request, Response $response) {
+        return $this->AdminController->document($request, $response);
+    });
+
+    $app->post('/register/', function (Request $request, Response $response) {
+        return $this->AdminController->saveDocument($request, $response);
+    });
+
+    $app->get('/api/[{id}/]', function (Request $request, Response $response) {
+        return $this->ApiController->documentsTable($request, $response);
+    });
 });

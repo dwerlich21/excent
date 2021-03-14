@@ -4,14 +4,8 @@
 namespace App\Controllers;
 
 use App\Helpers\Validator;
-use App\Models\Entities\AccessLog;
-use App\Models\Entities\Events;
-use App\Models\Entities\Gallery;
-use App\Models\Entities\Institution;
-use App\Models\Entities\Meetings;
-use App\Models\Entities\Neighborhood;
-use App\Models\Entities\TypeOfProject;
-use App\Models\Entities\TypeOfService;
+use App\Models\Entities\Client;
+use App\Models\Entities\Document;
 use App\Models\Entities\User;
 use \Psr\Http\Message\ResponseInterface as Response;
 use \Psr\Http\Message\ServerRequestInterface as Request;
@@ -23,67 +17,42 @@ class AdminController extends Controller
     public function index(Request $request, Response $response)
     {
         $user = $this->getLogged();
-        $neighborhoods = $this->em->getRepository(Neighborhood::class)->findBy(['cabinet' => $user->getCabinet()->getId()], ['name' => 'asc']);
-        $typeOfService = $this->em->getRepository(TypeOfService::class)->findBy(['active' => 1, 'cabinet' => $user->getCabinet()->getId()], ['name' => 'asc']);
-        $users = $this->em->getRepository(User::class)->findBy(['active' => 1, 'cabinet' => $user->getCabinet()->getId()], ['name' => 'asc']);
-        $institutions = $this->em->getRepository(Institution::class)->findBy(['cabinet' => $user->getCabinet()->getId()], ['name' => 'asc']);
-        $typeOfProject = $this->em->getRepository(TypeOfProject::class)->findBy(['active' => 1, 'cabinet' => $user->getCabinet()->getId()], ['name' => 'asc']);
         return $this->renderer->render($response, 'default.phtml', ['page' => 'index.phtml', 'menuActive' => ['dashboard'],
-            'user' => $user, 'neighborhoods' => $neighborhoods, 'typeOfService' => $typeOfService, 'users' => $users,
-            'institutions' => $institutions, 'typeOfProject' => $typeOfProject]);
+            'user' => $user]);
     }
 
-    public function users(Request $request, Response $response)
+    public function user(Request $request, Response $response)
     {
         $user = $this->getLogged();
-        $users = $this->em->getRepository(User::class)->findBy([], ['name' => 'asc']);
-        $hits = $this->em->getRepository(AccessLog::class)->findBy(['user' => null], ['id' => 'desc'], 30);
-        return $this->renderer->render($response, 'default.phtml', ['page' => 'users/index.phtml', 'menuActive' => ['dashboard'],
-            'user' => $user, 'hits' => $hits, 'users' => $users]);
+        return $this->renderer->render($response, 'default.phtml', ['page' => 'users/index.phtml', 'menuActive' => ['users'],
+            'user' => $user]);
     }
 
-    public function gallery(Request $request, Response $response)
-    {
-        $user = $this->getLogged(); //usario logado
-        $images = $this->em->getRepository(Gallery::class)->findBy(['cabinet' => $user->getCabinet()], ['id' => 'desc']);
-        return $this->renderer->render($response, 'default.phtml', ['page' => 'gallery.phtml', 'menuActive' => ['gallery'],
-            'user' => $user, 'images' => $images]);
-    }
-
-    private function saveGalleryFile($files, Gallery $img): Gallery
-    {
-        $folder = UPLOAD_FOLDER . 'imagens/';
-        $imgFile = $files['img'];
-        if ($imgFile && $imgFile->getClientFilename()) {
-            $time = time();
-            $extension = explode('.', $imgFile->getClientFilename());
-            $extension = end($extension);
-            $target = "{$folder}{$time}imgFile.{$extension}";
-            $imgFile->moveTo($target);
-            $img->setImgFile($target);
-        }
-        return $img;
-    }
-
-    public function saveImage(Request $request, Response $response)
+    public function saveUser(Request $request, Response $response)
     {
         try {
-            $user = $this->getLogged();
-            $this->em->beginTransaction();
+            $this->getLogged();
             $data = (array)$request->getParams();
-            $files = $request->getUploadedFiles();
+            $data['userId'] ?? 0;
             $fields = [
-
+                'email' => 'Email',
+                'name' => 'Name',
+                'type' => 'Type'
             ];
             Validator::requireValidator($fields, $data);
-            $img = new Gallery();
-            $img = $this->saveGalleryFile($files, $img);
-            $img->setCabinet($user->getCabinet());
-            $this->em->getRepository(Gallery::class)->save($img);
-            $this->em->commit();
+            $users = new User();
+            if ($data['userId'] > 0) {
+                $users = $this->em->getRepository(User::class)->find($data['userId']);
+            }
+            $users->setPassword('123')
+                ->setEmail($data['email'])
+                ->setName($data['name'])
+                ->setActive($data['active'])
+                ->setType($data['type']);
+            $this->em->getRepository(User::class)->save($users);
             return $response->withJson([
                 'status' => 'ok',
-                'message' => 'Imagem cadastrada com sucesso',
+                'message' => 'Successfully registered user!',
             ], 201)
                 ->withHeader('Content-type', 'application/json');
         } catch (\Exception $e) {
@@ -92,39 +61,98 @@ class AdminController extends Controller
         }
     }
 
-    public function schedule(Request $request, Response $response)
+    public function client(Request $request, Response $response)
     {
         $user = $this->getLogged();
-        return $this->renderer->render($response, 'default.phtml', ['page' => 'schedule/index.phtml', 'menuActive' => ['schedule'],
-            'user' => $user,]);
+        return $this->renderer->render($response, 'default.phtml', ['page' => 'clients/index.phtml', 'menuActive' => ['clients'],
+            'user' => $user]);
     }
 
-    public function getSchedule(Request $request, Response $response)
+    public function saveClient(Request $request, Response $response)
     {
         try {
             $user = $this->getLogged();
-            $meetings = $this->em->getRepository(Meetings::class)->findBy(['cabinet' => $user->getCabinet()->getId()]);
-            $eventsArray = [];
-            foreach ($meetings as $meeting) {
-                $id = $meeting->getId();
-                $start = $end = $meeting->getStart()->format('Y-m-d H:i:s');
-                if ($meeting->getEnd()) $end = $meeting->getEnd()->format('Y-m-d H:i:s');
-                $title = $meeting->getTheme();
-                $adress = $meeting->getAdressStr();
-                if ($meeting->getType() == 1) {
-                    $color = 'blue';
-                } else if ($meeting->getType() == 2) {
-                    $color = 'red';
-                } else {
-                    $color = 'yellow';
-                }
-                $eventsArray[] = ['id' => $id, 'start' => $start, 'title' => $title, 'adress' => $adress, 'end' => $end, 'color' => $color];
+            $data = (array)$request->getParams();
+            $data['clientId'] ?? 0;
+            $fields = [
+                'name' => 'Nome',
+                'company' => 'Empresa',
+                'email' => 'E-mail',
+                'phone' => 'Telefone',
+                'office' => 'Cargo'
+            ];
+            Validator::requireValidator($fields, $data);
+            $client = new Client();
+            if ($data['clientId'] > 0) {
+                $client = $this->em->getRepository(Client::class)->find($data['clientId']);
             }
-            return $response->withJson(
-                $eventsArray
-                , 201)
+            $client->setCompany($data['company'])
+                ->setEmail($data['email'])
+                ->setName($data['name'])
+                ->setPhone($data['phone'])
+                ->setOffice($data['office'])
+                ->setStatus(0)
+                ->setResponsible($user);
+            $this->em->getRepository(Client::class)->save($client);
+            return $response->withJson([
+                'status' => 'ok',
+                'message' => 'Successfully registered client!',
+            ], 201)
                 ->withHeader('Content-type', 'application/json');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
+            return $response->withJson(['status' => 'error',
+                'message' => $e->getMessage(),])->withStatus(500);
+        }
+    }
+
+    public function document(Request $request, Response $response)
+    {
+        $user = $this->getLogged();
+        return $this->renderer->render($response, 'default.phtml', ['page' => 'documents/index.phtml', 'menuActive' => ['documents'],
+            'user' => $user]);
+    }
+
+    private function saveDocumentFile($files, Document $document): Document
+    {
+        $folder = UPLOAD_FOLDER;
+        $documentFile = $files['projectFile'];
+        if ($documentFile && $documentFile->getClientFilename()) {
+            $time = time();
+            $extension = explode('.', $documentFile->getClientFilename());
+            $extension = end($extension);
+            $target = "{$folder}{$time}documentFile.{$extension}";
+            $documentFile->moveTo($target);
+            $document->setDocumentFile($target);
+        }
+        return $document;
+
+    }
+
+    public function saveDocument(Request $request, Response $response)
+    {
+        try {
+            $this->getLogged();
+            $this->em->beginTransaction();
+            $data = (array)$request->getParams();
+            $files = $request->getUploadedFiles();
+            $fields = [
+                'title' => 'Title',
+                'description' => 'Description',
+                'type' => 'Type'
+            ];
+            Validator::requireValidator($fields, $data);
+            $document = new Document();
+            $document = $this->saveDocumentFile($files, $document);
+            $document->setTitle($data['title'])
+                ->setDescription($data['description']);
+            $this->em->getRepository(Document::class)->save($document);
+            $this->em->commit();
+            return $response->withJson([
+                'status' => 'ok',
+                'message' => 'Successfully registered document!',
+            ], 201)
+                ->withHeader('Content-type', 'application/json');
+        } catch (\Exception $e) {
             return $response->withJson(['status' => 'error',
                 'message' => $e->getMessage(),])->withStatus(500);
         }

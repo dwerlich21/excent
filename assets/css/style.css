@@ -24,6 +24,15 @@
         -webkit-transform: rotate(360deg)
     }
 }
-.nav li.active>a{
-    color: #EFA61B!important;
+.active>a,.active>a>i, .sidebar .nav li.active>a i{
+    color: white!important;
+}
+
+.active {
+    background-color: #1565C0;!important;
+    font-weight: bold;
+}
+
+label{
+    padding-top: 10px !important;
 }

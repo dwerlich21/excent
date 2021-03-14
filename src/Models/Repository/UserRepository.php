@@ -49,7 +49,7 @@ class UserRepository extends EntityRepository
             $params[':email'] = "%$email%";
             $where .= " AND users.email LIKE :email";
         }
-        if ($type > -1) {
+        if ($type > 0) {
             $params[':type'] = $type;
             $where .= " AND users.type = :type";
         }
@@ -60,30 +60,31 @@ class UserRepository extends EntityRepository
         return $where;
     }
 
-    public function list(User $user, $id = 0, $name = null, $email = null, $type = null, $active = null, $limit = null, $offset = null): array
+    public function list($id = 0, $name = null, $email = null, $type = null, $active = null, $limit = null, $offset = null): array
     {
-        $params = [];$params[':cabinet'] = $user->getCabinet()->getId();
+        $params = [];
         $limitSql = $this->generateLimit($limit, $offset);
         $where = $this->generateWhere($id, $name, $email, $type, $active, $params);
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
         $sql = "SELECT users.id, users.name, users.email, users.type, users.active               
                 FROM users
-                WHERE users.cabinet = :cabinet {$where}
+                WHERE 1 = 1 {$where}
                 ORDER BY name ASC {$limitSql}
                ";
+
         $sth = $pdo->prepare($sql);
         $sth->execute($params);
         return $sth->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    public function listTotal(User $user, $id = 0, $name = null, $email = null, $type = null, $active = null): array
+    public function listTotal($id = 0, $name = null, $email = null, $type = null, $active = null): array
     {
-        $params = [];$params[':cabinet'] = $user->getCabinet()->getId();
+        $params = [];
         $where = $this->generateWhere($id, $name, $email, $type, $active, $params);
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
         $sql = "SELECT COUNT(users.id) AS total                  
                 FROM users
-                WHERE users.cabinet = :cabinet {$where}
+                WHERE 1 = 1 {$where}
                ";
         $sth = $pdo->prepare($sql);
         $sth->execute($params);

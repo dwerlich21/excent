@@ -36,7 +36,6 @@ class LoginController extends Controller
             Validator::requireValidator($fields, $data);
             $user = $this->em->getRepository(User::class)->login($data['email'], $data['password']);
             Session::set('sisgg', $user->getId());
-            Session::set('cabinet', $user->getCabinet()->getId());
             $this->newAccessLog($user);
             $redirect = Session::get('redirect');
             if ($redirect) {
@@ -143,8 +142,8 @@ class LoginController extends Controller
             $this->em->getRepository(RecoverPassword::class)->save($recoverPassword);
             $msg = "<p>Olá {$user->getName()}.</p>
                     <p>Segue <a href='{$this->baseUrl}recuperar/{$recoverPassword->getToken()}' target='_blank'>link</a> para redefinição de senha.</p>
-                    <p>Enviado por SISGG.</p>";
-            Email::send($user->getEmail(), $user->getName(), 'Recuperação de Senha - SISGG', $msg);
+                    <p>Enviado por Excent.</p>";
+            Email::send($user->getEmail(), $user->getName(), 'Recuperação de Senha', $msg);
             return $response->withJson([
                 'status' => 'ok',
                 'message' => 'Foi enviado um e-mail para redefinição de senha.',
