@@ -7,6 +7,10 @@ $app->get('/', function (Request $request, Response $response) {
     return $this->AdminController->index($request, $response);
 });
 
+$app->post('/task/register/', function (Request $request, Response $response) {
+    return $this->AdminController->saveTask($request, $response);
+});
+
 $app->group('/users', function () use ($app) {
 
     $app->get('/', function (Request $request, Response $response) {

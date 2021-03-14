@@ -6,6 +6,7 @@ namespace App\Controllers;
 use App\Helpers\Validator;
 use App\Models\Entities\Client;
 use App\Models\Entities\Document;
+use App\Models\Entities\Task;
 use App\Models\Entities\User;
 use \Psr\Http\Message\ResponseInterface as Response;
 use \Psr\Http\Message\ServerRequestInterface as Request;
@@ -17,8 +18,9 @@ class AdminController extends Controller
     public function index(Request $request, Response $response)
     {
         $user = $this->getLogged();
+        $clients = $this->em->getRepository(Client::class)->findBy(['responsible' => $user->getId()]);
         return $this->renderer->render($response, 'default.phtml', ['page' => 'index.phtml', 'menuActive' => ['dashboard'],
-            'user' => $user]);
+            'user' => $user, 'clients' => $clients]);
     }
 
     public function user(Request $request, Response $response)
@@ -150,6 +152,39 @@ class AdminController extends Controller
             return $response->withJson([
                 'status' => 'ok',
                 'message' => 'Successfully registered document!',
+            ], 201)
+                ->withHeader('Content-type', 'application/json');
+        } catch (\Exception $e) {
+            return $response->withJson(['status' => 'error',
+                'message' => $e->getMessage(),])->withStatus(500);
+        }
+    }
+
+    public function saveTask(Request $request, Response $response)
+    {
+        try {
+            $user = $this->getLogged();
+            $data = (array)$request->getParams();
+            $data['userId'] ?? 0;
+            $fields = [
+                'date' => 'Date',
+                'client' => 'Client',
+                'action' => 'Action'
+            ];
+            Validator::requireValidator($fields, $data);
+            $task = new Task();
+            $time = null;
+            if ($data['time']) $time = \DateTime::createFromFormat('H:i', $data['time']);
+            $task->setDate(\DateTime::createFromFormat('d/m/Y', $data['date']))
+                ->setTime($time)
+                ->setUser($user)
+                ->setAction($data['action'])
+                ->setDescription($data['description'])
+                ->setClient($this->em->getReference(Client::class,$data['client']));
+            $this->em->getRepository(Task::class)->save($task);
+            return $response->withJson([
+                'status' => 'ok',
+                'message' => 'Successfully registered user!',
             ], 201)
                 ->withHeader('Content-type', 'application/json');
         } catch (\Exception $e) {
