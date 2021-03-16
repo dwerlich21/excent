@@ -28,22 +28,32 @@
 
                 <li <?= in_array('dashboard', $menuActive) ? 'class="active"' : '' ?>>
                     <a href="<?= BASEURL ?>">
-                        <i class="fa fa-dashboard"></i>Dashboard
+                        <i class="fa fa-dashboard"></i> Dashboard
+                    </a>
+                </li>
+                <li <?= in_array('deals', $menuActive) ? 'class="active"' : '' ?>>
+                    <a href="<?= BASEURL ?>deals">
+                        <i class="fa fa-dollar"></i> Deals
                     </a>
                 </li>
                 <li <?= in_array('users', $menuActive) ? 'class="active"' : '' ?>>
                     <a href="<?= BASEURL ?>users">
-                        <span class="sidebar-normal"><i class="fa fa-users"></i>Users</span>
+                        <span class="sidebar-normal"><i class="fa fa-users"></i> Users</span>
                     </a>
                 </li>
                 <li <?= in_array('clients', $menuActive) ? 'class="active"' : '' ?>>
                     <a href="<?= BASEURL ?>clients">
-                        <span class="sidebar-normal"><i class="fa fa-briefcase"></i>Clients</span>
+                        <span class="sidebar-normal"><i class="fa fa-briefcase"></i> Clients</span>
                     </a>
                 </li>
                 <li <?= in_array('documents', $menuActive) ? 'class="active"' : '' ?>>
                     <a href="<?= BASEURL ?>documents">
-                        <span class="sidebar-normal"><i class="fa fa-file"></i>Documents</span>
+                        <span class="sidebar-normal"><i class="fa fa-file"></i> Documents</span>
+                    </a>
+                </li>
+                <li <?= in_array('messages', $menuActive) ? 'class="active"' : '' ?>>
+                    <a href="<?= BASEURL ?>messages">
+                        <span class="sidebar-normal"><i class="fa fa-envelope"></i> Messages</span>
                     </a>
                 </li>
             </ul>

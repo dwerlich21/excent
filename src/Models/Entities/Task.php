@@ -18,12 +18,12 @@ class Task
     private ?int $id = null;
 
     /**
-     * @Column(type="datetime")
+     * @Column(type="date")
      */
     private \DateTime $date;
 
     /**
-     * @Column(type="datetime", nullable=true)
+     * @Column(type="time", nullable=true)
      */
     private ?\DateTime $time = null;
 

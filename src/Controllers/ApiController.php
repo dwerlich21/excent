@@ -5,6 +5,7 @@ namespace App\Controllers;
 
 use App\Models\Entities\Client;
 use App\Models\Entities\Document;
+use App\Models\Entities\Message;
 use App\Models\Entities\User;
 use \Psr\Http\Message\ResponseInterface as Response;
 use \Psr\Http\Message\ServerRequestInterface as Request;
@@ -57,16 +58,67 @@ class ApiController extends Controller
     public function documentsTable(Request $request, Response $response)
     {
         $this->getLogged(true);
+        $id = $request->getAttribute('route')->getArgument('id');
         $index = $request->getQueryParam('index');
-        $users = $this->em->getRepository(Document::class)->list(20, $index * 20);
+        $documents = $this->em->getRepository(Document::class)->list($id, 20, $index * 20);
         $total = $this->em->getRepository(Document::class)->listTotal()['total'];
-        $partial = ($index * 20) + sizeof($users);
+        $partial = ($index * 20) + sizeof($documents);
         $partial = $partial <= $total ? $partial : $total;
+
         return $response->withJson([
             'status' => 'ok',
-            'message' => $users,
+            'message' => $documents,
             'total' => (int)$total,
             'partial' => $partial,
+        ], 200)
+            ->withHeader('Content-type', 'application/json');
+    }
+
+    public function documentDelete(Request $request, Response $response)
+    {
+        $this->getLogged(true);
+        $id = $request->getAttribute('route')->getArgument('id');
+        $this->em->getRepository(Document::class)->documentDelete($id);
+        die();
+    }
+
+    public function messagesTable(Request $request, Response $response)
+    {
+        $this->getLogged(true);
+        $id = $request->getAttribute('route')->getArgument('id');
+        $index = $request->getQueryParam('index');
+        $messages = $this->em->getRepository(Message::class)->list($id, 20, $index * 20);
+        $total = $this->em->getRepository(Message::class)->listTotal()['total'];
+        $partial = ($index * 20) + sizeof($messages);
+        $partial = $partial <= $total ? $partial : $total;
+
+        return $response->withJson([
+            'status' => 'ok',
+            'message' => $messages,
+            'total' => (int)$total,
+            'partial' => $partial,
+        ], 200)
+            ->withHeader('Content-type', 'application/json');
+    }
+
+    public function messageDelete(Request $request, Response $response)
+    {
+        $this->getLogged(true);
+        $id = $request->getAttribute('route')->getArgument('id');
+        $this->em->getRepository(Message::class)->messageDelete($id);
+        die();
+    }
+
+    public function messagesDashboard(Request $request, Response $response)
+    {
+        $this->getLogged(true);
+        $id = $request->getAttribute('route')->getArgument('id');
+        $index = $request->getQueryParam('index');
+        $messages = $this->em->getRepository(Message::class)->listDashboard($id, 20, $index * 20);
+
+        return $response->withJson([
+            'status' => 'ok',
+            'message' => $messages,
         ], 200)
             ->withHeader('Content-type', 'application/json');
     }

@@ -54,7 +54,6 @@
                 </thead>
                 <tbody></tbody>
             </table>
-            <div style="display: none" id="message" class="alert alert-danger" role="alert"></div>
         </div>
     </div>
 </div>
@@ -110,6 +109,7 @@
                         <button type="submit" class="btn btn-primary">Save Client</button>
                     </div>
                 </div>
+                <div style="display: none" id="message" class="alert alert-danger" role="alert"></div>
             </form>
         </div>
     </div>
@@ -222,7 +222,7 @@
 
     function generateClientsTable(client) {
         let actions = '';
-        actions += `<i class="fa fa-pencil text-info" title="Editar" onclick="openModalEdit(${client.id})"></i> `;
+        actions += `<i class="fa fa-pencil text-info" title="Edit" onclick="openModalEdit(${client.id})"></i> `;
         actions = `<td class="text-center">${actions} </td>`;
         return `<tr>
                     <td class="text-center">${client.name}</td>

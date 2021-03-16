@@ -2,12 +2,12 @@
 
 namespace App\Models\Repository;
 
-use App\Models\Entities\Document;
+use App\Models\Entities\Message;
 use Doctrine\ORM\EntityRepository;
 
-class DocumentRepository extends EntityRepository
+class MessageRepository extends EntityRepository
 {
-    public function save(Document $entity): Document
+    public function save(Message $entity): Message
     {
         $this->getEntityManager()->persist($entity);
         $this->getEntityManager()->flush();
@@ -19,7 +19,7 @@ class DocumentRepository extends EntityRepository
         $where = '';
         if ($id) {
             $params[':id'] = $id;
-            $where .= " AND document.id = :id";
+            $where .= " AND message.id = :id";
         }
         return $where;
     }
@@ -35,14 +35,14 @@ class DocumentRepository extends EntityRepository
         return $limitSql;
     }
 
-    public function list($id, $limit = null, $offset = null): array
+    public function list($id = 0, $limit = null, $offset = null): array
     {
         $params = [];
         $limitSql = $this->generateLimit($limit, $offset);
         $where = $this->generateWhere($id, $params);
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
-        $sql = "SELECT document.title, document.description, document.documentFile, document.id           
-                FROM document
+        $sql = "SELECT message.title, message.description, message.id, message.active           
+                FROM message
                 WHERE 1 = 1 {$where}
                 ORDER BY id DESC {$limitSql}
                ";
@@ -55,24 +55,41 @@ class DocumentRepository extends EntityRepository
     {
         $params = [];
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
-        $sql = "SELECT COUNT(document.id) AS total                  
-                FROM document
+        $sql = "SELECT COUNT(message.id) AS total                  
+                FROM message
                ";
         $sth = $pdo->prepare($sql);
         $sth->execute($params);
         return $sth->fetch(\PDO::FETCH_ASSOC);
     }
 
-    public function documentDelete($id): array
+    public function messageDelete($id): array
     {
         $params = [];
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
-        $sql = "DELETE FROM document
-                WHERE document.id = {$id}
+        $sql = "DELETE FROM message
+                WHERE message.id = {$id}
                ";
         $sth = $pdo->prepare($sql);
         $sth->execute($params);
         return $sth->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    public function listDashboard($id = 0, $limit = null, $offset = null): array
+    {
+        $params = [];
+        $limitSql = $this->generateLimit($limit, $offset);
+        $where = $this->generateWhere($id, $params);
+        $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
+        $sql = "SELECT message.title, message.description, message.id, message.active           
+                FROM message
+                WHERE message.active = 1 {$where}
+                ORDER BY id DESC {$limitSql}
+               ";
+
+        $sth = $pdo->prepare($sql);
+        $sth->execute($params);
+        return $sth->fetchAll(\PDO::FETCH_ASSOC);
     }
 
 }
