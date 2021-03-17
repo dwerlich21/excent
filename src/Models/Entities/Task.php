@@ -49,6 +49,11 @@ class Task
      */
     private User $user;
 
+    /**
+     * @Column(type="boolean")
+     */
+    private bool $status;
+
 
     public function getId(): int
     {
@@ -121,5 +126,14 @@ class Task
         return $this;
     }
 
+    public function getStatus(): bool
+    {
+        return $this->status;
+    }
 
+    public function setStatus(bool $status): Task
+    {
+        $this->status = $status;
+        return $this;
+    }
 }

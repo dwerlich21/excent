@@ -4,7 +4,7 @@
             <div class="card p-3">
                 <div class="row">
                     <div class="col-md-8">
-                        <h5 class="title">Messages</h5>
+                        <h6 class="title">Messages</h6>
                     </div>
                 </div>
                 <div class="card-body" id="messagesDiv">
@@ -20,6 +20,7 @@
                     </div>
                 </div>
                 <div class="card-body">
+                    <div class="row" id="tasksDiv"></div>
 
                 </div>
             </div>
@@ -69,12 +70,98 @@
 
     }
 
+    function generateTasksCard(task) {
+        let time = '';
+        if (task.time != null) time = `${task.time}:`;
+        return `<div class="row bg-white p-3 card-task m-2">
+                    <div class="col-md-4 my-auto">
+                        ${actionIcon(task.action)}
+                    </div>
+                    <div class="col-md-8 card-date">
+                        <div class="row">
+                            <div class="col"> <b>${time} ${actionStr(task.action)}</b></div>
+                        </div>
+                        <div class="row">
+                            <div class="col"> ${task.client}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col text-right finish" onclick="taskStatus(${task.id})"><a><i class="text-success fa fa-2x fa-check-circle"></i></a></div>
+                        </div>
+                    </div>
+                </div>
+
+        `;
+    }
+
+    function actionStr(action) {
+        switch (parseInt(action)) {
+            case 1:
+                return 'Call';
+            case 2:
+                return 'Meeting';
+            case 3:
+                return 'Email';
+            case 4:
+                return 'Lunch';
+            default:
+                return 'Unknown';
+
+        }
+    }
+
+    function actionIcon(action) {
+        switch (parseInt(action)) {
+            case 1:
+                return `<i class="fa fa-3x fa-phone text-gray"></i>`;
+            case 2:
+                return `<i class="fa fa-3x fa-users text-gray"></i>`;
+            case 3:
+                return `<i class="fa fa-3x fa-paper-plane text-gray"></i>`;
+            case 4:
+                return `<i class="fa fa-3x fa-utensils text-gray"></i>`;
+            default:
+                return `<i class="fa fa-3x fa-phone text-gray"></i>`;
+        }
+    }
+
+    function generateTasks() {
+        $('#loader').show();
+        fetch(`<?= BASEURL ?>dashboard/tasks/api/?index=${index}`, {
+            method: "GET",
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => {
+            response.json().then(json => {
+                $('#loader').hide();
+                let options = json.message.map(generateTasksCard);
+                $("#tasksDiv").append(options);
+            });
+        });
+
+    }
+
     function dashboardData() {
         generateMessages();
+        generateTasks();
     }
 
     $(document).ready(function () {
         dashboardData();
     });
+
+    function taskStatus(id) {
+        fetch(`<?= BASEURL ?>dashboard/tasks/status/${id}`, {
+            method: "GET",
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+        location.reload();
+    }
 
 </script>

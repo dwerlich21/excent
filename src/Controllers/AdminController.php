@@ -20,10 +20,10 @@ class AdminController extends Controller
     public function index(Request $request, Response $response)
     {
         $user = $this->getLogged();
-        $today =  date('Y-m-d');
+        $today = date('Y-m-d');
         $date = \DateTime::createFromFormat('Y-m-d', $today);
         $clients = $this->em->getRepository(Client::class)->findBy(['responsible' => $user->getId()]);
-        $tasks = $this->em->getRepository(Task::class)->findBy(['date' => $date]);
+        $tasks = $this->em->getRepository(Task::class)->findBy(['date' => $date, 'status' => 1]);
         $messages = $this->em->getRepository(Message::class)->findBy(['active' => 1]);
         return $this->renderer->render($response, 'default.phtml', ['page' => 'index.phtml', 'menuActive' => ['dashboard'],
             'user' => $user, 'clients' => $clients, 'tasks' => $tasks, 'messages' => $messages]);
@@ -45,10 +45,11 @@ class AdminController extends Controller
             if ($data['time']) $time = \DateTime::createFromFormat('H:i', $data['time']);
             $task->setDate(\DateTime::createFromFormat('d/m/Y', $data['date']))
                 ->setTime($time)
+                ->setStatus(1)
                 ->setUser($user)
                 ->setAction($data['action'])
                 ->setDescription($data['description'])
-                ->setClient($this->em->getReference(Client::class,$data['client']));
+                ->setClient($this->em->getReference(Client::class, $data['client']));
             $this->em->getRepository(Task::class)->save($task);
             return $response->withJson([
                 'status' => 'ok',
@@ -59,6 +60,15 @@ class AdminController extends Controller
             return $response->withJson(['status' => 'error',
                 'message' => $e->getMessage(),])->withStatus(500);
         }
+    }
+
+    public function taskStatus(Request $request, Response $response)
+    {
+        $this->getLogged();
+        $id = $request->getAttribute('route')->getArgument('id');
+        $task = $this->em->getRepository(Task::class)->find($id);
+        $task->setStatus(0);
+        $this->em->getRepository(Task::class)->save($task);
     }
 }
 

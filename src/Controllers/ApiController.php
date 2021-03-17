@@ -6,6 +6,7 @@ namespace App\Controllers;
 use App\Models\Entities\Client;
 use App\Models\Entities\Document;
 use App\Models\Entities\Message;
+use App\Models\Entities\Task;
 use App\Models\Entities\User;
 use \Psr\Http\Message\ResponseInterface as Response;
 use \Psr\Http\Message\ServerRequestInterface as Request;
@@ -119,6 +120,24 @@ class ApiController extends Controller
         return $response->withJson([
             'status' => 'ok',
             'message' => $messages,
+        ], 200)
+            ->withHeader('Content-type', 'application/json');
+    }
+
+    public function tasksDashboard(Request $request, Response $response)
+    {
+        $user = $this->getLogged(true);
+        $id = $request->getAttribute('route')->getArgument('id');
+        $index = $request->getQueryParam('index');
+        $today =  date('Y-m-d');
+        $date = \DateTime::createFromFormat('Y-m-d', $today);
+        $tasks = $this->em->getRepository(Task::class)->listDashboardNotNull($id, $user, $date, 20, $index * 20);
+        $tasksNull = $this->em->getRepository(Task::class)->listDashboardNull($id, $user, $date, 20, $index * 20);
+        $total = array_merge($tasks, $tasksNull);
+
+        return $response->withJson([
+            'status' => 'ok',
+            'message' => $total,
         ], 200)
             ->withHeader('Content-type', 'application/json');
     }
