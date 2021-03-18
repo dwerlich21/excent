@@ -32,36 +32,42 @@
             <div class="row mt-4">
                 <div class="col">
                     <div class="row justify-content-between">
-                        <div class=" card col-md-3">
-                            <div class="card-header" style="background: #F28547"><h6>Follow Up</h6></div>
+                        <div class="col-md-4 p-3">
+                            <div class="row">
+                                <div class="col bg-orange p-3">
+                                    <h6 class="my-auto">Follow Up</h6>
+                                </div>
+                            </div>
+                            <div class="row bg-grey">
+                                <div class="col" id="cardDeal1"></div>
+
+                            </div>
                         </div>
-                        <div class=" card col-md-3">
-                            <div class="card-header" style="background: #E3DF7E"><h6>Pending Agreement</h6></div>
+                        <div class="col-md-4 p-3">
+                            <div class="row">
+                                <div class="col bg-yellow p-3">
+                                    <h6 class="my-auto">Pending Agreement</h6>
+                                </div>
+                            </div>
+                            <div class="row bg-grey">
+                                <div class="col" id="cardDeal2"></div>
+                            </div>
                         </div>
-                        <div class=" card col-md-3">
-                            <div class="card-header" style="background: #6BD098"><h6>Approved Terms - To open accounts</h6></div>
+                        <div class="col-md-4 p-3">
+                            <div class="row">
+                                <div class="col bg-green p-3">
+                                    <h6 class="my-auto">Approved Terms</h6>
+                                </div>
+                            </div>
+                            <div class="row bg-grey">
+                                <div class="col" id="cardDeal3"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <img src="<?= BASEURL ?>assets/img/leed.png" alt="leed">
-        <p>Showing off <span id="partial"></span> of <span id="total"></span></p>
-        <table class="table table-bordered table-striped" id="dealsTable" width="100%" cellspacing="0">
-            <thead>
-            <tr>
-                <th class="text-center">Name</th>
-                <th class="text-center">Company</th>
-                <th class="text-center">Email</th>
-                <th class="text-center">Phone</th>
-                <th class="text-center">Status</th>
-                <th class="text-center">Actions</th>
-            </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
     </div>
-</div>
 </div>
 
 <!-- Modal Cadastro-->
@@ -107,7 +113,7 @@
                                 <option value="0">Select</option>
                                 <option value="1">Follow Up</option>
                                 <option value="2">Pending Agreement</option>
-                                <option value="3">Approved Terms - To open accounts</option>
+                                <option value="3">Approved Terms</option>
                             </select>
                         </div>
                         <div class="col-md-4">
@@ -133,36 +139,6 @@
         $('#modal').modal('show');
         $('#message').hide();
         document.getElementById('addDeal').reset();
-    }
-
-    function openModalEdit(id) {
-
-        document.getElementById('addDeal').reset();
-        document.getElementById('dealId').value = id;
-        $('#modal').modal('show');
-        $('#message').hide();
-        if (id > 0) {
-            showLoading();
-            fetch(`<?= BASEURL ?>deals/api/${id}`, {
-                method: "GET",
-                credentials: 'same-origin',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            }).then(response => {
-                response.json().then(json => {
-                    json = json.message[0];
-                    closeLoading();
-                    document.getElementById('email').value = json.email;
-                    document.getElementById('company').value = json.company;
-                    document.getElementById('name').value = json.name;
-                    document.getElementById('phone').value = json.phone;
-                    document.getElementById('office').value = json.office;
-                    document.getElementById('status').value = json.status;
-                });
-            });
-        }
     }
 
     const formAdd = document.getElementById('addDeal');
@@ -203,7 +179,6 @@
     var index = 0;
     var partial = 0;
     var total = 1;
-    var status = -1;
     var name = 0;
     var company = 0;
 
@@ -217,40 +192,76 @@
         total = 1;
         name = formData.name;
         company = formData.company;
-        type = formData.type;
-        $("#dealsTable tbody").empty();
-        generateTable();
+        $("#cardDeal1 tbody").empty();
+        $("#cardDeal2 tbody").empty();
+        $("#cardDeal3 tbody").empty();
+        generateDeals();
     });
 
     function resetTable() {
         index = 0;
         partial = 0;
         total = 1;
-        status = -1;
         name = 0;
         company = 0;
-        $("#dealsTable tbody").empty();
-        generateTable();
+        $("#cardDeal1 tbody").empty();
+        $("#cardDeal2 tbody").empty();
+        $("#cardDeal3 tbody").empty();
+        generateDeals();
     }
 
-    function generateDealsTable(deal) {
-        let actions = '';
-        actions += `<i class="fa fa-pencil text-info" title="Edit" onclick="openModalEdit(${deal.id})"></i> `;
-        actions = `<td class="text-center">${actions} </td>`;
-        return `<tr>
-                    <td class="text-center">${deal.name}</td>
-                    <td class="text-center">${deal.company}</td>
-                    <td class="text-center">${deal.email}</td>
-                    <td class="text-center">${deal.phone}</td>
-                    <td class="text-center">${deal.status}</td>
-                    ${actions}
-                </tr>`;
+    function generateDealsCard1(deal) {
+        if (deal.status == 1)
+
+        return `<div class="bg-white mx-1 my-3 p-2">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <div class="row"><b>${deal.name}</b></div>
+                            <div class="row">${deal.company}</div>
+                        </div>
+                        <div class="col-md-2 my-auto">
+                            <i class="fa fa-check-circle"></i>
+                        </div>
+                    </div>
+                </div>`;
     }
 
-    function generateTable() {
+    function generateDealsCard2(deal) {
+        if (deal.status == 2)
+
+            return `<div class="bg-white mx-1 my-3 p-2">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <div class="row"><b>${deal.name}</b></div>
+                            <div class="row">${deal.company}</div>
+                        </div>
+                        <div class="col-md-2 my-auto">
+                            <i class="fa fa-check-circle"></i>
+                        </div>
+                    </div>
+                </div>`;
+    }
+
+    function generateDealsCard3(deal) {
+        if (deal.status == 3)
+
+            return `<div class="bg-white mx-1 my-3 p-2">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <div class="row"><b>${deal.name}</b></div>
+                            <div class="row">${deal.company}</div>
+                        </div>
+                        <div class="col-md-2 my-auto">
+                            <i class="fa fa-check-circle"></i>
+                        </div>
+                    </div>
+                </div>`;
+    }
+
+    function generateDeals() {
         if (total > partial) {
             $('#loader').show();
-            fetch(`<?= BASEURL ?>deals/api/?index=${index}&name=${name}&company=${company}&status=${status}`, {
+            fetch(`<?= BASEURL ?>deals/api/?index=${index}&name=${name}&company=${company}`, {
                 method: "GET",
                 credentials: 'same-origin',
                 headers: {
@@ -260,23 +271,23 @@
             }).then(response => {
                 response.json().then(json => {
                     $('#loader').hide();
-                    $('#total').text(json.total);
-                    $('#partial').text(json.partial);
-                    total = json.total;
-                    partial = json.partial;
-                    let options = json.message.map(generateDealsTable);
-                    $("#dealsTable tbody").append(options);
+                    let status1 = json.message.map(generateDealsCard1);
+                    let status2 = json.message.map(generateDealsCard2);
+                    let status3 = json.message.map(generateDealsCard3);
+                    $("#cardDeal1").append(status1);
+                    $("#cardDeal2").append(status2);
+                    $("#cardDeal3").append(status3);
                 });
             });
         }
     }
 
     $(document).ready(function () {
-        generateTable();
+        generateDeals();
         $(window).scroll(function () {
             if ($(window).scrollTop() + $(window).height() >= $(document).height() - 1) {
                 index++;
-                generateTable();
+                generateDeals();
             }
         });
     });

@@ -41,15 +41,14 @@ class ApiController extends Controller
         $id = $request->getAttribute('route')->getArgument('id');
         $name = $request->getQueryParam('name');
         $company = $request->getQueryParam('company');
-        $status = $request->getQueryParam('status');
         $index = $request->getQueryParam('index');
-        $users = $this->em->getRepository(Deal::class)->list($id, $name, $company, $status,  20, $index * 20);
-        $total = $this->em->getRepository(Deal::class)->listTotal($id, $name, $company, $status)['total'];
-        $partial = ($index * 20) + sizeof($users);
+        $deals = $this->em->getRepository(Deal::class)->list($id, $name, $company,  42, $index * 42);
+        $total = $this->em->getRepository(Deal::class)->listTotal($id, $name, $company)['total'];
+        $partial = ($index * 42) + sizeof($deals);
         $partial = $partial <= $total ? $partial : $total;
         return $response->withJson([
             'status' => 'ok',
-            'message' => $users,
+            'message' => $deals,
             'total' => (int)$total,
             'partial' => $partial,
         ], 200)

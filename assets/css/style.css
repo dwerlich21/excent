@@ -126,36 +126,6 @@ nav {
     padding: 0; !important;
 }
 
-#tasksDiv {
-    width: 90%;
-    max-width: 1240px;
-    margin: 0 auto;
-
-    display: grid;
-
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: auto;
-    grid-gap: 20px;
-}
-
-@media only screen and (max-width: 450px) {
-    #tasksDiv {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media only screen and (min-width: 500px) {
-    #tasksDiv {
-        grid-template-columns: 1fr 1fr;
-    }
-}
-
-@media only screen and (min-width: 1300px) {
-    #tasksDiv {
-        grid-template-columns: 1fr 1fr 1fr;!important;
-    }
-}
-
 #iconCheck {
     color: grey;
 }
@@ -176,4 +146,25 @@ background: #F7F7F7;!important;
 
 #headerDeal{
     z-index: 100;
+}
+
+.card-header {
+    height: 100%;
+    width: 100%;
+    padding: 0;!important;
+}
+.bg-orange {
+    background: #EEA176;
+}
+
+.bg-yellow {
+    background: #E3DF7E;
+}
+
+.bg-green {
+    background: #6BD098;
+}
+
+.bg-grey {
+    background: #F4F3EF;
 }

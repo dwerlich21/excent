@@ -4,7 +4,7 @@
             <div class="card p-3">
                 <div class="row">
                     <div class="col-md-8">
-                        <h6 class="title">Messages</h6>
+                        <h5 class="title">Messages</h5>
                     </div>
                 </div>
                 <div class="card-body" id="messagesDiv">
@@ -33,26 +33,27 @@
     var index = 0;
 
     function generateMessagesCard(message) {
-        return `<br><div class="bg-white p-3" style="box-shadow: 6px 6px 6px 6px rgb(0, 0, 0, 0.25);">
-                <div class="row">
-                    <div class="col-md-11" data-toggle="collapse" data-target="#collapse${message.id}" aria-expanded="false" aria-controls="collapse${message.id}">
-                        <h6 class="mb-0">
-                              ${message.title}
-                        </h6>
+        return `<div class="bg-white p-3 mb-4" style="box-shadow: 6px 6px 6px 6px rgb(0, 0, 0, 0.25);">
+                    <div class="col">
+                        <div class="row">
+                            <div class="col-md-11" data-toggle="collapse" data-target="#collapse${message.id}" aria-expanded="false" aria-controls="collapse${message.id}">
+                                <h6 class="my-auto">
+                                      ${message.title}
+                                </h6>
+                            </div>
+                            <div class="col-md-1 text-right">
+                                <a><i class="fa fa-check-circle" id="iconCheck"></i></a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div id="collapse${message.id}" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                              <div class="card-body text-justify">
+                                ${message.description}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                     </div>
-                    <div class="col-md-1 text-right">
-                        <a><i class="fa fa-check-circle" id="iconCheck"></i></a>
-                    </div>
-                </div>
-                <div class="row">
-                    <div id="collapse${message.id}" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
-                      <div class="card-body text-justify">
-                        ${message.description}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                </div>
                 </div>
         `;
     }
@@ -79,25 +80,25 @@
     function generateTasksCard(task) {
         let time = '';
         if (task.time != null) time = `${task.time}:`;
-        return `<div class="row bg-white p-3 card-task" id="cardTask${task.id}">
-                    <div class="col-md-4 my-auto">
-                        ${actionIcon(task.action)}
+        return `<div class="col-md-4 my-2" id="cardTask${task.id}">
+                    <div class="row bg-white p-3 card-task">
+                        <div class="col-md-4 my-auto">
+                            ${actionIcon(task.action)}
+                        </div>
+                        <div class="col-md-8 card-date">
+                            <div class="row">
+                                <div class="col"> <b>${time} ${actionStr(task.action)}</b></div>
+                            </div>
+                            <div class="row">
+                                <div class="col"> ${task.deal}</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-9"></div>
+                                <div class="col-md-3 text-right" onclick="taskStatus(${task.id})"><a><i class="fa fa-check-circle" id="iconCheck"></i></a></div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-8 card-date">
-                        <div class="row">
-                            <div class="col"> <b>${time} ${actionStr(task.action)}</b></div>
-                        </div>
-                        <div class="row">
-                            <div class="col"> ${task.deal}</div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-9"></div>
-                            <div class="col-md-3 text-right" onclick="taskStatus(${task.id})"><a><i class="fa fa-check-circle" id="iconCheck"></i></a></div>
-                        </div>
-                    </div>
-                </div>
-
-        `;
+                </div>`;
     }
 
     function actionStr(action) {

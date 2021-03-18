@@ -25,7 +25,7 @@ class DealRepository extends EntityRepository
         return $limitSql;
     }
 
-    private function generateWhere($id = 0, $name = null, $company= null, $status = null, &$params): string
+    private function generateWhere($id = 0, $name = null, $company= null, &$params): string
     {
         $where = '';
         if ($id) {
@@ -40,18 +40,14 @@ class DealRepository extends EntityRepository
             $params[':company'] = "%$company%";
             $where .= " AND deal.company LIKE :company";
         }
-        if ($status > -1) {
-            $params[':status'] = $status;
-            $where .= " AND deal.status = :status";
-        }
         return $where;
     }
 
-    public function list($id = 0, $name = null, $company= null, $status = null, $limit = null, $offset = null): array
+    public function list($id = 0, $name = null, $company= null, $limit = null, $offset = null): array
     {
         $params = [];
         $limitSql = $this->generateLimit($limit, $offset);
-        $where = $this->generateWhere($id, $name, $company, $status, $params);
+        $where = $this->generateWhere($id, $name, $company, $params);
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
         $sql = "SELECT deal.id, deal.name, deal.company, deal.status, deal.phone, deal.email, 
                 deal.status, deal.office               
@@ -59,16 +55,15 @@ class DealRepository extends EntityRepository
                 WHERE 1 = 1 {$where}
                 ORDER BY name ASC {$limitSql}
                ";
-
         $sth = $pdo->prepare($sql);
         $sth->execute($params);
         return $sth->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    public function listTotal($id = 0, $name = null, $company= null, $status = null): array
+    public function listTotal($id = 0, $name = null, $company= null): array
     {
         $params = [];
-        $where = $this->generateWhere($id, $name, $company, $status, $params);
+        $where = $this->generateWhere($id, $name, $company, $params);
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
         $sql = "SELECT COUNT(deal.id) AS total                  
                 FROM deal
