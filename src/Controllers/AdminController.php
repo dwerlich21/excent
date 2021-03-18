@@ -5,7 +5,7 @@ namespace App\Controllers;
 
 use App\Helpers\Date;
 use App\Helpers\Validator;
-use App\Models\Entities\Client;
+use App\Models\Entities\Deal;
 use App\Models\Entities\Document;
 use App\Models\Entities\Message;
 use App\Models\Entities\Task;
@@ -22,7 +22,7 @@ class AdminController extends Controller
         $user = $this->getLogged();
         $today = date('Y-m-d');
         $date = \DateTime::createFromFormat('Y-m-d', $today);
-        $clients = $this->em->getRepository(Client::class)->findBy(['responsible' => $user->getId()]);
+        $clients = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId()]);
         $tasks = $this->em->getRepository(Task::class)->findBy(['date' => $date, 'status' => 1]);
         $messages = $this->em->getRepository(Message::class)->findBy(['active' => 1]);
         return $this->renderer->render($response, 'default.phtml', ['page' => 'index.phtml', 'menuActive' => ['dashboard'],
@@ -36,7 +36,7 @@ class AdminController extends Controller
             $data = (array)$request->getParams();
             $fields = [
                 'date' => 'Date',
-                'client' => 'Client',
+                'client' => 'Deal',
                 'action' => 'Action'
             ];
             Validator::requireValidator($fields, $data);
@@ -49,7 +49,7 @@ class AdminController extends Controller
                 ->setUser($user)
                 ->setAction($data['action'])
                 ->setDescription($data['description'])
-                ->setClient($this->em->getReference(Client::class, $data['client']));
+                ->setDeal($this->em->getReference(Deal::class, $data['client']));
             $this->em->getRepository(Task::class)->save($task);
             return $response->withJson([
                 'status' => 'ok',

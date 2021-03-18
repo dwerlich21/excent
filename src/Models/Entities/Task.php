@@ -38,10 +38,10 @@ class Task
     private ?string $description = null;
 
     /**
-     * @ManyToOne(targetEntity="Client")
+     * @ManyToOne(targetEntity="Deal")
      * @JoinColumn(name="client", referencedColumnName="id")
      */
-    private Client $client;
+    private Deal $client;
 
     /**
      * @ManyToOne(targetEntity="User")
@@ -93,12 +93,12 @@ class Task
         return $this;
     }
 
-    public function getClient(): Client
+    public function getDeal(): Deal
     {
         return $this->client;
     }
 
-    public function setClient(Client $client): Task
+    public function setDeal(Deal $client): Task
     {
         $this->client = $client;
         return $this;

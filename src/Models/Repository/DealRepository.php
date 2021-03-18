@@ -2,12 +2,12 @@
 
 namespace App\Models\Repository;
 
-use App\Models\Entities\Client;
+use App\Models\Entities\Deal;
 use Doctrine\ORM\EntityRepository;
 
-class ClientRepository extends EntityRepository
+class DealRepository extends EntityRepository
 {
-    public function save(Client $entity): Client
+    public function save(Deal $entity): Deal
     {
         $this->getEntityManager()->persist($entity);
         $this->getEntityManager()->flush();
@@ -30,19 +30,19 @@ class ClientRepository extends EntityRepository
         $where = '';
         if ($id) {
             $params[':id'] = $id;
-            $where .= " AND client.id = :id";
+            $where .= " AND deal.id = :id";
         }
         if ($name) {
             $params[':name'] = "%$name%";
-            $where .= " AND client.name LIKE :name";
+            $where .= " AND deal.name LIKE :name";
         }
         if ($company) {
             $params[':company'] = "%$company%";
-            $where .= " AND client.company LIKE :company";
+            $where .= " AND deal.company LIKE :company";
         }
         if ($status > -1) {
             $params[':status'] = $status;
-            $where .= " AND client.status = :status";
+            $where .= " AND deal.status = :status";
         }
         return $where;
     }
@@ -53,9 +53,9 @@ class ClientRepository extends EntityRepository
         $limitSql = $this->generateLimit($limit, $offset);
         $where = $this->generateWhere($id, $name, $company, $status, $params);
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
-        $sql = "SELECT client.id, client.name, client.company, client.status, client.phone, client.email, 
-                client.status, client.office               
-                FROM client
+        $sql = "SELECT deal.id, deal.name, deal.company, deal.status, deal.phone, deal.email, 
+                deal.status, deal.office               
+                FROM deal
                 WHERE 1 = 1 {$where}
                 ORDER BY name ASC {$limitSql}
                ";
@@ -70,8 +70,8 @@ class ClientRepository extends EntityRepository
         $params = [];
         $where = $this->generateWhere($id, $name, $company, $status, $params);
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
-        $sql = "SELECT COUNT(client.id) AS total                  
-                FROM client
+        $sql = "SELECT COUNT(deal.id) AS total                  
+                FROM deal
                 WHERE 1 = 1 {$where}
                ";
         $sth = $pdo->prepare($sql);

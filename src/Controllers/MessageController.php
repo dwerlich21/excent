@@ -4,7 +4,7 @@
 namespace App\Controllers;
 
 use App\helpers\Validator;
-use App\Models\Entities\Client;
+use App\Models\Entities\Deal;
 use App\Models\Entities\Message;
 use \Psr\Http\Message\ResponseInterface as Response;
 use \Psr\Http\Message\ServerRequestInterface as Request;
@@ -13,7 +13,7 @@ class MessageController extends Controller
     public function message(Request $request, Response $response)
     {
         $user = $this->getLogged();
-        $clients = $this->em->getRepository(Client::class)->findBy(['responsible' => $user->getId()]);
+        $clients = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId()]);
         return $this->renderer->render($response, 'default.phtml', ['page' => 'messages/index.phtml', 'menuActive' => ['messages'],
             'user' => $user, 'clients' => $clients]);
     }

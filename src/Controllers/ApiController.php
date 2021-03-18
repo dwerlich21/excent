@@ -3,7 +3,7 @@
 
 namespace App\Controllers;
 
-use App\Models\Entities\Client;
+use App\Models\Entities\Deal;
 use App\Models\Entities\Document;
 use App\Models\Entities\Message;
 use App\Models\Entities\Task;
@@ -35,7 +35,7 @@ class ApiController extends Controller
             ->withHeader('Content-type', 'application/json');
     }
 
-    public function clientsTable(Request $request, Response $response)
+    public function dealsTable(Request $request, Response $response)
     {
         $this->getLogged(true);
         $id = $request->getAttribute('route')->getArgument('id');
@@ -43,8 +43,8 @@ class ApiController extends Controller
         $company = $request->getQueryParam('company');
         $status = $request->getQueryParam('status');
         $index = $request->getQueryParam('index');
-        $users = $this->em->getRepository(Client::class)->list($id, $name, $company, $status,  20, $index * 20);
-        $total = $this->em->getRepository(Client::class)->listTotal($id, $name, $company, $status)['total'];
+        $users = $this->em->getRepository(Deal::class)->list($id, $name, $company, $status,  20, $index * 20);
+        $total = $this->em->getRepository(Deal::class)->listTotal($id, $name, $company, $status)['total'];
         $partial = ($index * 20) + sizeof($users);
         $partial = $partial <= $total ? $partial : $total;
         return $response->withJson([

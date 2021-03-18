@@ -4,20 +4,20 @@
 namespace App\Controllers;
 
 use App\helpers\Validator;
-use App\Models\Entities\Client;
+use App\Models\Entities\Deal;
 use \Psr\Http\Message\ResponseInterface as Response;
 use \Psr\Http\Message\ServerRequestInterface as Request;
-class ClientController extends Controller
+class DealController extends Controller
 {
-    public function client(Request $request, Response $response)
+    public function deal(Request $request, Response $response)
     {
         $user = $this->getLogged();
-        $clients = $this->em->getRepository(Client::class)->findBy(['responsible' => $user->getId()]);
-        return $this->renderer->render($response, 'default.phtml', ['page' => 'clients/index.phtml', 'menuActive' => ['clients'],
+        $clients = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId()]);
+        return $this->renderer->render($response, 'default.phtml', ['page' => 'deals/index.phtml', 'menuActive' => ['deals'],
             'user' => $user, 'clients' => $clients]);
     }
 
-    public function saveClient(Request $request, Response $response)
+    public function saveDeal(Request $request, Response $response)
     {
         try {
             $user = $this->getLogged();
@@ -28,21 +28,22 @@ class ClientController extends Controller
                 'company' => 'Empresa',
                 'email' => 'E-mail',
                 'phone' => 'Telefone',
+                'status' => 'Status',
                 'office' => 'Cargo'
             ];
             Validator::requireValidator($fields, $data);
-            $client = new Client();
+            $client = new Deal();
             if ($data['clientId'] > 0) {
-                $client = $this->em->getRepository(Client::class)->find($data['clientId']);
+                $client = $this->em->getRepository(Deal::class)->find($data['clientId']);
             }
             $client->setCompany($data['company'])
                 ->setEmail($data['email'])
                 ->setName($data['name'])
                 ->setPhone($data['phone'])
                 ->setOffice($data['office'])
-                ->setStatus(0)
+                ->setStatus($data['status'])
                 ->setResponsible($user);
-            $this->em->getRepository(Client::class)->save($client);
+            $this->em->getRepository(Deal::class)->save($client);
             return $response->withJson([
                 'status' => 'ok',
                 'message' => 'Successfully registered client!',

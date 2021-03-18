@@ -4,7 +4,7 @@
 namespace App\Controllers;
 
 use App\helpers\Validator;
-use App\Models\Entities\Client;
+use App\Models\Entities\Deal;
 use App\Models\Entities\Document;
 use \Psr\Http\Message\ResponseInterface as Response;
 use \Psr\Http\Message\ServerRequestInterface as Request;
@@ -13,7 +13,7 @@ class DocumentController extends Controller
     public function document(Request $request, Response $response)
     {
         $user = $this->getLogged();
-        $clients = $this->em->getRepository(Client::class)->findBy(['responsible' => $user->getId()]);
+        $clients = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId()]);
         return $this->renderer->render($response, 'default.phtml', ['page' => 'documents/index.phtml', 'menuActive' => ['documents'],
             'user' => $user, 'clients' => $clients]);
     }
@@ -22,9 +22,9 @@ class DocumentController extends Controller
     {
         $folder = UPLOAD_FOLDER;
         $documentFile = $files['projectFile'];
-        if ($documentFile && $documentFile->getClientFilename()) {
+        if ($documentFile && $documentFile->getDealFilename()) {
             $time = time();
-            $extension = explode('.', $documentFile->getClientFilename());
+            $extension = explode('.', $documentFile->getDealFilename());
             $extension = end($extension);
             $target = "{$folder}{$time}documentFile.{$extension}";
             $documentFile->moveTo($target);

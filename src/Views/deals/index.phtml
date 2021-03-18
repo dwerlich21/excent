@@ -1,87 +1,92 @@
 <div class="row">
     <div class="col">
         <div class="card p-3">
-            <div class="row">
-                <div class="col-md-8">
-                    <h5 class="title">Clients</h5>
-                </div>
-                <div class="col-md-4">
-                    <a class="float-right btn btn-primary text-white" href="#" onclick="openModal()"><i
-                                class="fa fa-plus"></i> Client</a>
-                </div>
-            </div>
             <form id="filter">
                 <div class="row">
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="nameFilter">Name</label>
+                    <div class="col-md-3">
+                        <div class="row">
+                            <h5 class="title my-auto">Deals</h5>
+                            <a class="btn btn-primary text-white ml-3" href="#" onclick="openModal()"><i
+                                        class="fa fa-plus"></i> Deal</a>
+                        </div>
+                    </div>
+                    <div class="col-md-3 my-auto">
+                        <div class="form-group mt-2">
                             <input class="form-control" id="nameFilter" name="name" type="text" placeholder="Name">
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="companyFilter">Company</label>
-                            <input class="form-control" id="companyFilter" name="company" type="text" placeholder="Company">
+                    <div class="col-md-3 my-auto">
+                        <div class="form-group mt-2">
+                            <input class="form-control" id="companyFilter" name="company" type="text"
+                                   placeholder="Company">
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="statusFilter">Status</label>
-                            <select name="status" id="statusFilter" class="form-control">
-                                <option value="-1">Select</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col text-right">
+                    <div class="col-md-3 text-right">
                         <button class="btn btn-danger" type="reset" onclick="resetTable()">Cancel</button>
                         <button class="btn btn-primary" type="submit">Search</button>
                     </div>
                 </div>
             </form>
-            <p>Showing off <span id="partial"></span> of <span id="total"></span></p>
-            <table class="table table-bordered table-striped" id="clientsTable" width="100%" cellspacing="0">
-                <thead>
-                <tr>
-                    <th class="text-center">Name</th>
-                    <th class="text-center">Company</th>
-                    <th class="text-center">Email</th>
-                    <th class="text-center">Phone</th>
-                    <th class="text-center">Status</th>
-                    <th class="text-center">Actions</th>
-                </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
         </div>
+        <div class="card">
+            <div class="row mt-4">
+                <div class="col">
+                    <div class="row justify-content-between">
+                        <div class=" card col-md-3">
+                            <div class="card-header" style="background: #F28547"><h6>Follow Up</h6></div>
+                        </div>
+                        <div class=" card col-md-3">
+                            <div class="card-header" style="background: #E3DF7E"><h6>Pending Agreement</h6></div>
+                        </div>
+                        <div class=" card col-md-3">
+                            <div class="card-header" style="background: #6BD098"><h6>Approved Terms - To open accounts</h6></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <img src="<?= BASEURL ?>assets/img/leed.png" alt="leed">
+        <p>Showing off <span id="partial"></span> of <span id="total"></span></p>
+        <table class="table table-bordered table-striped" id="dealsTable" width="100%" cellspacing="0">
+            <thead>
+            <tr>
+                <th class="text-center">Name</th>
+                <th class="text-center">Company</th>
+                <th class="text-center">Email</th>
+                <th class="text-center">Phone</th>
+                <th class="text-center">Status</th>
+                <th class="text-center">Actions</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
     </div>
+</div>
 </div>
 
 <!-- Modal Cadastro-->
 <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="subscriptionModal"
      aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Client registration</h5>
+                <h5 class="modal-title">Deal registration</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form class="form-control" id="addClient" method="post">
+            <form class="form-control" id="addDeal" method="post">
                 <div class="form-group">
-                    <input type="hidden" name="clientId" id="clientId">
+                    <input type="hidden" name="dealId" id="dealId">
                     <div class="row">
-                        <div class="col">
+                        <div class="col-md-6">
                             <label for="name">Name</label>
                             <input id="name" name="name" class="form-control" type="text" placeholder="Name">
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
+                        <div class="col-md-6">
                             <label for="company">Company</label>
-                            <input id="company" name="company" class="form-control" type="text" placeholder="Company">
+                            <input id="company" name="company" class="form-control" type="text"
+                                   placeholder="Company">
                         </div>
                     </div>
                     <div class="row">
@@ -91,14 +96,21 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col">
+                        <div class="col-md-4">
                             <label for="phone">Phone</label>
                             <input id="phone" name="phone" class="form-control" type="text"
-                                   placeholder="+99 99 9999-9999" onfocus="mTel()">
+                                   placeholder="+99 99 9999-9999">
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
+                        <div class="col-md-4">
+                            <label for="status">Status</label>
+                            <select id="status" name="status" class="form-control">
+                                <option value="0">Select</option>
+                                <option value="1">Follow Up</option>
+                                <option value="2">Pending Agreement</option>
+                                <option value="3">Approved Terms - To open accounts</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
                             <label for="office">Office</label>
                             <input id="office" name="office" class="form-control" type="text" placeholder="Office">
                         </div>
@@ -106,7 +118,7 @@
                 </div>
                 <div class="row">
                     <div class="col text-right">
-                        <button type="submit" class="btn btn-primary">Save Client</button>
+                        <button type="submit" class="btn btn-primary">Save Deal</button>
                     </div>
                 </div>
                 <div style="display: none" id="message" class="alert alert-danger" role="alert"></div>
@@ -120,18 +132,18 @@
     function openModal() {
         $('#modal').modal('show');
         $('#message').hide();
-        document.getElementById('addClient').reset();
+        document.getElementById('addDeal').reset();
     }
 
     function openModalEdit(id) {
 
-        document.getElementById('addClient').reset();
-        document.getElementById('clientId').value = id;
+        document.getElementById('addDeal').reset();
+        document.getElementById('dealId').value = id;
         $('#modal').modal('show');
         $('#message').hide();
         if (id > 0) {
             showLoading();
-            fetch(`<?= BASEURL ?>clients/api/${id}`, {
+            fetch(`<?= BASEURL ?>deals/api/${id}`, {
                 method: "GET",
                 credentials: 'same-origin',
                 headers: {
@@ -147,19 +159,20 @@
                     document.getElementById('name').value = json.name;
                     document.getElementById('phone').value = json.phone;
                     document.getElementById('office').value = json.office;
+                    document.getElementById('status').value = json.status;
                 });
             });
         }
     }
 
-    const formAdd = document.getElementById('addClient');
+    const formAdd = document.getElementById('addDeal');
     const divMessage = document.getElementById('message');
 
     formAdd.addEventListener('submit', e => {
         e.preventDefault();
         showLoading();
-        let formData = formDataToJson('addClient');
-        fetch("<?= BASEURL ?>clients/register", {
+        let formData = formDataToJson('addDeal');
+        fetch("<?= BASEURL ?>deals/register", {
             method: 'POST',
             credentials: 'same-origin',
             headers: {
@@ -205,7 +218,7 @@
         name = formData.name;
         company = formData.company;
         type = formData.type;
-        $("#clientsTable tbody").empty();
+        $("#dealsTable tbody").empty();
         generateTable();
     });
 
@@ -216,20 +229,20 @@
         status = -1;
         name = 0;
         company = 0;
-        $("#clientsTable tbody").empty();
+        $("#dealsTable tbody").empty();
         generateTable();
     }
 
-    function generateClientsTable(client) {
+    function generateDealsTable(deal) {
         let actions = '';
-        actions += `<i class="fa fa-pencil text-info" title="Edit" onclick="openModalEdit(${client.id})"></i> `;
+        actions += `<i class="fa fa-pencil text-info" title="Edit" onclick="openModalEdit(${deal.id})"></i> `;
         actions = `<td class="text-center">${actions} </td>`;
         return `<tr>
-                    <td class="text-center">${client.name}</td>
-                    <td class="text-center">${client.company}</td>
-                    <td class="text-center">${client.email}</td>
-                    <td class="text-center">${client.phone}</td>
-                    <td class="text-center">${client.status}</td>
+                    <td class="text-center">${deal.name}</td>
+                    <td class="text-center">${deal.company}</td>
+                    <td class="text-center">${deal.email}</td>
+                    <td class="text-center">${deal.phone}</td>
+                    <td class="text-center">${deal.status}</td>
                     ${actions}
                 </tr>`;
     }
@@ -237,7 +250,7 @@
     function generateTable() {
         if (total > partial) {
             $('#loader').show();
-            fetch(`<?= BASEURL ?>clients/api/?index=${index}&name=${name}&company=${company}&status=${status}`, {
+            fetch(`<?= BASEURL ?>deals/api/?index=${index}&name=${name}&company=${company}&status=${status}`, {
                 method: "GET",
                 credentials: 'same-origin',
                 headers: {
@@ -251,8 +264,8 @@
                     $('#partial').text(json.partial);
                     total = json.total;
                     partial = json.partial;
-                    let options = json.message.map(generateClientsTable);
-                    $("#clientsTable tbody").append(options);
+                    let options = json.message.map(generateDealsTable);
+                    $("#dealsTable tbody").append(options);
                 });
             });
         }

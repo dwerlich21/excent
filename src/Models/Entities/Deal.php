@@ -7,10 +7,10 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @Entity @Table(name="client")
- * @ORM @Entity(repositoryClass="App\Models\Repository\ClientRepository")
+ * @Entity @Table(name="deal")
+ * @ORM @Entity(repositoryClass="App\Models\Repository\DealRepository")
  */
-class Client
+class Deal
 {
     /**
      * @Id @GeneratedValue @Column(type="integer")
@@ -64,7 +64,7 @@ class Client
         return $this->phone;
     }
 
-    public function setPhone(string $phone): Client
+    public function setPhone(string $phone): Deal
     {
         $this->phone = $phone;
         return $this;
@@ -75,7 +75,7 @@ class Client
         return $this->company;
     }
 
-    public function setCompany(string $company): Client
+    public function setCompany(string $company): Deal
     {
         $this->company = $company;
         return $this;
@@ -86,7 +86,7 @@ class Client
         return $this->name;
     }
 
-    public function setName(string $name): Client
+    public function setName(string $name): Deal
     {
         $this->name = $name;
         return $this;
@@ -97,7 +97,7 @@ class Client
         return $this->office;
     }
 
-    public function setOffice(string $office): Client
+    public function setOffice(string $office): Deal
     {
         $this->office = $office;
         return $this;
@@ -108,7 +108,7 @@ class Client
         return $this->email;
     }
 
-    public function setEmail(string $email): Client
+    public function setEmail(string $email): Deal
     {
         $this->email = $email;
         return $this;
@@ -119,7 +119,7 @@ class Client
         return $this->responsible;
     }
 
-    public function setResponsible(User $responsible): Client
+    public function setResponsible(User $responsible): Deal
     {
         $this->responsible = $responsible;
         return $this;
@@ -130,7 +130,7 @@ class Client
         return $this->status;
     }
 
-    public function setStatus(int $status): Client
+    public function setStatus(int $status): Deal
     {
         $this->status = $status;
         return $this;

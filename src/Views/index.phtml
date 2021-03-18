@@ -35,12 +35,18 @@
     function generateMessagesCard(message) {
         return `<br><div class="bg-white p-3" style="box-shadow: 6px 6px 6px 6px rgb(0, 0, 0, 0.25);">
                 <div class="row">
-                <div class=col>
-                    <h5 class="mb-0"><a data-toggle="collapse" data-target="#collapse${message.id}" aria-expanded="false" aria-controls="collapse${message.id}">
-                          ${message.title}</a>
-                    </h5>
+                    <div class="col-md-11" data-toggle="collapse" data-target="#collapse${message.id}" aria-expanded="false" aria-controls="collapse${message.id}">
+                        <h6 class="mb-0">
+                              ${message.title}
+                        </h6>
+                    </div>
+                    <div class="col-md-1 text-right">
+                        <a><i class="fa fa-check-circle" id="iconCheck"></i></a>
+                    </div>
+                </div>
+                <div class="row">
                     <div id="collapse${message.id}" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
-                      <div class="card-body">
+                      <div class="card-body text-justify">
                         ${message.description}
                       </div>
                     </div>
@@ -73,7 +79,7 @@
     function generateTasksCard(task) {
         let time = '';
         if (task.time != null) time = `${task.time}:`;
-        return `<div class="row bg-white p-3 col-md-3 card-task m-2" id="cardTask${task.id}">
+        return `<div class="row bg-white p-3 card-task" id="cardTask${task.id}">
                     <div class="col-md-4 my-auto">
                         ${actionIcon(task.action)}
                     </div>
@@ -82,10 +88,11 @@
                             <div class="col"> <b>${time} ${actionStr(task.action)}</b></div>
                         </div>
                         <div class="row">
-                            <div class="col"> ${task.client}</div>
+                            <div class="col"> ${task.deal}</div>
                         </div>
                         <div class="row">
-                            <div class="col text-right finish" onclick="taskStatus(${task.id})"><a><i class="text-success fa fa-check-circle"></i></a></div>
+                            <div class="col-md-9"></div>
+                            <div class="col-md-3 text-right" onclick="taskStatus(${task.id})"><a><i class="fa fa-check-circle" id="iconCheck"></i></a></div>
                         </div>
                     </div>
                 </div>

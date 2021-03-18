@@ -118,12 +118,62 @@ nav {
     z-index: 2;!important;
 }
 
-
-
 .card-task {
     box-shadow: 6px 6px 6px 6px rgb(0, 0, 0, 0.25);
 }
 
 .card-date {
     padding: 0; !important;
+}
+
+#tasksDiv {
+    width: 90%;
+    max-width: 1240px;
+    margin: 0 auto;
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto;
+    grid-gap: 20px;
+}
+
+@media only screen and (max-width: 450px) {
+    #tasksDiv {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media only screen and (min-width: 500px) {
+    #tasksDiv {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media only screen and (min-width: 1300px) {
+    #tasksDiv {
+        grid-template-columns: 1fr 1fr 1fr;!important;
+    }
+}
+
+#iconCheck {
+    color: grey;
+}
+
+#iconCheck:hover {
+    color: #6BD098;
+}
+
+.modal-header {
+background: #F7F7F7;!important;
+}
+
+.vertical-line {
+    height: 100%;
+    border-left: 1px solid;
+    border-color: gray;
+}
+
+#headerDeal{
+    z-index: 100;
 }
