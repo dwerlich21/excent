@@ -12,9 +12,19 @@ class DealController extends Controller
     public function deal(Request $request, Response $response)
     {
         $user = $this->getLogged();
-        $clients = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId()]);
+        $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId()]);
         return $this->renderer->render($response, 'default.phtml', ['page' => 'deals/index.phtml', 'menuActive' => ['deals'],
-            'user' => $user, 'clients' => $clients]);
+            'user' => $user, 'deals' => $deals]);
+    }
+
+    public function viewDeal(Request $request, Response $response)
+    {
+        $user = $this->getLogged();
+        $id = $request->getAttribute('route')->getArgument('id');
+        $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId()]);
+        $deal = $this->em->getRepository(Deal::class)->find($id);
+        return $this->renderer->render($response, 'default.phtml', ['page' => 'deals/viewDeal.phtml', 'menuActive' => ['deals'],
+            'user' => $user, 'deals' => $deals, 'deal' => $deal]);
     }
 
     public function saveDeal(Request $request, Response $response)
@@ -32,18 +42,18 @@ class DealController extends Controller
                 'office' => 'Cargo'
             ];
             Validator::requireValidator($fields, $data);
-            $client = new Deal();
+            $deal = new Deal();
             if ($data['clientId'] > 0) {
-                $client = $this->em->getRepository(Deal::class)->find($data['clientId']);
+                $deal = $this->em->getRepository(Deal::class)->find($data['clientId']);
             }
-            $client->setCompany($data['company'])
+            $deal->setCompany($data['company'])
                 ->setEmail($data['email'])
                 ->setName($data['name'])
                 ->setPhone($data['phone'])
                 ->setOffice($data['office'])
                 ->setStatus($data['status'])
                 ->setResponsible($user);
-            $this->em->getRepository(Deal::class)->save($client);
+            $this->em->getRepository(Deal::class)->save($deal);
             return $response->withJson([
                 'status' => 'ok',
                 'message' => 'Successfully registered client!',

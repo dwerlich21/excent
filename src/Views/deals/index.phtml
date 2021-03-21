@@ -213,49 +213,53 @@
     function generateDealsCard1(deal) {
         if (deal.status == 1)
 
-        return `<div class="bg-white mx-1 my-3 p-2">
+        return `<a href="${viewDeal(deal.id)}" style="text-decoration: none"><div class="bg-white mx-1 my-3 p-2">
                     <div class="row">
                         <div class="col-md-10">
-                            <div class="row"><b>${deal.name}</b></div>
-                            <div class="row">${deal.company}</div>
+                            <div class="row deal-title"><b>${deal.name}</b></div>
+                            <div class="row deal-sub">${deal.company}</div>
                         </div>
                         <div class="col-md-2 my-auto">
                             <i class="fa fa-check-circle"></i>
                         </div>
                     </div>
-                </div>`;
+                </div></a>`;
     }
 
     function generateDealsCard2(deal) {
         if (deal.status == 2)
 
-            return `<div class="bg-white mx-1 my-3 p-2">
+            return `<a href="${viewDeal(deal.id)}" style="text-decoration: none"><div class="bg-white mx-1 my-3 p-2">
                     <div class="row">
                         <div class="col-md-10">
-                            <div class="row"><b>${deal.name}</b></div>
-                            <div class="row">${deal.company}</div>
+                            <div class="row deal-title"><b>${deal.name}</b></div>
+                            <div class="row deal-sub" style="color: grey">${deal.company}</div>
                         </div>
                         <div class="col-md-2 my-auto">
                             <i class="fa fa-check-circle"></i>
                         </div>
                     </div>
-                </div>`;
+                </div></a>`;
     }
 
     function generateDealsCard3(deal) {
         if (deal.status == 3)
 
-            return `<div class="bg-white mx-1 my-3 p-2">
+            return `<a href="${viewDeal(deal.id)}" style="text-decoration: none"><div class="bg-white mx-1 my-3 p-2">
                     <div class="row">
                         <div class="col-md-10">
-                            <div class="row"><b>${deal.name}</b></div>
-                            <div class="row">${deal.company}</div>
+                            <div class="row deal-title"><b>${deal.name}</b></div>
+                            <div class="row deal-sub">${deal.company}</div>
                         </div>
                         <div class="col-md-2 my-auto">
                             <i class="fa fa-check-circle"></i>
                         </div>
                     </div>
-                </div>`;
+                </div></a>`;
+    }
+
+    function viewDeal(id) {
+        return `<?= BASEURL ?>deals/${id}`
     }
 
     function generateDeals() {

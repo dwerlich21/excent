@@ -16,4 +16,8 @@ $app->group('/deals', function () use ($app) {
     $app->get('/api/[{id}/]', function (Request $request, Response $response) {
         return $this->ApiController->dealsTable($request, $response);
     });
+
+    $app->get('/{id}/', function (Request $request, Response $response) {
+        return $this->DealController->viewDeal($request, $response);
+    });
 });

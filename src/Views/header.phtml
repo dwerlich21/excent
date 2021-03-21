@@ -116,10 +116,10 @@
                     <div class="modal-content">
                         <div class="modal-top">
                             <div class="row">
-                                <div class="col-md-10 mt-3">
-                                    <h4 class="modal-title" id="myModalLabel"><i class="fa fa-plus"></i> New Task</h4>
+                                <div class="col-md-5 mt-0">
+                                    <h4 class="modal-title" id="myModalLabel">New Task</h4>
                                 </div>
-                                <div class="col-md-2 float-right mt-5">
+                                <div class="col float-right my-auto">
                                     <i class="close fa-2x fa fa-chevron-circle-right text-white" data-dismiss="modal"
                                        aria-label="Close">
                                     </i>
@@ -157,8 +157,8 @@
                                             <label for="client">Client</label>
                                             <select class="form-control" id="client" name="client" required>
                                                 <option value="0">Select</option>
-                                                <?php foreach ($clients as $client): ?>
-                                                    <option value="<?= $client->getId() ?>"><?= $client->getName() ?></option>
+                                                <?php foreach ($deals as $deal): ?>
+                                                    <option value="<?= $deal->getId() ?>"><?= $deal->getName() ?></option>
                                                 <?php endforeach; ?>
                                             </select>
                                         </div>

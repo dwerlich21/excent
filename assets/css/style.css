@@ -168,3 +168,15 @@ background: #F7F7F7;!important;
 .bg-grey {
     background: #F4F3EF;
 }
+
+.deal-title {
+    color: black;
+}
+
+.deal-sub {
+    color: grey;
+}
+
+.text-company {
+    color: white;!important;
+}

@@ -13,9 +13,9 @@ class UserController extends Controller
     public function user(Request $request, Response $response)
     {
         $user = $this->getLogged();
-        $clients = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId()]);
+        $deal = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId()]);
         return $this->renderer->render($response, 'default.phtml', ['page' => 'users/index.phtml', 'menuActive' => ['users'],
-            'user' => $user, 'clients' => $clients]);
+            'user' => $user, 'deal' => $deal]);
     }
 
     public function saveUser(Request $request, Response $response)

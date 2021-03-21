@@ -22,11 +22,11 @@ class AdminController extends Controller
         $user = $this->getLogged();
         $today = date('Y-m-d');
         $date = \DateTime::createFromFormat('Y-m-d', $today);
-        $clients = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId()]);
-        $tasks = $this->em->getRepository(Task::class)->findBy(['date' => $date, 'status' => 1]);
+        $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId()]);
+        $tasks = $this->em->getRepository(Task::class)->findBy(['date' => $date, 'status' => 1, 'user' => $user->getId()]);
         $messages = $this->em->getRepository(Message::class)->findBy(['active' => 1]);
         return $this->renderer->render($response, 'default.phtml', ['page' => 'index.phtml', 'menuActive' => ['dashboard'],
-            'user' => $user, 'clients' => $clients, 'tasks' => $tasks, 'messages' => $messages]);
+            'user' => $user, 'deals' => $deals, 'tasks' => $tasks, 'messages' => $messages]);
     }
 
     public function saveTask(Request $request, Response $response)
