@@ -38,29 +38,36 @@
                                     <h6 class="my-auto">Follow Up</h6>
                                 </div>
                             </div>
-                            <div class="row bg-grey">
-                                <div class="col" id="cardDeal1"></div>
+                            <div id="status1" class="row bg-grey" >
+                                <div class="row bg-grey pb-5" id="cardDeal1" ondrop="drop(event, 'cardDeal1')" ondragover="allowDrop(event)" style="width: 100%">
 
+                                </div>
                             </div>
                         </div>
+
                         <div class="col-md-4 p-3">
                             <div class="row">
                                 <div class="col bg-yellow p-3">
                                     <h6 class="my-auto">Pending Agreement</h6>
                                 </div>
                             </div>
-                            <div class="row bg-grey">
-                                <div class="col" id="cardDeal2"></div>
+                            <div id="stauts2" class="row bg-grey" >
+                                <div class="row bg-grey pb-5" id="cardDeal2" ondrop="drop(event, 'cardDeal2')" ondragover="allowDrop(event)" style="width: 100%">
+
+                                </div>
                             </div>
                         </div>
+
                         <div class="col-md-4 p-3">
                             <div class="row">
                                 <div class="col bg-green p-3">
                                     <h6 class="my-auto">Approved Terms</h6>
                                 </div>
                             </div>
-                            <div class="row bg-grey">
-                                <div class="col" id="cardDeal3"></div>
+                            <div id="status3" class="row bg-grey colDrop" >
+                                <div class="row bg-grey pb-5" id="cardDeal3" ondrop="drop(event, 'cardDeal3')" ondragover="allowDrop(event)" style="width: 100%">
+
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -213,49 +220,90 @@
     function generateDealsCard1(deal) {
         if (deal.status == 1)
 
-        return `<a href="${viewDeal(deal.id)}" style="text-decoration: none"><div class="bg-white mx-1 my-3 p-2">
-                    <div class="row">
-                        <div class="col-md-10">
-                            <div class="row deal-title"><b>${deal.name}</b></div>
-                            <div class="row deal-sub">${deal.company}</div>
-                        </div>
-                        <div class="col-md-2 my-auto">
-                            <i class="fa fa-check-circle"></i>
-                        </div>
-                    </div>
-                </div></a>`;
+            return `<div id="${deal.id}" draggable="true" class="mx-2" ondragstart="drag(event)" style="width: 100%">
+                        <a href="${viewDeal(deal.id)}" style="text-decoration: none">
+                            <div class="bg-white mt-3 p-2">
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <div class="row deal-title"><b>${deal.name}</b></div>
+                                        <div class="row deal-sub">${deal.company}</div>
+                                    </div>
+                                    <div class="col-md-2 my-auto">
+                                        <i class="fa fa-check-circle"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>`;
     }
 
     function generateDealsCard2(deal) {
         if (deal.status == 2)
 
-            return `<a href="${viewDeal(deal.id)}" style="text-decoration: none"><div class="bg-white mx-1 my-3 p-2">
-                    <div class="row">
-                        <div class="col-md-10">
-                            <div class="row deal-title"><b>${deal.name}</b></div>
-                            <div class="row deal-sub" style="color: grey">${deal.company}</div>
-                        </div>
-                        <div class="col-md-2 my-auto">
-                            <i class="fa fa-check-circle"></i>
-                        </div>
-                    </div>
-                </div></a>`;
+            return `<div id="${deal.id}" draggable="true" class="mx-2" ondragstart="drag(event)" style="width: 100%">
+                        <a href="${viewDeal(deal.id)}" style="text-decoration: none">
+                            <div class="bg-white mx-1 mt-3 p-2" >
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <div class="row deal-title"><b>${deal.name}</b></div>
+                                        <div class="row deal-sub" style="color: grey">${deal.company}</div>
+                                    </div>
+                                    <div class="col-md-2 my-auto">
+                                        <i class="fa fa-check-circle"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    <div>`;
     }
 
     function generateDealsCard3(deal) {
         if (deal.status == 3)
 
-            return `<a href="${viewDeal(deal.id)}" style="text-decoration: none"><div class="bg-white mx-1 my-3 p-2">
-                    <div class="row">
-                        <div class="col-md-10">
-                            <div class="row deal-title"><b>${deal.name}</b></div>
-                            <div class="row deal-sub">${deal.company}</div>
-                        </div>
-                        <div class="col-md-2 my-auto">
-                            <i class="fa fa-check-circle"></i>
-                        </div>
-                    </div>
-                </div></a>`;
+            return `<div id="${deal.id}" draggable="true" class="mx-2" ondragstart="drag(event)" style="width: 100%">
+                        <a href="${viewDeal(deal.id)}" style="text-decoration: none">
+                            <div class="bg-white mx-1 mt-3 p-2">
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <div class="row deal-title"><b>${deal.name}</b></div>
+                                        <div class="row deal-sub">${deal.company}</div>
+                                    </div>
+                                    <div class="col-md-2 my-auto">
+                                        <i class="fa fa-check-circle"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>`;
+    }
+
+    function allowDrop(ev) {
+        ev.preventDefault();
+    }
+
+    function drag(ev) {
+        ev.dataTransfer.setData("text", ev.target.id);
+    }
+
+    function drop(ev, id) {
+        ev.preventDefault();
+        var data = ev.dataTransfer.getData("text");
+        document.getElementById(id).appendChild(document.getElementById(data));
+
+        var status = id;
+        var statusInt = status.substr(-1);
+        updateStatus(data, statusInt);
+    }
+
+    function updateStatus(deal, status) {
+        fetch(`<?= BASEURL ?>deals/update/api/?deal=${deal}&status=${status}`, {
+            method: "GET",
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
     }
 
     function viewDeal(id) {

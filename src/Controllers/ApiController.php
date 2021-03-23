@@ -22,7 +22,7 @@ class ApiController extends Controller
         $type = $request->getQueryParam('type');
         $active = $request->getQueryParam('active');
         $index = $request->getQueryParam('index');
-        $users = $this->em->getRepository(User::class)->list($id, $name, $email, $type,  $active, 20, $index * 20);
+        $users = $this->em->getRepository(User::class)->list($id, $name, $email, $type, $active, 20, $index * 20);
         $total = $this->em->getRepository(User::class)->listTotal($id, $name, $email, $type, $active)['total'];
         $partial = ($index * 20) + sizeof($users);
         $partial = $partial <= $total ? $partial : $total;
@@ -42,7 +42,7 @@ class ApiController extends Controller
         $name = $request->getQueryParam('name');
         $company = $request->getQueryParam('company');
         $index = $request->getQueryParam('index');
-        $deals = $this->em->getRepository(Deal::class)->list($id, $name, $company,  42, $index * 42);
+        $deals = $this->em->getRepository(Deal::class)->list($id, $name, $company, 42, $index * 42);
         $total = $this->em->getRepository(Deal::class)->listTotal($id, $name, $company)['total'];
         $partial = ($index * 42) + sizeof($deals);
         $partial = $partial <= $total ? $partial : $total;
@@ -55,7 +55,24 @@ class ApiController extends Controller
             ->withHeader('Content-type', 'application/json');
     }
 
-    public function documentsTable(Request $request, Response $response)
+    public function statusUpdate(Request $request, Response $response)
+    {
+        $this->getLogged(true);
+        $id = $request->getQueryParam('deal');
+        $status = $request->getQueryParam('status');
+        $deal = $this->em->getRepository(Deal::class)->find($id);
+        $deal->setStatus($status);
+        $this->em->getRepository(Deal::class)->save($deal);
+        return $response->withJson([
+            'status' => 'ok',
+            'message' => 'Status alterado com sucesso!',
+        ], 201)
+            ->withHeader('Content-type', 'application/json');
+    }
+
+
+    public
+    function documentsTable(Request $request, Response $response)
     {
         $this->getLogged(true);
         $id = $request->getAttribute('route')->getArgument('id');
@@ -74,7 +91,8 @@ class ApiController extends Controller
             ->withHeader('Content-type', 'application/json');
     }
 
-    public function documentDelete(Request $request, Response $response)
+    public
+    function documentDelete(Request $request, Response $response)
     {
         $this->getLogged(true);
         $id = $request->getAttribute('route')->getArgument('id');
@@ -82,7 +100,8 @@ class ApiController extends Controller
         die();
     }
 
-    public function messagesTable(Request $request, Response $response)
+    public
+    function messagesTable(Request $request, Response $response)
     {
         $this->getLogged(true);
         $id = $request->getAttribute('route')->getArgument('id');
@@ -101,7 +120,8 @@ class ApiController extends Controller
             ->withHeader('Content-type', 'application/json');
     }
 
-    public function messageDelete(Request $request, Response $response)
+    public
+    function messageDelete(Request $request, Response $response)
     {
         $this->getLogged(true);
         $id = $request->getAttribute('route')->getArgument('id');
@@ -109,7 +129,8 @@ class ApiController extends Controller
         die();
     }
 
-    public function messagesDashboard(Request $request, Response $response)
+    public
+    function messagesDashboard(Request $request, Response $response)
     {
         $this->getLogged(true);
         $id = $request->getAttribute('route')->getArgument('id');
@@ -123,12 +144,13 @@ class ApiController extends Controller
             ->withHeader('Content-type', 'application/json');
     }
 
-    public function tasksDashboard(Request $request, Response $response)
+    public
+    function tasksDashboard(Request $request, Response $response)
     {
         $user = $this->getLogged(true);
         $id = $request->getAttribute('route')->getArgument('id');
         $index = $request->getQueryParam('index');
-        $today =  date('Y-m-d');
+        $today = date('Y-m-d');
         $date = \DateTime::createFromFormat('Y-m-d', $today);
         $tasks = $this->em->getRepository(Task::class)->listDashboardNotNull($id, $user, $date, 20, $index * 20);
         $tasksNull = $this->em->getRepository(Task::class)->listDashboardNull($id, $user, $date, 20, $index * 20);

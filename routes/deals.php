@@ -17,6 +17,10 @@ $app->group('/deals', function () use ($app) {
         return $this->ApiController->dealsTable($request, $response);
     });
 
+    $app->get('/update/api/[{id}/]', function (Request $request, Response $response) {
+        return $this->ApiController->statusUpdate($request, $response);
+    });
+
     $app->get('/{id}/', function (Request $request, Response $response) {
         return $this->DealController->viewDeal($request, $response);
     });

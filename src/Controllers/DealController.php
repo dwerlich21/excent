@@ -22,9 +22,9 @@ class DealController extends Controller
         $user = $this->getLogged();
         $id = $request->getAttribute('route')->getArgument('id');
         $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId()]);
-        $deal = $this->em->getRepository(Deal::class)->find($id);
+        $client = $this->em->getRepository(Deal::class)->findOneBy(['id' => $id]);
         return $this->renderer->render($response, 'default.phtml', ['page' => 'deals/viewDeal.phtml', 'menuActive' => ['deals'],
-            'user' => $user, 'deals' => $deals, 'deal' => $deal]);
+            'user' => $user, 'deals' => $deals, 'client' => $client]);
     }
 
     public function saveDeal(Request $request, Response $response)

@@ -177,6 +177,26 @@ background: #F7F7F7;!important;
     color: grey;
 }
 
-.text-company {
-    color: white;!important;
+
+html, body {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#imgLogin {
+    margin-top: 50%;!important;
+    margin-right: 50%;!important;
+    /*margin-top: 50%;!important;*/
+    /*margin-top: 50%;!important;*/
+}
+
+.w-100{
+    width: 100%;!important;
+}
+
+.btn-primary {
+    background: #004FC5;!important;
 }

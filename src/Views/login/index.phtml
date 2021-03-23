@@ -8,42 +8,52 @@
     <link rel="stylesheet" href="<?= BASEURL ?>assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="<?= BASEURL ?>assets/libs/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="<?= BASEURL ?>assets/css/login.css">
+    <link rel="stylesheet" href="<?= BASEURL ?>assets/css/style.css">
     <script src="<?= BASEURL ?>assets/js/core/jquery.min.js"></script>
-    <link rel="icon" href="<?= BASEURL ?>assets/img/logo.png">
+    <link rel="icon" href="<?= BASEURL ?>assets/img/icon.png">
 </head>
 
-<body class="bg-dark">
+<body>
 
-<div class="container">
-    <div class="card card-login mx-auto mt-5">
-        <div class="card-header text-center">
-            <img src="<?= BASEURL?>assets/img/logo.png" style="height: 60px" alt="logo SISGG">
+<div class="row" style="height: 100%">
+    <div class="col-md-6 bg-dark">
+        <div class="row mx-auto my-auto" style="height: 100%; width: 100%">
+            <img src="<?= BASEURL ?>assets/img/logobranco.png" class="my-auto mx-auto" style="height: 100px"
+                 alt="logo Excent">
         </div>
-        <div class="card-body">
-           <form method="post">
-               <?php if (\App\Helpers\Session::get('errorMsg')): ?>
-                   <div class="alert alert-danger"><?= \App\Helpers\Session::get('errorMsg') ?></div>
-                   <?php \App\Helpers\Session::forgot('errorMsg'); ?>
-               <?php endif; ?>
-               <div class="form-group">
-                   <label for="email">Email</label>
-                   <input id="email" name="email" type="email" class="form-control"
-                            placeholder="Email" required>
-               </div>
-               <div class="form-group">
-                   <label for="password">Senha</label>
-                   <input id="password" name="password" type="password" required
-                            placeholder="Senha" class="form-control">
-               </div>
-               <button class="btn btn-primary btn-block">Entrar</button>
-               <div class="text-center">
-                   <a href="<?= BASEURL?>recuperar/" class="d-block small">Esqueceu a Senha</a>
-               </div>
-           </form>
+    </div>
+    <div class="col-md-6">
+        <div class="row mx-auto my-auto" style="height: 100%; width: 100%">
+            <div class="col-md-2"></div>
+            <div class="col-md-8 my-auto mx-auto">
+                <form method="post">
+                    <?php if (\App\Helpers\Session::get('errorMsg')): ?>
+                        <div class="alert alert-danger"><?= \App\Helpers\Session::get('errorMsg') ?></div>
+                        <?php \App\Helpers\Session::forgot('errorMsg'); ?>
+                    <?php endif; ?>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input id="email" name="email" type="email" class="form-control"
+                               placeholder="Email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Senha</label>
+                        <input id="password" name="password" type="password" required
+                               placeholder="Senha" class="form-control">
+                    </div>
+                    <button class="btn btn-primary btn-block">Sign In</button>
+                    <div class="text-center">
+                        <a href="<?= BASEURL ?>recuperar/" class="d-block small">Forgot your Password?</a>
+                    </div>
+                </form>
+                <div id="loader" class="loader"></div>
+            </div>
+            <div class="col-md-2">
+
+            </div>
         </div>
     </div>
 </div>
-
 
 
 </body>
