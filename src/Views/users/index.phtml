@@ -1,58 +1,42 @@
 <div class="row">
     <div class="col">
         <div class="card p-3">
-            <div class="row">
-                <div class="col-md-8">
-                    <h5 class="title">Users</h5>
-                </div>
-                <div class="col-md-4">
-                    <a class="float-right btn btn-primary text-white" href="#" onclick="openModal()"><i
-                                class="fa fa-plus"></i> User</a>
-                </div>
-            </div>
             <form id="filter">
                 <div class="row">
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="nameFilter">Name</label>
+                    <div class="col-md-3">
+                        <div class="row">
+                            <h5 class="title my-auto">Users</h5>
+                            <a class="btn btn-primary text-white ml-3" href="#" onclick="openModal()"><i
+                                        class="fa fa-plus"></i> User</a>
+                        </div>
+                    </div>
+                    <div class="col-md-3 my-auto">
+                        <div class="form-group mt-2">
                             <input class="form-control" id="nameFilter" name="name" type="text" placeholder="Name">
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="emailFilter">Email</label>
-                            <input class="form-control" id="emailFilter" name="email" type="text" placeholder="Email">
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for="activeFilter">Status</label>
-                            <select name="active" id="activeFilter" class="form-control">
-                                <option value="-1">Select</option>
-                                <option value="1">Active</option>
-                                <option value="0">Inactive</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for="typeFilter">Type</label>
+                    <div class="col-md-3 my-auto">
+                        <div class="form-group mt-2">
                             <select name="type" id="typeFilter" class="form-control">
-                                <option value="0">Selecione</option>
+                                <option value="0">Select Type</option>
                                 <option value="1">Admin</option>
                                 <option value="2">Manager</option>
                                 <option value="3">Advisor</option>
                             </select>
                         </div>
                     </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col text-right">
+                    <div class="col-md-3 text-right">
                         <button class="btn btn-danger" type="reset" onclick="resetTable()">Cancel</button>
                         <button class="btn btn-primary" type="submit">Search</button>
                     </div>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div class="card p-3">
             <p>Showing off <span id="partial"></span> of <span id="total"></span></p>
             <table class="table table-bordered table-striped" id="usersTable" width="100%" cellspacing="0">
                 <thead>
@@ -128,6 +112,15 @@
 
 <script>
 
+
+    var index = 0;
+    var partial = 0;
+    var total = 1;
+    var active = -1;
+    var name = 0;
+    var email = 0;
+    var type = 0;
+
     function openModal() {
         $('#modal').modal('show');
         $('#message').hide();
@@ -196,14 +189,6 @@
             });
         });
     });
-
-    var index = 0;
-    var partial = 0;
-    var total = 1;
-    var active = -1;
-    var name = 0;
-    var email = 0;
-    var type = 0;
 
     const form = document.getElementById('filter');
 
