@@ -1,102 +1,245 @@
 <div class="row">
-    <div class="col">
-        <div class="row">
-            <div class="col-md-7">
-                <div class="card p-3">
-                    <div class="row pb-5">
-                        <div class="col">
-                            <h6 class="title ml-5">activity history</h6>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-2 text-center">
-                            <i class="fa fa-2x fa-phone"></i>
-                        </div>
-                        <div class="col-md-10">
-                            <div class="row">
-                                Call
-                            </div>
-                            <div class="row">
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                                23/02/2021 09:51 Diego Werlich<br>
-                            </div>
-                        </div>
+    <div class="col-md-7">
+        <div class="card p-3">
+            <div class="row">
+                <div class="col">
+                    <div class="row" data-toggle="collapse" data-target="#activityNew" aria-expanded="false"
+                         aria-controls="activityNew">
+                        <i class="fa fa-plus my-auto mr-2" id="iconCollapse"></i><h6 class="title my-auto"> activity
+                            history </h6>
                     </div>
                 </div>
             </div>
-            <div class="col-md-5">
-                <div class="card p-3" style="background: #004FC5">
-                    <div class="row text-white">
-                        <div class="row">
-                            <i class="fa fa-2x fa-user p-2"></i> <h5
-                                    class="title mr-4 my-auto"> <?= $client->getName() ?></h5><br>
+            <div id="activityNew" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                <form id="formActivity">
+                    <div class="row">
+                        <div class="col">
+                            <label for="activity">Activity</label>
+                            <input name="activity" id="activity" placeholder="Activity" class="form-control mb-1">
+                            <input name="dealId" id="dealId" value="<?= $client->getId() ?>" type="hidden">
                         </div>
-                        <div class="row">
-                            <i class="fa fa-2x fa-city p-2"></i><span
-                                    class="my-auto mr-4"><?= $client->getCompany() ?></span>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                <label class="btn btn-white active">
+                                    <input type="radio" name="options" id="hatchback" autocomplete="off" value="1"
+                                           checked>
+                                    <i class="fa fa-phone text-gray"></i>
+                                </label>
+                                <label class="btn btn-white">
+                                    <input type="radio" name="options" id="sedan" autocomplete="off" value="2">
+                                    <i class="fa fa-users text-gray"></i>
+                                </label>
+                                <label class="btn btn-white">
+                                    <input type="radio" name="options" id="suv" autocomplete="off" value="3">
+                                    <i class="fa fa-paper-plane text-gray"></i>
+                                </label>
+                                <label class="btn btn-white">
+                                    <input type="radio" name="options" id="suv" autocomplete="off" value="4">
+                                    <i class="fa fa-utensils text-gray"></i>
+                                </label>
+                                <label class="btn btn-white">
+                                    <input type="radio" name="options" id="suv" autocomplete="off" value="5">
+                                    <i class="fa fa-clock text-gray"></i>
+                                </label>
+                            </div>
                         </div>
-                        <div class="row">
-                            <i class="fa fa-2x fa-phone p-2"></i><span
-                                    class="my-auto mr-4"><?= $client->getPhone() ?></span>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="date">Date</label>
+                            <input name="date" id="date" placeholder="dd/mm/YYYY" data-mask="99/99/9999"
+                                   class="form-control mb-1">
                         </div>
-                        <div class="row">
-                            <i class="fa fa-2x fa-envelope p-2"></i><span
-                                    class="my-auto"><?= $client->getEmail() ?></span>
+                        <div class="col-md-6">
+                            <label for="time">Time</label>
+                            <input name="time" id="time" placeholder="HH:ii" data-mask="99:99"
+                                   class="form-control mb-1">
                         </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="description">Description</label>
+                            <textarea name="description" id="description" placeholder="Description"
+                                      class="form-control mb-1"></textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col text-right">
+                            <button type="submit" class="btn btn-primary">Save Activity</button>
+                        </div>
+                    </div>
+                </form>
+                <div style="display: none" id="messageActivity" class="alert alert-danger" role="alert"></div>
+            </div>
+            <div class="row mt-3">
+                <div class="col" id="activitiesDiv"></div>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="card p-3" style="background: #004FC5;z-index: 1000; position: fixed; width: 30%;">
+            <div class="row text-white">
+                <div class="col">
+                    <div class="row p-2">
+                        <i class="fa fa-2x fa-user p-2"></i> <h5
+                                class="title my-auto"> <?= $client->getName() ?></h5><br>
+                    </div>
+                    <div class="row p-2">
+                        <i class="fa fa-2x fa-city p-2"></i><span
+                                class="my-auto"><?= $client->getCompany() ?></span>
+
+                    </div>
+                    <div class="row p-2">
+                        <i class="fa fa-2x fa-phone p-2"></i><span
+                                class="my-auto"><?= $client->getPhone() ?></span>
+
+                    </div>
+                    <div class="row p-2">
+                        <i class="fa fa-2x fa-envelope p-2"></i><span
+                                class="my-auto"><?= $client->getEmail() ?></span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+
+    var deal = <?= $client->getId() ?>;
+    var activity = 0;
+    var index = 0;
+    var total = 0;
+    var partial = 0;
+
+    const formAddActivity = document.getElementById('formActivity');
+    const divMessageActivity = document.getElementById('messageActivity');
+
+    formAddActivity.addEventListener('submit', e => {
+        e.preventDefault();
+        showLoading();
+        let formData = formDataToJson('formActivity');
+        fetch("<?= BASEURL ?>deals/activity/register", {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        }).then(response => {
+            closeLoading();
+            divMessageActivity.classList.add("alert-danger");
+            divMessageActivity.classList.remove("alert-success");
+            response.json().then(json => {
+                divMessageActivity.textContent = json.message;
+                divMessageActivity.style.display = 'block';
+                if (response.status === 201) {
+                    $('#modal').modal('hide');
+                    divMessageActivity.classList.add("alert-success");
+                    divMessageActivity.classList.remove("alert-danger");
+                    formAddActivity.reset();
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1500);
+                }
+            });
+        });
+    });
+
+    $('#activityNew').on('shown.bs.collapse', function () {
+        $("#iconCollapse").removeClass("fa-plus").addClass("fa-minus");
+    });
+
+    $('#activityNew').on('hidden.bs.collapse', function () {
+        $("#iconCollapse").removeClass("fa-minus").addClass("fa-plus");
+    });
+
+    function generateActivitiesCard(activity) {
+        let time = '';
+        if (activity.time != null) time = `<i class="fa fa-clock-o ml-2"></i> ${activity.time}`;
+        let description = '';
+        if (activity.description != '') description = `<b>Description: </b>${activity.description}`;
+        return `<hr class="mt-2">
+                    <div class="row p-2">
+                        <div class="col-md-1 my-auto mx-auto">
+                            ${actionIcon(activity.type)}
+                        </div>
+                        <div class="col-md-11">
+                            <div class="col" style="float:left; height: 100%; margin-left:10px; border-left:1px solid #E3E3E3">
+                            <div class="row">
+                                <div class="col"><b>${activity.activity}</b></div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col" style="font-size: 12px">
+                                    <i class="fa fa-calendar"></i> ${activity.date}
+                                     ${time}
+                                    <i class="fa fa-user ml-2"></i> ${activity.user}
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col">${description}</div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                `;
+    }
+
+    function actionStr(action) {
+        switch (parseInt(action)) {
+            case 1:
+                return 'Call';
+            case 2:
+                return 'Meeting';
+            case 3:
+                return 'Email';
+            case 4:
+                return 'Lunch';
+            default:
+                return 'Unknown';
+
+        }
+    }
+
+    function actionIcon(action) {
+        switch (parseInt(action)) {
+            case 1:
+                return `<i class="fa fa-2x fa-phone text-gray"></i>`;
+            case 2:
+                return `<i class="fa fa-2x fa-users text-gray"></i>`;
+            case 3:
+                return `<i class="fa fa-2x fa-paper-plane text-gray"></i>`;
+            case 4:
+                return `<i class="fa fa-2x fa-utensils text-gray"></i>`;
+            default:
+                return `<i class="fa fa-2x fa-phone text-gray"></i>`;
+        }
+    }
+
+    function generateActivities() {
+        $('#loader').show();
+        fetch(`<?= BASEURL ?>deals/activities/api/?index=${index}&deal=${deal}&activity=${activity}`, {
+            method: "GET",
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => {
+            response.json().then(json => {
+                $('#loader').hide();
+                let options = json.message.map(generateActivitiesCard);
+                $("#activitiesDiv").append(options);
+            });
+        });
+
+    }
+
+    $(document).ready(function () {
+        generateActivities();
+    });
+</script>

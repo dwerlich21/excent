@@ -105,7 +105,7 @@
 }
 
 .active {
-    background-color: #1565C0;!important;
+    background-color: #004FC5;!important;
     font-weight: bold;
 }
 
@@ -199,4 +199,9 @@ html, body {
 
 .btn-primary {
     background: #004FC5;!important;
+}
+
+.btn-white {
+    background: white;!important;
+    border: grey solid 1px;
 }

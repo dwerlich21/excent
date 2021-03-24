@@ -3,6 +3,7 @@
 
 namespace App\Controllers;
 
+use App\Models\Entities\ActivityDeal;
 use App\Models\Entities\Deal;
 use App\Models\Entities\Document;
 use App\Models\Entities\Message;
@@ -49,6 +50,25 @@ class ApiController extends Controller
         return $response->withJson([
             'status' => 'ok',
             'message' => $deals,
+            'total' => (int)$total,
+            'partial' => $partial,
+        ], 200)
+            ->withHeader('Content-type', 'application/json');
+    }
+
+    public function ActivityDeal(Request $request, Response $response)
+    {
+        $this->getLogged(true);
+        $deal = $request->getQueryParam('deal');
+        $id = $request->getQueryParam('activity');
+        $index = $request->getQueryParam('index');
+        $activity = $this->em->getRepository(ActivityDeal::class)->list($id, $deal, 10, $index * 10);
+        $total = $this->em->getRepository(ActivityDeal::class)->listTotal($id, $deal)['total'];
+        $partial = ($index * 42) + sizeof($activity);
+        $partial = $partial <= $total ? $partial : $total;
+        return $response->withJson([
+            'status' => 'ok',
+            'message' => $activity,
             'total' => (int)$total,
             'partial' => $partial,
         ], 200)

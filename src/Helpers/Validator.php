@@ -9,10 +9,10 @@ class Validator
     public static function validatePassword($data)
     {
         if ($data['password2'] != $data['password']) {
-            throw new \Exception('As senhas são diferentes');
+            throw new \Exception('How passwords are different');
         }
         if (strlen($data['password']) < 8) {
-            throw new \Exception('As senha deve ter pelo menos 8 caracteres');
+            throw new \Exception('Password must be at least 8 characters');
         }
 
     }
@@ -21,7 +21,7 @@ class Validator
     {
         foreach ($fields as $key => $value) {
             if (!array_key_exists($key, $data) ||(is_string($data[$key]) && trim($data[$key]) === '')|| $data[$key] === null) {
-                throw new \Exception('O campo ' . $value . ' é obrigátorio');
+                throw new \Exception('The field ' . $value. ' is required');
             }
         }
     }

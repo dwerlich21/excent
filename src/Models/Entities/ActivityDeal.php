@@ -5,13 +5,12 @@ namespace App\Models\Entities;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping as ORM;
-use http\Client;
 
 /**
- * @Entity @Table(name="task")
- * @ORM @Entity(repositoryClass="App\Models\Repository\TaskRepository")
+ * @Entity @Table(name="activityDeal")
+ * @ORM @Entity(repositoryClass="App\Models\Repository\ActivityDealRepository")
  */
-class Task
+class ActivityDeal
 {
     /**
      * @Id @GeneratedValue @Column(type="integer")
@@ -31,7 +30,12 @@ class Task
     /**
      * @Column(type="integer")
      */
-    private int $action;
+    private int $type;
+
+    /**
+     * @Column(type="string")
+     */
+    private string $activity;
 
     /**
      * @Column(type="string", nullable=true)
@@ -66,20 +70,20 @@ class Task
         return $this->date;
     }
 
-    public function setDate(\DateTime $date): Task
+    public function setDate(\DateTime $date): ActivityDeal
     {
         $this->date = $date;
         return $this;
     }
 
-    public function getAction(): int
+    public function getType(): int
     {
-        return $this->action;
+        return $this->type;
     }
 
-    public function setAction(int $action): Task
+    public function setType(int $type): ActivityDeal
     {
-        $this->action = $action;
+        $this->type = $type;
         return $this;
     }
 
@@ -88,7 +92,7 @@ class Task
         return $this->description;
     }
 
-    public function setDescription(?string $description): Task
+    public function setDescription(?string $description): ActivityDeal
     {
         $this->description = $description;
         return $this;
@@ -99,7 +103,7 @@ class Task
         return $this->deal;
     }
 
-    public function setDeal(Deal $deal): Task
+    public function setDeal(Deal $deal): ActivityDeal
     {
         $this->deal = $deal;
         return $this;
@@ -110,7 +114,7 @@ class Task
         return $this->time;
     }
 
-    public function setTime(?\DateTime $time): Task
+    public function setTime(?\DateTime $time): ActivityDeal
     {
         $this->time = $time;
         return $this;
@@ -121,7 +125,7 @@ class Task
         return $this->user;
     }
 
-    public function setUser(User $user): Task
+    public function setUser(User $user): ActivityDeal
     {
         $this->user = $user;
         return $this;
@@ -132,9 +136,22 @@ class Task
         return $this->status;
     }
 
-    public function setStatus(bool $status): Task
+    public function setStatus(bool $status): ActivityDeal
     {
         $this->status = $status;
         return $this;
     }
+
+    public function getActivity(): string
+    {
+        return $this->activity;
+    }
+
+    public function setActivity(string $activity): ActivityDeal
+    {
+        $this->activity = $activity;
+        return $this;
+    }
+
+
 }

@@ -4,6 +4,7 @@
 namespace App\Controllers;
 
 use App\helpers\Validator;
+use App\Models\Entities\ActivityDeal;
 use App\Models\Entities\Deal;
 use \Psr\Http\Message\ResponseInterface as Response;
 use \Psr\Http\Message\ServerRequestInterface as Request;
@@ -57,6 +58,40 @@ class DealController extends Controller
             return $response->withJson([
                 'status' => 'ok',
                 'message' => 'Successfully registered client!',
+            ], 201)
+                ->withHeader('Content-type', 'application/json');
+        } catch (\Exception $e) {
+            return $response->withJson(['status' => 'error',
+                'message' => $e->getMessage(),])->withStatus(500);
+        }
+    }
+
+    public function saveActivityDeal(Request $request, Response $response)
+    {
+        try {
+            $user = $this->getLogged();
+            $data = (array)$request->getParams();
+            $fields = [
+                'date' => 'Date',
+                'activity' => 'Activity',
+                'options' => 'Type'
+            ];
+            Validator::requireValidator($fields, $data);
+            $task = new ActivityDeal();
+            $time = null;
+            if ($data['time']) $time = \DateTime::createFromFormat('H:i', $data['time']);
+            $task->setDate(\DateTime::createFromFormat('d/m/Y', $data['date']))
+                ->setTime($time)
+                ->setType($data['options'])
+                ->setStatus(1)
+                ->setUser($user)
+                ->setActivity($data['activity'])
+                ->setDescription($data['description'])
+                ->setDeal($this->em->getReference(Deal::class, $data['dealId']));
+            $this->em->getRepository(ActivityDeal::class)->save($task);
+            return $response->withJson([
+                'status' => 'ok',
+                'message' => 'Successfully registered activity!',
             ], 201)
                 ->withHeader('Content-type', 'application/json');
         } catch (\Exception $e) {
