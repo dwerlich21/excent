@@ -23,9 +23,9 @@ class Deal
     private string $phone;
 
     /**
-     * @Column(type="string")
+     * @Column(type="string", nullable=true)
      */
-    private string $company;
+    private ?string $company = null;
 
     /**
      * @Column(type="integer")
@@ -38,9 +38,9 @@ class Deal
     private string $name;
 
     /**
-     * @Column(type="string")
+     * @Column(type="string", nullable=true)
      */
-    private string $office;
+    private ?string $office = null;
 
     /**
      * @Column(type="string", unique=true)
@@ -49,9 +49,9 @@ class Deal
 
     /**
      * @ManyToOne(targetEntity="User")
-     * @JoinColumn(name="responsible", referencedColumnName="id")
+     * @JoinColumn(name="responsible", referencedColumnName="id", nullable=true)
      */
-    private User $responsible;
+    private ?User $responsible = null;
 
 
     public function getId(): int
@@ -70,12 +70,12 @@ class Deal
         return $this;
     }
 
-    public function getCompany(): string
+    public function getCompany(): ?string
     {
         return $this->company;
     }
 
-    public function setCompany(string $company): Deal
+    public function setCompany(?string $company): Deal
     {
         $this->company = $company;
         return $this;
@@ -92,12 +92,12 @@ class Deal
         return $this;
     }
 
-    public function getOffice(): string
+    public function getOffice(): ?string
     {
         return $this->office;
     }
 
-    public function setOffice(string $office): Deal
+    public function setOffice(?string $office): Deal
     {
         $this->office = $office;
         return $this;
@@ -114,12 +114,12 @@ class Deal
         return $this;
     }
 
-    public function getResponsible(): User
+    public function getResponsible(): ?User
     {
         return $this->responsible;
     }
 
-    public function setResponsible(User $responsible): Deal
+    public function setResponsible(?User $responsible): Deal
     {
         $this->responsible = $responsible;
         return $this;
@@ -135,6 +135,4 @@ class Deal
         $this->status = $status;
         return $this;
     }
-
-
 }

@@ -49,7 +49,7 @@ class TaskRepository extends EntityRepository
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
         $sql = "SELECT TIME_FORMAT(task.time, '%H:%i') AS time, deal.name AS deal, task.id, task.action           
                 FROM task
-                JOIN deal ON deal.id = task.client
+                JOIN deal ON deal.id = task.deal
                 WHERE task.time IS NOT NULL AND task.user = :user AND task.status = 1 {$where} 
                 ORDER BY time ASC {$limitSql}
                ";
@@ -66,7 +66,7 @@ class TaskRepository extends EntityRepository
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
         $sql = "SELECT task.time, task.id, task.action, deal.name AS deal           
                 FROM task
-                JOIN deal ON deal.id = task.client
+                JOIN deal ON deal.id = task.deal
                 WHERE task.time IS NULL AND task.user = :user AND task.status = 1 {$where} 
                 ORDER BY id DESC {$limitSql}
                ";

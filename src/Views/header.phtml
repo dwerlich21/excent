@@ -37,6 +37,11 @@
                         <i class="fa fa-dollar"></i> Deals
                     </a>
                 </li>
+                <li <?= in_array('leads', $menuActive) ? 'class="active"' : '' ?>>
+                    <a href="<?= BASEURL ?>leads">
+                        <i class="fa fa-crosshairs"></i> Leads
+                    </a>
+                </li>
                 <li <?= in_array('users', $menuActive) ? 'class="active"' : '' ?>>
                     <a href="<?= BASEURL ?>users">
                         <span class="sidebar-normal"><i class="fa fa-users"></i> Users</span>

@@ -1,0 +1,278 @@
+<div class="row">
+    <div class="col">
+        <div class="card p-3">
+            <form id="filter">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="row">
+                            <h5 class="title my-auto">Leads</h5>
+                            <a class="btn btn-primary text-white ml-3" href="#" onclick="openModal()"><i
+                                        class="fa fa-plus"></i> Lead</a>
+                        </div>
+                    </div>
+                    <div class="col-md-3 my-auto">
+                        <div class="form-group mt-2">
+                            <input class="form-control" id="nameFilter" name="name" type="text" placeholder="Name">
+                        </div>
+                    </div>
+                    <div class="col-md-3 my-auto">
+                        <div class="form-group mt-2">
+                            <input class="form-control" id="emailFilter" name="email" type="text"
+                                   placeholder="Email">
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-right">
+                        <button class="btn btn-danger" type="reset" onclick="resetTable()">Cancel</button>
+                        <button class="btn btn-primary" type="submit">Search</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="card p-3">
+            <p>Showing off <span id="partial"></span> of <span id="total"></span></p>
+            <table class="table table-bordered table-striped" id="usersTable" width="100%" cellspacing="0">
+                <thead>
+                <tr>
+                    <th class="text-center">Name</th>
+                    <th class="text-center">Type</th>
+                    <th class="text-center">Email</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Cadastro-->
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="subscriptionModal"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">User Registration</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form class="form-control" id="addUser" method="post">
+                <div class="form-group">
+                    <input type="hidden" name="userId" id="userId">
+                    <div class="row">
+                        <div class="col">
+                            <label for="name">Name</label>
+                            <input id="name" name="name" class="form-control" type="text" placeholder="Name">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="email">Email</label>
+                            <input id="email" name="email" class="form-control" type="email" placeholder="Email">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="type">Type</label>
+                            <select id="type" name="type" class="form-control">
+                                <option value="0">Selecione</option>
+                                <option value="1">Admin</option>
+                                <option value="2">Manager</option>
+                                <option value="3">Advisor</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="active">Status</label>
+                            <select id="active" name="active" class="form-control">
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col text-right">
+                        <button type="submit" class="btn btn-primary">Salvar Usuário</button>
+                    </div>
+                </div>
+                <div style="display: none" id="message" class="alert alert-danger" role="alert"></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function openModal() {
+        $('#modal').modal('show');
+        $('#message').hide();
+        document.getElementById('addUser').reset();
+    }
+
+    function openModalEdit(id) {
+
+        document.getElementById('addUser').reset();
+        document.getElementById('userId').value = id;
+        $('#modal').modal('show');
+        $('#message').hide();
+        if (id > 0) {
+            showLoading();
+            fetch(`<?= BASEURL ?>users/api/${id}`, {
+                method: "GET",
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                response.json().then(json => {
+                    json = json.message[0];
+                    closeLoading();
+                    document.getElementById('email').value = json.email;
+                    document.getElementById('type').value = json.type;
+                    document.getElementById('name').value = json.name;
+                    document.getElementById('active').value = json.active;
+                });
+            });
+        }
+    }
+
+    const formAdd = document.getElementById('addUser');
+    const divMessage = document.getElementById('message');
+
+    formAdd.addEventListener('submit', e => {
+        e.preventDefault();
+        showLoading();
+        let formData = formDataToJson('addUser');
+        fetch("<?= BASEURL ?>users/register", {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        }).then(response => {
+            closeLoading();
+            divMessage.classList.add("alert-danger");
+            divMessage.classList.remove("alert-success");
+            response.json().then(json => {
+                divMessage.textContent = json.message;
+                divMessage.style.display = 'block';
+                if (response.status === 201) {
+                    $('#modal').modal('hide');
+                    divMessage.classList.add("alert-success");
+                    divMessage.classList.remove("alert-danger");
+                    formAdd.reset();
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1500);
+                }
+            });
+        });
+    });
+
+    var index = 0;
+    var partial = 0;
+    var total = 1;
+    var active = -1;
+    var name = 0;
+    var email = 0;
+    var type = 0;
+
+    const form = document.getElementById('filter');
+
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        let formData = formDataToJson('filter');
+        partial = 0;
+        index = 0;
+        total = 1;
+        active = formData.active;
+        name = formData.name;
+        email = formData.email;
+        type = formData.type;
+        $("#usersTable tbody").empty();
+        generateTable();
+    });
+
+    function resetTable() {
+        index = 0;
+        partial = 0;
+        total = 1;
+        active = -1;
+        name = 0;
+        email = 0;
+        type = 0;
+        $("#usersTable tbody").empty();
+        generateTable();
+    }
+
+    function generateUsersTable(user) {
+        let actions = '';
+        actions += `<i class="fa fa-pencil text-info" title="Edit" onclick="openModalEdit(${user.id})"></i> `;
+        actions = `<td class="text-center">${actions} </td>`;
+        return `<tr>
+                    <td class="text-center">${user.name}</td>
+                    <td class="text-center">${typeStr(user.type)}</td>
+                    <td class="text-center">${user.email}</td>
+                    <td class="text-center">${activeStr(user.active)}</td>
+                    ${actions}
+                </tr>`;
+    }
+
+    function typeStr(type) {
+        if (type == 1) {
+            return 'Admin';
+        } else if (type == 2) {
+            return 'Manager';
+        } else if (type == 3) {
+            return 'Advisor';
+        }
+    }
+
+    function activeStr(active) {
+        if (active == 1) {
+            return 'Active';
+        } else {
+            return 'Inactive';
+        }
+    }
+
+    function generateTable() {
+        if (total > partial) {
+            $('#loader').show();
+            fetch(`<?= BASEURL ?>users/api/?index=${index}&name=${name}&email=${email}&type=${type}&active=${active}`, {
+                method: "GET",
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                response.json().then(json => {
+                    $('#loader').hide();
+                    $('#total').text(json.total);
+                    $('#partial').text(json.partial);
+                    total = json.total;
+                    partial = json.partial;
+                    let options = json.message.map(generateUsersTable);
+                    $("#usersTable tbody").append(options);
+                });
+            });
+        }
+    }
+
+    $(document).ready(function () {
+        generateTable();
+        $(window).scroll(function () {
+            if ($(window).scrollTop() + $(window).height() >= $(document).height() - 1) {
+                index++;
+                generateTable();
+            }
+        });
+    });
+
+</script>
