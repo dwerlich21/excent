@@ -5,6 +5,7 @@ namespace App\Controllers;
 
 
 use App\helpers\Validator;
+use App\Models\Entities\Countries;
 use App\Models\Entities\Deal;
 use App\Models\Entities\User;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -16,35 +17,37 @@ class LeadController extends Controller
     {
         $user = $this->getLogged();
         $deal = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId()]);
+        $countries = $this->em->getRepository(Countries::class)->findBy([], ['name' => 'asc']);
         return $this->renderer->render($response, 'default.phtml', ['page' => 'leads/index.phtml', 'menuActive' => ['leads'],
-            'user' => $user, 'deal' => $deal]);
+            'user' => $user, 'deal' => $deal, 'countries' => $countries]);
     }
 
-    public function saveUser(Request $request, Response $response)
+    public function saveLead(Request $request, Response $response)
     {
         try {
             $this->getLogged();
             $data = (array)$request->getParams();
-            $data['userId'] ?? 0;
+            $data['leadId'] ?? 0;
             $fields = [
                 'email' => 'Email',
                 'name' => 'Name',
-                'type' => 'Type'
+                'phone' => 'Phone',
+                'country' => 'Country'
             ];
             Validator::requireValidator($fields, $data);
-            $users = new User();
-            if ($data['userId'] > 0) {
-                $users = $this->em->getRepository(User::class)->find($data['userId']);
+            $users = new Deal();
+            if ($data['leadId'] > 0) {
+                $users = $this->em->getRepository(Deal::class)->find($data['leadId']);
             }
-            $users->setPassword('123')
+            $users->setPhone($data['phone'])
                 ->setEmail($data['email'])
                 ->setName($data['name'])
-                ->setActive($data['active'])
-                ->setType($data['type']);
-            $this->em->getRepository(User::class)->save($users);
+                ->setStatus(0)
+                ->setCountry($this->em->getReference(Countries::class, $data['country']));
+            $this->em->getRepository(Deal::class)->save($users);
             return $response->withJson([
                 'status' => 'ok',
-                'message' => 'Successfully registered user!',
+                'message' => 'Successfully registered lead!',
             ], 201)
                 ->withHeader('Content-type', 'application/json');
         } catch (\Exception $e) {

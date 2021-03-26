@@ -26,14 +26,14 @@ class TaskRepository extends EntityRepository
         return $limitSql;
     }
 
-    private function generateWhere($id = 0, $date,  &$params): string
+    private function generateWhere($id = 0, $date = null, &$params): string
     {
         $where = '';
         if ($id) {
             $params[':id'] = $id;
             $where .= " AND task.id = :id";
         }
-        $date = \DateTime::createFromFormat('d/m/Y', $date);
+
         if ($date) {
             $params[':date'] = $date;
             $where .= " AND task.date = :date";
@@ -41,9 +41,10 @@ class TaskRepository extends EntityRepository
         return $where;
     }
 
-    public function listDashboardNotNull($id = 0, User $user, $date, $limit = null, $offset = null): array
+    public function listDashboardNotNull($id = 0, User $user, $date = null, $limit = null, $offset = null): array
     {
-        $params = [];$params[':user'] = $user->getId();
+        $params = [];
+        $params[':user'] = $user->getId();
         $limitSql = $this->generateLimit($limit, $offset);
         $where = $this->generateWhere($id, $date, $params);
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
@@ -58,9 +59,10 @@ class TaskRepository extends EntityRepository
         return $sth->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    public function listDashboardNull($id = 0, User $user, $date, $limit = null, $offset = null): array
+    public function listDashboardNull($id = 0, User $user, $date = null, $limit = null, $offset = null): array
     {
-        $params = []; $params[':user'] = $user->getId();
+        $params = [];
+        $params[':user'] = $user->getId();
         $limitSql = $this->generateLimit($limit, $offset);
         $where = $this->generateWhere($id, $date, $params);
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();

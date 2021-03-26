@@ -24,7 +24,6 @@ abstract class Controller
         if (!$user) {
             if ($excepetion) throw new \Exception("Sessão expirada");
             Session::set('redirect', $_SERVER["REQUEST_URI"]);
-            Session::set('errorMsg', 'Você precisa se autenticar');
             $this->redirect('login');
             exit;
         }

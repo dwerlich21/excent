@@ -32,6 +32,21 @@ class Message
      */
     private bool $active;
 
+    /**
+     * @ManyToOne(targetEntity="User")
+     * @JoinColumn(name="user", referencedColumnName="id")
+     */
+    private User $user;
+
+    /**
+     * @Column(type="datetime")
+     */
+    private \DateTime $date;
+
+    public function __construct()
+    {
+        $this->date = new \DateTime();
+    }
 
     public function getId(): int
     {
@@ -71,5 +86,19 @@ class Message
         return $this;
     }
 
+    public function getUser(): User
+    {
+        return $this->user;
+    }
 
+    public function setUser(User $user): Message
+    {
+        $this->user = $user;
+        return $this;
+    }
+
+    public function getDate(): \DateTime
+    {
+        return $this->date;
+    }
 }

@@ -53,6 +53,12 @@ class Deal
      */
     private ?User $responsible = null;
 
+    /**
+     * @ManyToOne(targetEntity="Countries")
+     * @JoinColumn(name="country", referencedColumnName="id")
+     */
+    private Countries $country;
+
 
     public function getId(): int
     {
@@ -135,4 +141,17 @@ class Deal
         $this->status = $status;
         return $this;
     }
+
+    public function getCountry(): Countries
+    {
+        return $this->country;
+    }
+
+    public function setCountry(Countries $country): Deal
+    {
+        $this->country = $country;
+        return $this;
+    }
+
+
 }

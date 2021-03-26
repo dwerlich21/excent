@@ -18,7 +18,7 @@ class UserRepository extends EntityRepository
     {
         $user = $this->findOneBy(['email' => $email, 'active' => 1]);
         if (!$user || !password_verify($password, $user->getPassword())) {
-            throw new \Exception('Usuário ou senha inválidos.');
+            throw new \Exception('Username or Password is invalid.');
         }
         return $user;
     }

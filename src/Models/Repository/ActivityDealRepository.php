@@ -47,7 +47,7 @@ class ActivityDealRepository extends EntityRepository
         $where = $this->generateWhere($id, $deal,  $params);
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
         $sql = "SELECT activityDeal.id, activityDeal.type, activityDeal.activity, 
-                users.name AS user, DATE_FORMAT(activityDeal.date, '%d/%m/%Y') AS date, TIME_FORMAT(activityDeal.time, '%H:%m') 
+                users.name AS user, DATE_FORMAT(activityDeal.date, '%d/%m/%Y') AS date, TIME_FORMAT(activityDeal.time, '%H:%i') 
                 AS time, activityDeal.description               
                 FROM activityDeal
                 JOIN users ON users.id = activityDeal.user

@@ -14,12 +14,20 @@ class MessageRepository extends EntityRepository
         return $entity;
     }
 
-    private function generateWhere($id = 0,  &$params): string
+    private function generateWhere($id = 0, $title = null, $active = null,  &$params): string
     {
         $where = '';
         if ($id) {
             $params[':id'] = $id;
             $where .= " AND message.id = :id";
+        }
+        if ($title) {
+            $params[':title'] = "%$title%";
+            $where .= " AND message.title LIKE :title";
+        }
+        if ($active > -1) {
+            $params[':active'] = $active;
+            $where .= " AND message.active = :active";
         }
         return $where;
     }
@@ -35,14 +43,16 @@ class MessageRepository extends EntityRepository
         return $limitSql;
     }
 
-    public function list($id = 0, $limit = null, $offset = null): array
+    public function list($id = 0, $title = null, $active = null, $limit = null, $offset = null): array
     {
         $params = [];
         $limitSql = $this->generateLimit($limit, $offset);
-        $where = $this->generateWhere($id, $params);
+        $where = $this->generateWhere($id, $title, $active, $params);
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
-        $sql = "SELECT message.title, message.description, message.id, message.active           
+        $sql = "SELECT message.title, message.description, message.id, message.active, users.name AS user, 
+                DATE_FORMAT(message.date, '%d/%m/%Y') AS date, TIME_FORMAT(message.date, '%H:%i') AS time         
                 FROM message
+                JOIN users ON users.id = message.user
                 WHERE 1 = 1 {$where}
                 ORDER BY id DESC {$limitSql}
                ";
@@ -75,14 +85,16 @@ class MessageRepository extends EntityRepository
         return $sth->fetch(\PDO::FETCH_ASSOC);
     }
 
-    public function listDashboard($id = 0, $limit = null, $offset = null): array
+    public function listDashboard($id = 0, $title = null, $active = null, $limit = null, $offset = null): array
     {
         $params = [];
         $limitSql = $this->generateLimit($limit, $offset);
-        $where = $this->generateWhere($id, $params);
+        $where = $this->generateWhere($id, $title, $active, $params);
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
-        $sql = "SELECT message.title, message.description, message.id, message.active           
+        $sql = "SELECT message.title, message.description, message.id, message.active, users.name AS user, 
+                DATE_FORMAT(message.date, '%d/%m/%Y') AS date, TIME_FORMAT(message.date, '%H:%i') AS time          
                 FROM message
+                JOIN users ON users.id = message.user
                 WHERE message.active = 1 {$where}
                 ORDER BY id DESC {$limitSql}
                ";

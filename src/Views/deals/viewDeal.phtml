@@ -189,22 +189,6 @@
                 `;
     }
 
-    function actionStr(action) {
-        switch (parseInt(action)) {
-            case 1:
-                return 'Call';
-            case 2:
-                return 'Meeting';
-            case 3:
-                return 'Email';
-            case 4:
-                return 'Lunch';
-            default:
-                return 'Unknown';
-
-        }
-    }
-
     function actionIcon(action) {
         switch (parseInt(action)) {
             case 1:
@@ -216,7 +200,7 @@
             case 4:
                 return `<i class="fa fa-2x fa-utensils text-gray"></i>`;
             default:
-                return `<i class="fa fa-2x fa-phone text-gray"></i>`;
+                return `<i class="fa fa-2x fa-check text-gray"></i>`;
         }
     }
 

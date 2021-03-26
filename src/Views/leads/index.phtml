@@ -3,22 +3,23 @@
         <div class="card p-3">
             <form id="filter">
                 <div class="row">
-                    <div class="col-md-3">
-                        <div class="row">
-                            <h5 class="title my-auto">Leads</h5>
-                            <a class="btn btn-primary text-white ml-3" href="#" onclick="openModal()"><i
+                    <div class="col-md-2">
+                            <a class="btn btn-primary text-white" href="#" onclick="openModal()"><i
                                         class="fa fa-plus"></i> Lead</a>
-                        </div>
                     </div>
-                    <div class="col-md-3 my-auto">
+                    <div class="col-md-4 my-auto">
                         <div class="form-group mt-2">
                             <input class="form-control" id="nameFilter" name="name" type="text" placeholder="Name">
                         </div>
                     </div>
                     <div class="col-md-3 my-auto">
                         <div class="form-group mt-2">
-                            <input class="form-control" id="emailFilter" name="email" type="text"
-                                   placeholder="Email">
+                            <select class="form-control" id="countryFilter" name="country" type="text">
+                                <option value="0">Select Country</option>
+                                <?php foreach ($countries as $country): ?>
+                                <option value="<?= $country->getId() ?>>"><?= $country->getName() ?></option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
                     </div>
                     <div class="col-md-3 text-right">
@@ -29,14 +30,15 @@
             </form>
         </div>
         <div class="card p-3">
-            <p>Showing off <span id="partial"></span> of <span id="total"></span></p>
-            <table class="table table-bordered table-striped" id="usersTable" width="100%" cellspacing="0">
+            <p>Showing <span id="partial"></span> of <span id="total"></span></p>
+            <table class="table table-bordered table-striped" id="leadsTable" width="100%" cellspacing="0">
                 <thead>
                 <tr>
                     <th class="text-center">Name</th>
-                    <th class="text-center">Type</th>
                     <th class="text-center">Email</th>
-                    <th class="text-center">Status</th>
+                    <th class="text-center">Phone</th>
+                    <th class="text-center">Owner</th>
+                    <th class="text-center">Country</th>
                     <th class="text-center">Actions</th>
                 </tr>
                 </thead>
@@ -50,17 +52,17 @@
 <!-- Modal Cadastro-->
 <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="subscriptionModal"
      aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">User Registration</h5>
+                <h5 class="modal-title">Lead Registration</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form class="form-control" id="addUser" method="post">
+            <form class="form-control" id="addLead" method="post">
                 <div class="form-group">
-                    <input type="hidden" name="userId" id="userId">
+                    <input type="hidden" name="leadId" id="leadId">
                     <div class="row">
                         <div class="col">
                             <label for="name">Name</label>
@@ -74,27 +76,26 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-6">
-                            <label for="type">Type</label>
-                            <select id="type" name="type" class="form-control">
-                                <option value="0">Selecione</option>
-                                <option value="1">Admin</option>
-                                <option value="2">Manager</option>
-                                <option value="3">Advisor</option>
-                            </select>
+                        <div class="col">
+                            <label for="phone">Phone</label>
+                            <input id="phone" name="phone" class="form-control" type="text" placeholder="Phone">
                         </div>
-                        <div class="col-md-6">
-                            <label for="active">Status</label>
-                            <select id="active" name="active" class="form-control">
-                                <option value="1">Active</option>
-                                <option value="0">Inactive</option>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="country">Country</label>
+                            <select class="form-control" id="country" name="country" type="text">
+                                <option value="0">Select Country</option>
+                                <?php foreach ($countries as $country): ?>
+                                    <option value="<?= $country->getId() ?>>"><?= $country->getName() ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col text-right">
-                        <button type="submit" class="btn btn-primary">Salvar Usuário</button>
+                        <button type="submit" class="btn btn-primary">Save Lead</button>
                     </div>
                 </div>
                 <div style="display: none" id="message" class="alert alert-danger" role="alert"></div>
@@ -105,21 +106,27 @@
 
 <script>
 
+    var index = 0;
+    var partial = 0;
+    var total = 1;
+    var country = 0;
+    var name = 0;
+
     function openModal() {
         $('#modal').modal('show');
         $('#message').hide();
-        document.getElementById('addUser').reset();
+        document.getElementById('addLead').reset();
     }
 
     function openModalEdit(id) {
 
-        document.getElementById('addUser').reset();
-        document.getElementById('userId').value = id;
+        document.getElementById('addLead').reset();
+        document.getElementById('leadId').value = id;
         $('#modal').modal('show');
         $('#message').hide();
         if (id > 0) {
             showLoading();
-            fetch(`<?= BASEURL ?>users/api/${id}`, {
+            fetch(`<?= BASEURL ?>leads/api/${id}`, {
                 method: "GET",
                 credentials: 'same-origin',
                 headers: {
@@ -131,22 +138,21 @@
                     json = json.message[0];
                     closeLoading();
                     document.getElementById('email').value = json.email;
-                    document.getElementById('type').value = json.type;
                     document.getElementById('name').value = json.name;
-                    document.getElementById('active').value = json.active;
+                    document.getElementById('country').value = json.country;
                 });
             });
         }
     }
 
-    const formAdd = document.getElementById('addUser');
+    const formAdd = document.getElementById('addLead');
     const divMessage = document.getElementById('message');
 
     formAdd.addEventListener('submit', e => {
         e.preventDefault();
         showLoading();
-        let formData = formDataToJson('addUser');
-        fetch("<?= BASEURL ?>users/register", {
+        let formData = formDataToJson('addLead');
+        fetch("<?= BASEURL ?>leads/register", {
             method: 'POST',
             credentials: 'same-origin',
             headers: {
@@ -174,14 +180,6 @@
         });
     });
 
-    var index = 0;
-    var partial = 0;
-    var total = 1;
-    var active = -1;
-    var name = 0;
-    var email = 0;
-    var type = 0;
-
     const form = document.getElementById('filter');
 
     form.addEventListener('submit', e => {
@@ -190,11 +188,9 @@
         partial = 0;
         index = 0;
         total = 1;
-        active = formData.active;
         name = formData.name;
-        email = formData.email;
-        type = formData.type;
-        $("#usersTable tbody").empty();
+        country = formData.country;
+        $("#leadsTable tbody").empty();
         generateTable();
     });
 
@@ -202,15 +198,13 @@
         index = 0;
         partial = 0;
         total = 1;
-        active = -1;
         name = 0;
-        email = 0;
-        type = 0;
-        $("#usersTable tbody").empty();
+        country = 0;
+        $("#leadsTable tbody").empty();
         generateTable();
     }
 
-    function generateUsersTable(user) {
+    function generateLeadsTable(user) {
         let actions = '';
         actions += `<i class="fa fa-pencil text-info" title="Edit" onclick="openModalEdit(${user.id})"></i> `;
         actions = `<td class="text-center">${actions} </td>`;
@@ -244,7 +238,7 @@
     function generateTable() {
         if (total > partial) {
             $('#loader').show();
-            fetch(`<?= BASEURL ?>users/api/?index=${index}&name=${name}&email=${email}&type=${type}&active=${active}`, {
+            fetch(`<?= BASEURL ?>leads/api/?index=${index}&name=${name}&country=${country}`, {
                 method: "GET",
                 credentials: 'same-origin',
                 headers: {
@@ -258,8 +252,8 @@
                     $('#partial').text(json.partial);
                     total = json.total;
                     partial = json.partial;
-                    let options = json.message.map(generateUsersTable);
-                    $("#usersTable tbody").append(options);
+                    let options = json.message.map(generateLeadsTable);
+                    $("#leadsTable tbody").append(options);
                 });
             });
         }

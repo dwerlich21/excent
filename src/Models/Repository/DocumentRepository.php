@@ -14,12 +14,16 @@ class DocumentRepository extends EntityRepository
         return $entity;
     }
 
-    private function generateWhere($id = 0,  &$params): string
+    private function generateWhere($id = 0, $title = null,  &$params): string
     {
         $where = '';
         if ($id) {
             $params[':id'] = $id;
             $where .= " AND document.id = :id";
+        }
+        if ($title) {
+            $params[':title'] = "%$title%";
+            $where .= " AND document.title LIKE :title";
         }
         return $where;
     }
@@ -35,11 +39,11 @@ class DocumentRepository extends EntityRepository
         return $limitSql;
     }
 
-    public function list($id, $limit = null, $offset = null): array
+    public function list($id, $title = null, $limit = null, $offset = null): array
     {
         $params = [];
         $limitSql = $this->generateLimit($limit, $offset);
-        $where = $this->generateWhere($id, $params);
+        $where = $this->generateWhere($id, $title, $params);
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
         $sql = "SELECT document.title, document.description, document.documentFile, document.id           
                 FROM document

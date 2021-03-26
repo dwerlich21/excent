@@ -21,7 +21,7 @@ class MessageController extends Controller
     public function saveMessage(Request $request, Response $response)
     {
         try {
-            $this->getLogged();
+            $user = $this->getLogged();
             $data = (array)$request->getParams();
             $data['messageId'] ?? 0;
             $fields = [
@@ -36,6 +36,7 @@ class MessageController extends Controller
             }
             $message->setTitle($data['title'])
                 ->setDescription($data['description'])
+                ->setUser($user)
                 ->setActive($data['active']);
             $this->em->getRepository(Message::class)->save($message);
             return $response->withJson([

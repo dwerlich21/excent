@@ -1,46 +1,30 @@
 <div class="row">
     <div class="col">
         <div class="card p-3">
-            <div class="row">
-                <div class="col-md-8">
-                    <h5 class="title">Messages</h5>
+            <form id="filter">
+                <div class="row">
+                    <div class="col-md-2">
+                            <a class="btn btn-primary text-white" href="#" onclick="openModal()"><i
+                                        class="fa fa-plus"></i> Message</a>
+                    </div>
+                    <div class="col-md-7 my-auto">
+                        <div class="form-group mt-2">
+                            <input class="form-control" id="titleFilter" name="title" type="text" placeholder="Title">
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-right">
+                        <button class="btn btn-danger" type="reset" onclick="resetTable()">Cancel</button>
+                        <button class="btn btn-primary" type="submit">Search</button>
+                    </div>
                 </div>
-                <div class="col-md-4">
-                    <a class="float-right btn btn-primary text-white" href="#" onclick="openModal()"><i
-                            class="fa fa-plus"></i> Message</a>
-                </div>
-            </div>
-            <!--            <form id="filter">-->
-            <!--                <div class="row">-->
-            <!--                    <div class="col-md-4">-->
-            <!--                        <div class="form-group">-->
-            <!--                            <label for="nameFilter">Name</label>-->
-            <!--                            <input class="form-control" id="nameFilter" name="name" type="text" placeholder="Name">-->
-            <!--                        </div>-->
-            <!--                    </div>-->
-            <!--                    <div class="col-md-4">-->
-            <!--                        <div class="form-group">-->
-            <!--                            <label for="companyFilter">Company</label>-->
-            <!--                            <input class="form-control" id="companyFilter" name="company" type="text" placeholder="Company">-->
-            <!--                        </div>-->
-            <!--                    </div>-->
-            <!--                    <div class="col-md-4">-->
-            <!--                        <div class="form-group">-->
-            <!--                            <label for="statusFilter">Status</label>-->
-            <!--                            <select name="status" id="statusFilter" class="form-control">-->
-            <!--                                <option value="-1">Select</option>-->
-            <!--                            </select>-->
-            <!--                        </div>-->
-            <!--                    </div>-->
-            <!--                </div>-->
-            <!--                <div class="row mb-3">-->
-            <!--                    <div class="col text-right">-->
-            <!--                        <button class="btn btn-danger" type="reset" onclick="resetTable()">Cancel</button>-->
-            <!--                        <button class="btn btn-primary" type="submit">Search</button>-->
-            <!--                    </div>-->
-            <!--                </div>-->
-            <!--            </form>-->
-            <p>Showing off <span id="partial"></span> of <span id="total"></span></p>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div class="card p-3">
+            <p>Showing <span id="partial"></span> of <span id="total"></span></p>
             <table class="table table-bordered table-striped" id="messagesTable" width="100%" cellspacing="0">
                 <thead>
                 <tr>
@@ -79,7 +63,7 @@
                         <div class="col">
                             <label for="description">Description</label>
                             <textarea id="description" name="description" class="form-control" type="text"
-                                      placeholder="Description"><span id="spanDescription"></span></textarea>
+                                      placeholder="Description"></textarea>
                         </div>
                     </div>
                     <div class="row">
@@ -122,6 +106,12 @@
 </script>
 
 <script>
+
+    var index = 0;
+    var partial = 0;
+    var total = 1;
+    var title = 0;
+    var active = -1;
 
     function openModal() {
         $('#modal').modal('show');
@@ -166,9 +156,30 @@
         });
     });
 
-    var index = 0;
-    var partial = 0;
-    var total = 1;
+    const form = document.getElementById('filter');
+
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        let formData = formDataToJson('filter');
+        partial = 0;
+        index = 0;
+        total = 1;
+        active = -1;
+        title = formData.title;
+        $("#messagesTable tbody").empty();
+        generateTable();
+    });
+
+    function resetTable() {
+        index = 0;
+        partial = 0;
+        total = 1;
+        title = 0;
+        active = -1;
+        $("#messagesTable tbody").empty();
+        generateTable();
+    }
+
 
     function generateMessagesTable(message) {
         let actions = '';
@@ -206,7 +217,7 @@
     function generateTable() {
         if (total > partial) {
             $('#loader').show();
-            fetch(`<?= BASEURL ?>messages/api/?index=${index}`, {
+            fetch(`<?= BASEURL ?>messages/api/?index=${index}&title=${title}&active=${active}`, {
                 method: "GET",
                 credentials: 'same-origin',
                 headers: {
@@ -279,7 +290,7 @@
                     closeLoading();
                     document.getElementById('title').value = json.title;
                     document.getElementById('active').value = json.active;
-                    $('#description').text(json.description);
+                    document.getElementById('description').value = json.description;
                 });
             });
         }

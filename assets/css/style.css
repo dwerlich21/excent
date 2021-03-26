@@ -119,7 +119,7 @@ nav {
 }
 
 .card-task {
-    box-shadow: 6px 6px 6px 6px rgb(0, 0, 0, 0.25);
+    border: solid 1px rgb(0, 0, 0, 0.25);
 }
 
 .card-date {

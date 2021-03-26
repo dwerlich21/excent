@@ -75,14 +75,43 @@ class ApiController extends Controller
             ->withHeader('Content-type', 'application/json');
     }
 
+    public function statusStr($status)
+    {
+        switch (intval($status)) {
+            case 1:
+                return 'Follow Up';
+            case 2:
+                return 'Pending Agreement';
+            case 3:
+                return 'Approved Terms';
+        }
+
+    }
+
     public function statusUpdate(Request $request, Response $response)
     {
-        $this->getLogged(true);
+        $user = $this->getLogged(true);
+        $date = date('Y-m-d');
+        $hour = \date('H:i');
         $id = $request->getQueryParam('deal');
-        $status = $request->getQueryParam('status');
+        $newStatus = $request->getQueryParam('status');
         $deal = $this->em->getRepository(Deal::class)->find($id);
-        $deal->setStatus($status);
-        $this->em->getRepository(Deal::class)->save($deal);
+        $status = $deal->getStatus();
+        $deal->setStatus($newStatus);
+        $deal = $this->em->getRepository(Deal::class)->save($deal);
+        $statusStr = $this->statusStr($status);
+        $newStatusStr = $this->statusStr($newStatus);
+        $description = "Moved from " . $statusStr . " to " . $newStatusStr;
+        $activity = new ActivityDeal();
+        $activity->setDeal($this->em->getReference(Deal::class, $id))
+            ->setUser($user)
+            ->setDate(\DateTime::createFromFormat('Y-m-d', $date))
+            ->setTime(\DateTime::createFromFormat('H:i', $hour))
+            ->setType(0)
+            ->setDescription('')
+            ->setStatus(1)
+            ->setActivity($description);
+        $this->em->getRepository(ActivityDeal::class)->save($activity);
         return $response->withJson([
             'status' => 'ok',
             'message' => 'Status alterado com sucesso!',
@@ -91,13 +120,13 @@ class ApiController extends Controller
     }
 
 
-    public
-    function documentsTable(Request $request, Response $response)
+    public function documentsTable(Request $request, Response $response)
     {
         $this->getLogged(true);
         $id = $request->getAttribute('route')->getArgument('id');
         $index = $request->getQueryParam('index');
-        $documents = $this->em->getRepository(Document::class)->list($id, 20, $index * 20);
+        $title = $request->getQueryParam('title');
+        $documents = $this->em->getRepository(Document::class)->list($id, $title, 20, $index * 20);
         $total = $this->em->getRepository(Document::class)->listTotal()['total'];
         $partial = ($index * 20) + sizeof($documents);
         $partial = $partial <= $total ? $partial : $total;
@@ -111,8 +140,7 @@ class ApiController extends Controller
             ->withHeader('Content-type', 'application/json');
     }
 
-    public
-    function documentDelete(Request $request, Response $response)
+    public function documentDelete(Request $request, Response $response)
     {
         $this->getLogged(true);
         $id = $request->getAttribute('route')->getArgument('id');
@@ -120,13 +148,14 @@ class ApiController extends Controller
         die();
     }
 
-    public
-    function messagesTable(Request $request, Response $response)
+    public function messagesTable(Request $request, Response $response)
     {
         $this->getLogged(true);
         $id = $request->getAttribute('route')->getArgument('id');
         $index = $request->getQueryParam('index');
-        $messages = $this->em->getRepository(Message::class)->list($id, 20, $index * 20);
+        $title = $request->getQueryParam('title');
+        $active = $request->getQueryParam('active');
+        $messages = $this->em->getRepository(Message::class)->list($id, $title, $active, 20, $index * 20);
         $total = $this->em->getRepository(Message::class)->listTotal()['total'];
         $partial = ($index * 20) + sizeof($messages);
         $partial = $partial <= $total ? $partial : $total;
@@ -140,8 +169,7 @@ class ApiController extends Controller
             ->withHeader('Content-type', 'application/json');
     }
 
-    public
-    function messageDelete(Request $request, Response $response)
+    public function messageDelete(Request $request, Response $response)
     {
         $this->getLogged(true);
         $id = $request->getAttribute('route')->getArgument('id');
@@ -149,13 +177,14 @@ class ApiController extends Controller
         die();
     }
 
-    public
-    function messagesDashboard(Request $request, Response $response)
+    public function messagesDashboard(Request $request, Response $response)
     {
         $this->getLogged(true);
         $id = $request->getAttribute('route')->getArgument('id');
         $index = $request->getQueryParam('index');
-        $messages = $this->em->getRepository(Message::class)->listDashboard($id, 20, $index * 20);
+        $title = $request->getQueryParam('title');
+        $active = $request->getQueryParam('active');
+        $messages = $this->em->getRepository(Message::class)->listDashboard($id, $title, $active, 20, $index * 20);
 
         return $response->withJson([
             'status' => 'ok',
@@ -164,16 +193,14 @@ class ApiController extends Controller
             ->withHeader('Content-type', 'application/json');
     }
 
-    public
-    function tasksDashboard(Request $request, Response $response)
+    public function tasksDashboard(Request $request, Response $response)
     {
         $user = $this->getLogged(true);
         $id = $request->getAttribute('route')->getArgument('id');
         $index = $request->getQueryParam('index');
         $today = date('Y-m-d');
-        $date = \DateTime::createFromFormat('Y-m-d', $today);
-        $tasks = $this->em->getRepository(Task::class)->listDashboardNotNull($id, $user, $date, 20, $index * 20);
-        $tasksNull = $this->em->getRepository(Task::class)->listDashboardNull($id, $user, $date, 20, $index * 20);
+        $tasks = $this->em->getRepository(Task::class)->listDashboardNotNull($id, $user, $today, 20, $index * 20);
+        $tasksNull = $this->em->getRepository(Task::class)->listDashboardNull($id, $user, $today, 20, $index * 20);
         $total = array_merge($tasks, $tasksNull);
 
         return $response->withJson([

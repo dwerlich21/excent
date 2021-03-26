@@ -26,27 +26,33 @@
         <div class="row mx-auto my-auto" style="height: 100%; width: 100%">
             <div class="col-md-2"></div>
             <div class="col-md-8 my-auto mx-auto">
-                <form method="post">
-                    <?php if (\App\Helpers\Session::get('errorMsg')): ?>
-                        <div class="alert alert-danger"><?= \App\Helpers\Session::get('errorMsg') ?></div>
-                        <?php \App\Helpers\Session::forgot('errorMsg'); ?>
-                    <?php endif; ?>
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input id="email" name="email" type="email" class="form-control"
-                               placeholder="Email" required>
+                <div class="row">
+                    <div class="col">
+                        <h3 class="title text-center">Welcome!</h3>
+                        <form method="post">
+                            <div class="form-group mt-5">
+                                <input id="email" name="email" type="email" class="form-control" required placeholder="Email">
+                            </div>
+                            <div class="form-group mt-4">
+                                <input id="password" name="password" type="password" class="form-control"
+                                placeholder="Password" required>
+                            </div>
+                            <button class="btn btn-primary btn-block mt-3">Sign In</button>
+                            <div class="text-center mt-4">
+                                <a href="<?= BASEURL ?>recuperar/" class="d-block small">Forgot your Password?</a>
+                            </div>
+                        </form>
                     </div>
-                    <div class="form-group">
-                        <label for="password">Senha</label>
-                        <input id="password" name="password" type="password" required
-                               placeholder="Senha" class="form-control">
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <?php if (\App\Helpers\Session::get('errorMsg')): ?>
+                            <div class="alert alert-danger text-center"><?= \App\Helpers\Session::get('errorMsg') ?></div>
+                            <?php \App\Helpers\Session::forgot('errorMsg'); ?>
+                        <?php endif; ?>
+                        <div id="loader" class="loader"></div>
                     </div>
-                    <button class="btn btn-primary btn-block">Sign In</button>
-                    <div class="text-center">
-                        <a href="<?= BASEURL ?>recuperar/" class="d-block small">Forgot your Password?</a>
-                    </div>
-                </form>
-                <div id="loader" class="loader"></div>
+                </div>
             </div>
             <div class="col-md-2">
 

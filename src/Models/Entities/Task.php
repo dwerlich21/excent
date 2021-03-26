@@ -5,7 +5,6 @@ namespace App\Models\Entities;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping as ORM;
-use http\Client;
 
 /**
  * @Entity @Table(name="task")
