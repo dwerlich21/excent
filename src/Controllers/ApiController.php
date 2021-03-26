@@ -41,10 +41,10 @@ class ApiController extends Controller
         $this->getLogged(true);
         $id = $request->getAttribute('route')->getArgument('id');
         $name = $request->getQueryParam('name');
-        $company = $request->getQueryParam('company');
+        $country = $request->getQueryParam('country');
         $index = $request->getQueryParam('index');
-        $deals = $this->em->getRepository(Deal::class)->list($id, $name, $company, 42, $index * 42);
-        $total = $this->em->getRepository(Deal::class)->listTotal($id, $name, $company)['total'];
+        $deals = $this->em->getRepository(Deal::class)->list($id, $name, $country, 42, $index * 42);
+        $total = $this->em->getRepository(Deal::class)->listTotal($id, $name, $country)['total'];
         $partial = ($index * 42) + sizeof($deals);
         $partial = $partial <= $total ? $partial : $total;
         return $response->withJson([
@@ -98,7 +98,7 @@ class ApiController extends Controller
         $deal = $this->em->getRepository(Deal::class)->find($id);
         $status = $deal->getStatus();
         $deal->setStatus($newStatus);
-        $deal = $this->em->getRepository(Deal::class)->save($deal);
+        $this->em->getRepository(Deal::class)->save($deal);
         $statusStr = $this->statusStr($status);
         $newStatusStr = $this->statusStr($newStatus);
         $description = "Moved from " . $statusStr . " to " . $newStatusStr;
@@ -109,7 +109,7 @@ class ApiController extends Controller
             ->setTime(\DateTime::createFromFormat('H:i', $hour))
             ->setType(0)
             ->setDescription('')
-            ->setStatus(1)
+            ->setStatus(0)
             ->setActivity($description);
         $this->em->getRepository(ActivityDeal::class)->save($activity);
         return $response->withJson([
@@ -206,6 +206,27 @@ class ApiController extends Controller
         return $response->withJson([
             'status' => 'ok',
             'message' => $total,
+        ], 200)
+            ->withHeader('Content-type', 'application/json');
+    }
+
+    public function leadsTable(Request $request, Response $response)
+    {
+        $this->getLogged(true);
+        $id = $request->getAttribute('route')->getArgument('id');
+        $index = $request->getQueryParam('index');
+        $name = $request->getQueryParam('name');
+        $country = $request->getQueryParam('country');
+        $messages = $this->em->getRepository(Deal::class)->listLead($id, $name, $country, 20, $index * 20);
+        $total = $this->em->getRepository(Deal::class)->listTotalLead($id, $name, $country)['total'];
+        $partial = ($index * 20) + sizeof($messages);
+        $partial = $partial <= $total ? $partial : $total;
+
+        return $response->withJson([
+            'status' => 'ok',
+            'message' => $messages,
+            'total' => (int)$total,
+            'partial' => $partial,
         ], 200)
             ->withHeader('Content-type', 'application/json');
     }

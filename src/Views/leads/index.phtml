@@ -17,7 +17,7 @@
                             <select class="form-control" id="countryFilter" name="country" type="text">
                                 <option value="0">Select Country</option>
                                 <?php foreach ($countries as $country): ?>
-                                <option value="<?= $country->getId() ?>>"><?= $country->getName() ?></option>
+                                <option value="<?= $country->getId() ?>"><?= $country->getName() ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -52,7 +52,7 @@
 <!-- Modal Cadastro-->
 <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="subscriptionModal"
      aria-hidden="true">
-    <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Lead Registration</h5>
@@ -104,6 +104,22 @@
     </div>
 </div>
 
+<!--Modal de informaões do Lead-->
+<div class="modal fade" id="modalLead" tabindex="-1" role="dialog" aria-labelledby="subscriptionModal"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-center">Lead Informations</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modalLeadBody"></div>
+        </div>
+    </div>
+</div>
+
 <script>
 
     var index = 0;
@@ -122,7 +138,7 @@
 
         document.getElementById('addLead').reset();
         document.getElementById('leadId').value = id;
-        $('#modal').modal('show');
+        $('#modalLead').modal('show');
         $('#message').hide();
         if (id > 0) {
             showLoading();
@@ -140,6 +156,8 @@
                     document.getElementById('email').value = json.email;
                     document.getElementById('name').value = json.name;
                     document.getElementById('country').value = json.country;
+                    document.getElementById('phone').value = json.phone;
+                    alert(json.country)
                 });
             });
         }
@@ -204,35 +222,32 @@
         generateTable();
     }
 
-    function generateLeadsTable(user) {
+    function generateLeadsTable(lead) {
         let actions = '';
-        actions += `<i class="fa fa-pencil text-info" title="Edit" onclick="openModalEdit(${user.id})"></i> `;
+        actions += `<i class="fa fa-search text-info" title="View" onclick="openModalEdit(${lead.id})"></i> `;
+        actions += `<i class="fa fa-times text-danger" title="Delete" onclick="deleteLead(${document.id})"></i> `;
         actions = `<td class="text-center">${actions} </td>`;
         return `<tr>
-                    <td class="text-center">${user.name}</td>
-                    <td class="text-center">${typeStr(user.type)}</td>
-                    <td class="text-center">${user.email}</td>
-                    <td class="text-center">${activeStr(user.active)}</td>
+                    <td class="text-center">${lead.name}</td>
+                    <td class="text-center">${lead.email}</td>
+                    <td class="text-center">${lead.phone}</td>
+                    <td class="text-center">${lead.user}</td>
+                    <td class="text-center">${lead.country}</td>
                     ${actions}
                 </tr>`;
     }
 
-    function typeStr(type) {
-        if (type == 1) {
-            return 'Admin';
-        } else if (type == 2) {
-            return 'Manager';
-        } else if (type == 3) {
-            return 'Advisor';
-        }
-    }
-
-    function activeStr(active) {
-        if (active == 1) {
-            return 'Active';
-        } else {
-            return 'Inactive';
-        }
+    function deleteLead(id) {
+        $('#loader').show();
+        fetch(`<?= BASEURL ?>documents/delete/api/${id}`, {
+            method: "GET",
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+        location.reload();
     }
 
     function generateTable() {

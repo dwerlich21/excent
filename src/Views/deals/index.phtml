@@ -14,8 +14,12 @@
                     </div>
                     <div class="col-md-3 my-auto">
                         <div class="form-group mt-2">
-                            <input class="form-control" id="companyFilter" name="company" type="text"
-                                   placeholder="Company">
+                            <select class="form-control" id="countryFilter" name="country" type="text">
+                                <option value="0">Select Country</option>
+                                <?php foreach ($countries as $country): ?>
+                                    <option value="<?= $country->getId() ?>"><?= $country->getName() ?></option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
                     </div>
                     <div class="col-md-3 text-right">
@@ -187,7 +191,7 @@
     var partial = 0;
     var total = 1;
     var name = 0;
-    var company = 0;
+    var country = 0;
 
     const form = document.getElementById('filter');
 
@@ -198,7 +202,7 @@
         index = 0;
         total = 1;
         name = formData.name;
-        company = formData.company;
+        country = formData.country;
         $("#cardDeal1 tbody").empty();
         $("#cardDeal2 tbody").empty();
         $("#cardDeal3 tbody").empty();
@@ -210,7 +214,7 @@
         partial = 0;
         total = 1;
         name = 0;
-        company = 0;
+        country = 0;
         $("#cardDeal1 tbody").empty();
         $("#cardDeal2 tbody").empty();
         $("#cardDeal3 tbody").empty();
@@ -313,7 +317,7 @@
     function generateDeals() {
         if (total > partial) {
             $('#loader').show();
-            fetch(`<?= BASEURL ?>deals/api/?index=${index}&name=${name}&company=${company}`, {
+            fetch(`<?= BASEURL ?>deals/api/?index=${index}&name=${name}&country=${country}`, {
                 method: "GET",
                 credentials: 'same-origin',
                 headers: {

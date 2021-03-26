@@ -5,6 +5,7 @@ namespace App\Controllers;
 
 
 use App\helpers\Validator;
+use App\Models\Entities\ActivityDeal;
 use App\Models\Entities\Countries;
 use App\Models\Entities\Deal;
 use App\Models\Entities\User;
@@ -25,9 +26,11 @@ class LeadController extends Controller
     public function saveLead(Request $request, Response $response)
     {
         try {
-            $this->getLogged();
+            $user = $this->getLogged();
             $data = (array)$request->getParams();
             $data['leadId'] ?? 0;
+            $date = date('Y-m-d');
+            $hour = \date('H:i');
             $fields = [
                 'email' => 'Email',
                 'name' => 'Name',
@@ -35,16 +38,30 @@ class LeadController extends Controller
                 'country' => 'Country'
             ];
             Validator::requireValidator($fields, $data);
-            $users = new Deal();
+            $leads = new Deal();
             if ($data['leadId'] > 0) {
-                $users = $this->em->getRepository(Deal::class)->find($data['leadId']);
+                $leads = $this->em->getRepository(Deal::class)->find($data['leadId']);
             }
-            $users->setPhone($data['phone'])
+            $leads->setPhone($data['phone'])
                 ->setEmail($data['email'])
                 ->setName($data['name'])
+                ->setResponsible($user)
                 ->setStatus(0)
                 ->setCountry($this->em->getReference(Countries::class, $data['country']));
-            $this->em->getRepository(Deal::class)->save($users);
+
+            $this->em->getRepository(Deal::class)->save($leads);
+            $deal = $this->em->getRepository(Deal::class)->findOneBy([],['id' => 'desc']);
+            $id = $deal->getId();
+            $activity = new ActivityDeal();
+            $activity->setActivity('Lead created')
+                ->setStatus(0)
+                ->setUser($user)
+                ->setDate(\DateTime::createFromFormat('Y-m-d', $date))
+                ->setDescription('')
+                ->setType(0)
+                ->setDeal($this->em->getReference(Deal::class, $id))
+                ->setTime(\DateTime::createFromFormat('H:i', $hour));
+            $this->em->getRepository(ActivityDeal::class)->save($activity);
             return $response->withJson([
                 'status' => 'ok',
                 'message' => 'Successfully registered lead!',

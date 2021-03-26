@@ -25,7 +25,7 @@ class DealRepository extends EntityRepository
         return $limitSql;
     }
 
-    private function generateWhere($id = 0, $name = null, $company= null, &$params): string
+    private function generateWhere($id = 0, $name = null, $country= null, &$params): string
     {
         $where = '';
         if ($id) {
@@ -36,23 +36,23 @@ class DealRepository extends EntityRepository
             $params[':name'] = "%$name%";
             $where .= " AND deal.name LIKE :name";
         }
-        if ($company) {
-            $params[':company'] = "%$company%";
-            $where .= " AND deal.company LIKE :company";
+        if ($country) {
+            $params[':country'] = $country;
+            $where .= " AND deal.country LIKE :country";
         }
         return $where;
     }
 
-    public function list($id = 0, $name = null, $company= null, $limit = null, $offset = null): array
+    public function list($id = 0, $name = null, $country= null, $limit = null, $offset = null): array
     {
         $params = [];
         $limitSql = $this->generateLimit($limit, $offset);
-        $where = $this->generateWhere($id, $name, $company, $params);
+        $where = $this->generateWhere($id, $name, $country, $params);
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
         $sql = "SELECT deal.id, deal.name, deal.company, deal.status, deal.phone, deal.email, 
                 deal.status, deal.office               
                 FROM deal
-                WHERE 1 = 1 {$where}
+                WHERE 1 = 1 AND deal.type = 1 {$where}
                 ORDER BY name ASC {$limitSql}
                ";
         $sth = $pdo->prepare($sql);
@@ -60,14 +60,48 @@ class DealRepository extends EntityRepository
         return $sth->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    public function listTotal($id = 0, $name = null, $company= null): array
+    public function listTotal($id = 0, $name = null, $country= null): array
     {
         $params = [];
-        $where = $this->generateWhere($id, $name, $company, $params);
+        $where = $this->generateWhere($id, $name, $country, $params);
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
         $sql = "SELECT COUNT(deal.id) AS total                  
                 FROM deal
-                WHERE 1 = 1 {$where}
+                WHERE 1 = 1 AND deal.type = 1 {$where}
+               ";
+        $sth = $pdo->prepare($sql);
+        $sth->execute($params);
+        return $sth->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    public function listLead($id = 0, $name = null, $country= null, $limit = null, $offset = null): array
+    {
+        $params = [];
+        $limitSql = $this->generateLimit($limit, $offset);
+        $where = $this->generateWhere($id, $name, $country, $params);
+        $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
+        $sql = "SELECT deal.id, deal.status, deal.phone, deal.email, deal.name, deal.email, 
+                deal.status, deal.office, users.name AS user, countries.name AS country, deal.type, deal.country AS countryID               
+                FROM deal
+                JOIN users ON users.id = deal.responsible
+                JOIN countries ON countries.id = deal.country
+                WHERE 1 = 1 AND deal.type = 0 {$where}
+                ORDER BY deal.name ASC {$limitSql}
+               ";
+
+        $sth = $pdo->prepare($sql);
+        $sth->execute($params);
+        return $sth->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function listTotalLead($id = 0, $name = null, $country= null): array
+    {
+        $params = [];
+        $where = $this->generateWhere($id, $name, $country, $params);
+        $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
+        $sql = "SELECT COUNT(deal.id) AS total                  
+                FROM deal
+                WHERE 1 = 1 AND deal.type = 0 {$where}
                ";
         $sth = $pdo->prepare($sql);
         $sth->execute($params);

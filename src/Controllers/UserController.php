@@ -4,6 +4,7 @@
 namespace App\Controllers;
 
 use App\helpers\Validator;
+use App\Models\Entities\ActivityDeal;
 use App\Models\Entities\Deal;
 use App\Models\Entities\User;
 use \Psr\Http\Message\ResponseInterface as Response;
@@ -27,6 +28,7 @@ class UserController extends Controller
             $fields = [
                 'email' => 'Email',
                 'name' => 'Name',
+                'password' => 'password',
                 'type' => 'Type'
             ];
             Validator::requireValidator($fields, $data);
@@ -38,7 +40,8 @@ class UserController extends Controller
                 ->setEmail($data['email'])
                 ->setName($data['name'])
                 ->setActive($data['active'])
-                ->setType($data['type']);
+                ->setType($data['type'])
+                ->setPassword(password_hash($data['password'], PASSWORD_ARGON2I));
             $this->em->getRepository(User::class)->save($users);
             return $response->withJson([
                 'status' => 'ok',

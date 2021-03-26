@@ -88,9 +88,12 @@
                                 class="title my-auto"> <?= $client->getName() ?></h5><br>
                     </div>
                     <div class="row p-2">
+                        <i class="fa fa-2x fa-star p-2"></i><span
+                                class="my-auto"><?= $client->getResponsible()->getName() ?></span>
+                    </div>
+                    <div class="row p-2">
                         <i class="fa fa-2x fa-city p-2"></i><span
                                 class="my-auto"><?= $client->getCompany() ?></span>
-
                     </div>
                     <div class="row p-2">
                         <i class="fa fa-2x fa-phone p-2"></i><span

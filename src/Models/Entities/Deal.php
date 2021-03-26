@@ -49,15 +49,20 @@ class Deal
 
     /**
      * @ManyToOne(targetEntity="User")
-     * @JoinColumn(name="responsible", referencedColumnName="id", nullable=true)
+     * @JoinColumn(name="responsible", referencedColumnName="id")
      */
-    private ?User $responsible = null;
+    private User $responsible;
 
     /**
      * @ManyToOne(targetEntity="Countries")
      * @JoinColumn(name="country", referencedColumnName="id")
      */
     private Countries $country;
+
+    /**
+     * @Column(type="boolean")
+     */
+    private bool $type;
 
 
     public function getId(): int
@@ -120,12 +125,12 @@ class Deal
         return $this;
     }
 
-    public function getResponsible(): ?User
+    public function getResponsible(): User
     {
         return $this->responsible;
     }
 
-    public function setResponsible(?User $responsible): Deal
+    public function setResponsible(User $responsible): Deal
     {
         $this->responsible = $responsible;
         return $this;
@@ -150,6 +155,17 @@ class Deal
     public function setCountry(Countries $country): Deal
     {
         $this->country = $country;
+        return $this;
+    }
+
+    public function getType(): bool
+    {
+        return $this->type;
+    }
+
+    public function setType(bool $type): Deal
+    {
+        $this->type = $type;
         return $this;
     }
 
