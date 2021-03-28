@@ -68,13 +68,15 @@ class DealController extends Controller
                 $newDeal = $this->em->getRepository(Deal::class)->findOneBy([],['id' => 'desc']);
                 $id = $newDeal->getId();
             }
+            $type = 0;
+            if ($data['type'] != null) $type = $data['type'];
             $activity = new ActivityDeal();
             $activity->setActivity($data['activityDeal'])
                 ->setStatus(0)
                 ->setUser($user)
                 ->setDate(\DateTime::createFromFormat('Y-m-d', $date))
                 ->setDescription('')
-                ->setType($data['type'])
+                ->setType($type)
                 ->setDeal($this->em->getReference(Deal::class, $id))
                 ->setTime(\DateTime::createFromFormat('H:i', $hour));
             $this->em->getRepository(ActivityDeal::class)->save($activity);

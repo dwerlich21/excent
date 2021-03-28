@@ -124,5 +124,4 @@ class ActivityDealRepository extends EntityRepository
         $sth->execute($params);
         return $sth->fetchAll(\PDO::FETCH_ASSOC);
     }
-
 }

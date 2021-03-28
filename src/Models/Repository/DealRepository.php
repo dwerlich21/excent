@@ -108,4 +108,17 @@ class DealRepository extends EntityRepository
         return $sth->fetch(\PDO::FETCH_ASSOC);
     }
 
+    public function dealDelete($id): array
+    {
+        $params = [];
+        $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
+        $sql = "DELETE FROM activityDeal WHERE activityDeal.deal = {$id};
+                DELETE FROM deal 
+                WHERE deal.id = {$id}
+               ";
+        $sth = $pdo->prepare($sql);
+        $sth->execute($params);
+        return $sth->fetch(\PDO::FETCH_ASSOC);
+    }
+
 }

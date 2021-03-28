@@ -13,8 +13,8 @@ $app->group('/leads', function () use ($app) {
         return $this->LeadController->saveLead($request, $response);
     });
 
-    $app->get('/modal/api/[{id}/]', function (Request $request, Response $response) {
-        return $this->ApiController->leadsModal($request, $response);
+    $app->get('/delete/api/{id}/', function (Request $request, Response $response) {
+        return $this->ApiController->LeadDelete($request, $response);
     });
 
     $app->get('/api/[{id}/]', function (Request $request, Response $response) {

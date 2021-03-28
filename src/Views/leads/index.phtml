@@ -336,7 +336,7 @@
 
     function deleteLead(id) {
         $('#loader').show();
-        fetch(`<?= BASEURL ?>deals/delete/api/${id}`, {
+        fetch(`<?= BASEURL ?>leads/delete/api/${id}`, {
             method: "GET",
             credentials: 'same-origin',
             headers: {

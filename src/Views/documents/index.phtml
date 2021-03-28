@@ -7,7 +7,7 @@
                         <div class="row">
                             <a class="btn btn-primary text-white" href="#" onclick="openModal()"><i
                                         class="fa fa-plus"></i> Document</a>
-                            <a class="btn btn-primary ml-3" href="#" onclick="openModal()"><i
+                            <a class="btn ml-3" href="#" onclick="openModal()"><i
                                     class="fa fa-plus"></i> Category</a>
                         </div>
                     </div>
@@ -46,7 +46,7 @@
 <!-- Modal Cadastro-->
 <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="subscriptionModal"
      aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Document registration</h5>
@@ -65,8 +65,8 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                            <label for="description">Description</label>
-                            <textarea id="description" name="description" class="form-control" type="text"
+                            <label for="descriptionDocument">Description</label>
+                            <textarea id="descriptionDocument" name="description" class="form-control" type="text"
                                       placeholder="Description"></textarea>
                         </div>
                     </div>
@@ -191,7 +191,7 @@
                     json = json.message[0];
                     closeLoading();
                     document.getElementById('title').value = json.title;
-                    document.getElementById('description').value = json.description;
+                    document.getElementById('descriptionDocument').value = json.description;
                     document.getElementById('type').value = json.type;
                 });
             });

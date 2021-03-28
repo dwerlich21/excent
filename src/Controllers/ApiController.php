@@ -230,4 +230,12 @@ class ApiController extends Controller
         ], 200)
             ->withHeader('Content-type', 'application/json');
     }
+
+    public function leadDelete(Request $request, Response $response)
+    {
+        $this->getLogged(true);
+        $id = $request->getAttribute('route')->getArgument('id');
+        $this->em->getRepository(Deal::class)->dealDelete($id);
+        die();
+    }
 }
