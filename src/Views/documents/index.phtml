@@ -224,7 +224,7 @@
     function generateDocumentsTable(document) {
         let actions = '';
         actions += `<i class="fa fa-pencil text-info" title="Edit" onclick="openModalEdit(${document.id})"></i> `
-        actions += `<i class="fa fa-times text-danger" title="Delete" onclick="deleteDoc(${document.id})"></i> `;
+        actions += `<i class="fa fa-times text-danger ml-2" title="Delete" onclick="deleteDoc(${document.id})"></i> `;
         actions = `<td class="text-center">${actions} </td>`;
         return `<tr>
                     <td class="text-center px-4"><a href="${documentView(document.documentFile)}" target="_blank"><i class="fa fa-3x fa-file-pdf-o"></i><a></td>

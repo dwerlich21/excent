@@ -18,7 +18,7 @@
 
 <body>
 <div class="wrapper">
-    <div class="sidebar" data-color="dark" data-active-color="success">
+    <div class="sidebar" data-color="dark">
         <div class="logo">
             <a href="<?= BASEURL ?>" class="simple-text text-center logo-normal">
                 <img class="img-fluid" style="max-height: 80px" src="<?= BASEURL ?>assets/img/logobranco.png">
@@ -62,8 +62,9 @@
     </div>
     <div class="main-panel">
         <!-- Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-absolute fixed-top navbar-transparent">
+        <nav class="navbar navbar-expand-lg navbar-absolute fixed-top bg-custom-2">
             <div class="container-fluid">
+
                 <div class="navbar-wrapper">
                     <div class="navbar-toggle">
                         <button type="button" class="navbar-toggler">
@@ -72,8 +73,8 @@
                             <span class="navbar-toggler-bar bar3"></span>
                         </button>
                     </div>
-                    <a class="navbar-brand" href="#">
-                        <?= $user->getName() ?>
+                    <a class="navbar-brand" href="#" onclick="openModalUser()" style="z-index: 100">
+                        <b><?= $user->getName() ?></b> <i class="fa fa-cog"></i>
                     </a>
                 </div>
                 <button
@@ -115,7 +116,7 @@
                 </div>
                 <?php \App\Helpers\Session::forgot('errorMsg'); ?>
             <?php endif; ?>
-            <!-- Modal -->
+            <!-- Modal Remember-->
             <div class="modal right fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
@@ -133,56 +134,132 @@
                         </div>
                         <div class="modal-body">
                             <form id="formTask">
-                                <div class="form-group">
-                                    <div class="row mt-4">
-                                        <div class="col-md-6">
-                                            <label for="date">Date</label>
-                                            <input class="form-control" id="date" name="date" type="text" placeholder="dd/mm/YYYY"
-                                                   required data-mask="99/99/9999">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="time">Time</label>
-                                            <input class="form-control" id="time" name="time" type="text" placeholder="HH:ii" data-mask="99:99">
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="dealId">Lead</label>
+                                        <select id="dealId" name="dealId" class="form-control">
+                                            <option value="0">Select lead</option>
+                                            <?php foreach ($deals as $deal): ?>
+                                            <option value="<?= $deal->getId() ?>"><?= $deal->getName() ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="activity">Activity</label>
+                                        <input name="activity" id="activity" placeholder="Activity" class="form-control mb-1">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                            <label class="btn btn-white active" title="Call">
+                                                <input type="radio" name="options" id="hatchback" autocomplete="off" value="2"
+                                                       checked >
+                                                <i class="fa fa-phone text-gray"></i>
+                                            </label>
+                                            <label class="btn btn-white" title="Meeting">
+                                                <input type="radio" name="options" id="sedan" autocomplete="off" value="3">
+                                                <i class="fa fa-users text-gray" ></i>
+                                            </label>
+                                            <label class="btn btn-white" title="Email">
+                                                <input type="radio" name="options" id="suv" autocomplete="off" value="4">
+                                                <i class="fa fa-paper-plane text-gray" ></i>
+                                            </label>
+                                            <label class="btn btn-white" title="Launch">
+                                                <input type="radio" name="options" id="suv" autocomplete="off" value="5">
+                                                <i class="fa fa-utensils text-gray" ></i>
+                                            </label>
+                                            <label class="btn btn-white" title="Task">
+                                                <input type="radio" name="options" id="suv" autocomplete="off" value="6">
+                                                <i class="fa fa-clock text-gray" ></i>
+                                            </label>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col">
-                                            <label for="action">Action</label>
-                                            <select class="form-control" id="action" name="action" required>
-                                                <option value="0">Select</option>
-                                                <option value="1">Call</option>
-                                                <option value="2">Meeting</option>
-                                                <option value="3">Email</option>
-                                                <option value="4">Lunch</option>
-                                            </select>
-                                        </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="date">Date</label>
+                                        <input name="date" id="date" placeholder="dd/mm/YYYY" data-mask="99/99/9999"
+                                               class="form-control mb-1">
                                     </div>
-                                    <div class="row">
-                                        <div class="col">
-                                            <label for="client">Client</label>
-                                            <select class="form-control" id="client" name="client" required>
-                                                <option value="0">Select</option>
-                                                <?php foreach ($deals as $deal): ?>
-                                                    <option value="<?= $deal->getId() ?>"><?= $deal->getName() ?></option>
-                                                <?php endforeach; ?>
-                                            </select>
-                                        </div>
+                                    <div class="col-md-6">
+                                        <label for="time">Time</label>
+                                        <input name="time" id="time" placeholder="HH:ii" data-mask="99:99"
+                                               class="form-control mb-1">
                                     </div>
-                                    <div class="row">
-                                        <div class="col">
-                                            <label for="description">Description</label>
-                                            <textarea class="form-control" id="description" name="description" placeholder="Description"
-                                                      type="text"></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col text-right">
-                                            <button type="submit" class="btn btn-primary">Save Task</button>
-                                        </div>
+                                </div>
+<!--                                <div class="row">-->
+<!--                                    <div class="col">-->
+<!--                                        <label for="description">Description</label>-->
+<!--                                        <textarea name="description" id="description" placeholder="Description"-->
+<!--                                                  class="form-control mb-1"></textarea>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+                                <input name="status" id="status" type="hidden" value="1">
+                                <div class="row">
+                                    <div class="col text-right">
+                                        <button type="submit" class="btn btn-primary">Save Activity</button>
                                     </div>
                                 </div>
                             </form>
                             <div style="display: none" id="messageTask" class="alert alert-danger" role="alert"></div>
+                        </div>
+                    </div><!-- modal-content -->
+                </div><!-- modal-dialog -->
+            </div><!-- modal -->
+
+            <!-- Modal User-->
+            <div class="modal right fade" id="myUser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-top">
+                            <div class="row">
+                                <div class="col-md-5 mt-0">
+                                    <h4 class="modal-title" id="myModalLabel">Edit User</h4>
+                                </div>
+                                <div class="col float-right my-auto">
+                                    <i class="close fa-2x fa fa-chevron-circle-right text-white" data-dismiss="modal"
+                                       aria-label="Close">
+                                    </i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-body">
+                            <form id="addUser" method="post">
+                                <div class="form-group">
+                                    <input type="hidden" name="userId" id="userId">
+                                    <div class="row">
+                                        <div class="col">
+                                            <label for="name">Name</label>
+                                            <input id="name" name="name" class="form-control" type="text"
+                                                   placeholder="Name" value="<?= $user->getName() ?>">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <label for="email">Email</label>
+                                            <input id="email" name="email" class="form-control" type="email"
+                                                   placeholder="Email" value="<?= $user->getEmail() ?>">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <label for="password">Password</label>
+                                            <input id="password" name="password" class="form-control" type="text"
+                                                   placeholder="Password">
+                                            <span style="font-size: 8px; color: grey; margin-left: 5px">Minimum 8 characters</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col text-right">
+                                        <button type="submit" class="btn btn-primary">Edit User</button>
+                                    </div>
+                                </div>
+                            </form>
+                            <div style="display: none" id="messageUser" class="alert alert-danger" role="alert"></div>
                         </div>
                     </div><!-- modal-content -->
                 </div><!-- modal-dialog -->
@@ -192,6 +269,10 @@
                     $('#myModal').modal('show');
                 }
 
+                function openModalUser() {
+                    $('#myUser').modal('show');
+                }
+
                 const formAddTask = document.getElementById('formTask');
                 const divMessageTask = document.getElementById('messageTask');
 
@@ -199,7 +280,7 @@
                     e.preventDefault();
                     showLoading();
                     let formData = formDataToJson('formTask');
-                    fetch("<?= BASEURL ?>task/register", {
+                    fetch("<?= BASEURL ?>deals/activity/register", {
                         method: 'POST',
                         credentials: 'same-origin',
                         headers: {
@@ -226,5 +307,41 @@
                         });
                     });
                 });
+
+                const formEditUser = document.getElementById('addUser');
+                const divMessageUser = document.getElementById('messageUser');
+
+                formEditUser.addEventListener('submit', e => {
+                    e.preventDefault();
+                    showLoading();
+                    let formData = formDataToJson('addUser');
+                    fetch(`<?= BASEURL ?>users/edit/<?= $user->getId() ?>`, {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    }).then(response => {
+                        closeLoading();
+                        divMessageUser.classList.add("alert-danger");
+                        divMessageUser.classList.remove("alert-success");
+                        response.json().then(json => {
+                            divMessageUser.textContent = json.message;
+                            divMessageUser.style.display = 'block';
+                            if (response.status === 201) {
+                                $('#modal').modal('hide');
+                                divMessageUser.classList.add("alert-success");
+                                divMessageUser.classList.remove("alert-danger");
+                                formEditUser.reset();
+                                setTimeout(function () {
+                                    location.reload();
+                                }, 1500);
+                            }
+                        });
+                    });
+                });
+
 
             </script>

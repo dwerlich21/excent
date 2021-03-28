@@ -73,4 +73,56 @@ class ActivityDealRepository extends EntityRepository
         return $sth->fetch(\PDO::FETCH_ASSOC);
     }
 
+    private function generateWhereTask($id = 0, $date = null, &$params): string
+    {
+        $where = '';
+        if ($id) {
+            $params[':id'] = $id;
+            $where .= " AND activityDeal.id = :id";
+        }
+
+        if ($date) {
+            $params[':date'] = $date;
+            $where .= " AND activityDeal.date = :date";
+        }
+        return $where;
+    }
+
+    public function listDashboardNotNull($id = 0, User $user, $date = null, $limit = null, $offset = null): array
+    {
+        $params = [];
+        $params[':user'] = $user->getId();
+        $limitSql = $this->generateLimit($limit, $offset);
+        $where = $this->generateWhereTask($id, $date, $params);
+        $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
+        $sql = "SELECT TIME_FORMAT(activityDeal.time, '%H:%i') AS time, deal.name AS deal, activityDeal.id, 
+                activityDeal.activity, activityDeal.type           
+                FROM activityDeal
+                JOIN deal ON deal.id = activityDeal.deal
+                WHERE activityDeal.time IS NOT NULL AND activityDeal.user = :user AND activityDeal.status = 1 {$where} 
+                ORDER BY time ASC {$limitSql}
+               ";
+        $sth = $pdo->prepare($sql);
+        $sth->execute($params);
+        return $sth->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function listDashboardNull($id = 0, User $user, $date = null, $limit = null, $offset = null): array
+    {
+        $params = [];
+        $params[':user'] = $user->getId();
+        $limitSql = $this->generateLimit($limit, $offset);
+        $where = $this->generateWhereTask($id, $date, $params);
+        $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
+        $sql = "SELECT activityDeal.time, activityDeal.id, activityDeal.activity, deal.name AS deal, activityDeal.type           
+                FROM activityDeal
+                JOIN deal ON deal.id = activityDeal.deal
+                WHERE activityDeal.time IS NULL AND activityDeal.user = :user AND activityDeal.status = 1 {$where} 
+                ORDER BY id DESC {$limitSql}
+               ";
+        $sth = $pdo->prepare($sql);
+        $sth->execute($params);
+        return $sth->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
 }

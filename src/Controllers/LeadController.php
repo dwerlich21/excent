@@ -17,10 +17,10 @@ class LeadController extends Controller
     public function lead(Request $request, Response $response)
     {
         $user = $this->getLogged();
-        $deal = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId()]);
+        $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId(), 'type' => 0], ['name' => 'asc']);
         $countries = $this->em->getRepository(Countries::class)->findBy([], ['name' => 'asc']);
         return $this->renderer->render($response, 'default.phtml', ['page' => 'leads/index.phtml', 'menuActive' => ['leads'],
-            'user' => $user, 'deal' => $deal, 'countries' => $countries]);
+            'user' => $user, 'deals' => $deals, 'countries' => $countries]);
     }
 
     public function saveLead(Request $request, Response $response)
@@ -32,26 +32,27 @@ class LeadController extends Controller
             $date = date('Y-m-d');
             $hour = \date('H:i');
             $fields = [
-                'email' => 'Email',
-                'name' => 'Name',
-                'phone' => 'Phone',
-                'country' => 'Country'
+                'emailLead' => 'Email',
+                'nameLead' => 'Name',
+                'phoneLead' => 'Phone',
+                'countryLead' => 'Country'
             ];
             Validator::requireValidator($fields, $data);
             $leads = new Deal();
             if ($data['leadId'] > 0) {
                 $leads = $this->em->getRepository(Deal::class)->find($data['leadId']);
             }
-            $leads->setPhone($data['phone'])
-                ->setEmail($data['email'])
-                ->setName($data['name'])
+            $leads->setPhone($data['phoneLead'])
+                ->setEmail($data['emailLead'])
+                ->setName($data['nameLead'])
                 ->setResponsible($user)
                 ->setStatus(0)
-                ->setCountry($this->em->getReference(Countries::class, $data['country']));
+                ->setType(0)
+                ->setCountry($this->em->getReference(Countries::class, $data['countryLead']));
 
             $this->em->getRepository(Deal::class)->save($leads);
-            $deal = $this->em->getRepository(Deal::class)->findOneBy([],['id' => 'desc']);
-            $id = $deal->getId();
+            $lead = $this->em->getRepository(Deal::class)->findOneBy([],['id' => 'desc']);
+            $id = $lead->getId();
             $activity = new ActivityDeal();
             $activity->setActivity('Lead created')
                 ->setStatus(0)

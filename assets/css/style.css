@@ -78,26 +78,13 @@
 .modal-top {
     display: block; !important;
     position: fixed;
-    background: #51cbce;
+    background: #004FC5;
     padding-bottom: 10px;
     color: white;
     right: 0;
     left: 0;
     top: 0;
     z-index: 2;
-}
-
-.modal-bottom {
-    display: block; !important;
-    position: fixed;
-    background: #51cbce;
-    padding: 20px;
-    color: white;
-    right: 0;
-    left: 0;
-    bottom: 0;
-    z-index: 2;
-    font-size: 25px;
 }
 
 .active>a,.active>a>i, .sidebar .nav li.active>a i{
@@ -189,8 +176,6 @@ html, body {
 #imgLogin {
     margin-top: 50%;!important;
     margin-right: 50%;!important;
-    /*margin-top: 50%;!important;*/
-    /*margin-top: 50%;!important;*/
 }
 
 .w-100{
@@ -204,4 +189,29 @@ html, body {
 .btn-white {
     background: white;!important;
     border: grey solid 1px;
+}
+
+.bg-custom-1 {
+    background-color: #66615B;
+}
+
+.bg-custom-2 {
+    background-image: linear-gradient(15deg, #66615B 0%, #000000
+    100%);
+}
+
+.card-deal {
+    background: #004FC5;
+    z-index: 1000;
+}
+
+@media (max-width: 700px) {
+    #dealInformation {
+        flex-direction: column-reverse;
+    }
+}
+
+.edit {
+    border: solid 2px white;
+    border-radius: 20px;
 }

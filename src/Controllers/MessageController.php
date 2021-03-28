@@ -13,9 +13,9 @@ class MessageController extends Controller
     public function message(Request $request, Response $response)
     {
         $user = $this->getLogged();
-        $deal = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId()]);
+        $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId(), 'type' => 0], ['name' => 'asc']);
         return $this->renderer->render($response, 'default.phtml', ['page' => 'messages/index.phtml', 'menuActive' => ['messages'],
-            'user' => $user, 'deal' => $deal]);
+            'user' => $user, 'deals' => $deals]);
     }
 
     public function saveMessage(Request $request, Response $response)

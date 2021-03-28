@@ -42,7 +42,7 @@
 <!-- Modal Cadastro-->
 <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="subscriptionModal"
      aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Message registration</h5>
@@ -184,7 +184,7 @@
     function generateMessagesTable(message) {
         let actions = '';
         actions += `<i class="fa fa-pencil text-info" title="Edit" onclick="openModalEdit(${message.id})"></i> `
-        actions += `<i class="fa fa-times text-danger" title="Delete" onclick="deleteMessage(${message.id})"></i> `;
+        actions += `<i class="fa fa-times text-danger ml-2" title="Delete" onclick="deleteMessage(${message.id})"></i> `;
         actions = `<td class="text-center">${actions} </td>`;
         return `<tr>
                     <td ><b>${message.title}</b><br>${message.description}</td>

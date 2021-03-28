@@ -147,6 +147,20 @@ class Deal
         return $this;
     }
 
+    public function getStatusStr(): string
+    {
+        switch ($this->status) {
+            case 1:
+                return 'Follow Up';
+            case 2:
+                return 'Pending Agreement';
+            case 3:
+                return 'Approved Terms';
+            default:
+                return 'Undefined';
+        }
+    }
+
     public function getCountry(): Countries
     {
         return $this->country;

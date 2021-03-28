@@ -199,8 +199,8 @@ class ApiController extends Controller
         $id = $request->getAttribute('route')->getArgument('id');
         $index = $request->getQueryParam('index');
         $today = date('Y-m-d');
-        $tasks = $this->em->getRepository(Task::class)->listDashboardNotNull($id, $user, $today, 20, $index * 20);
-        $tasksNull = $this->em->getRepository(Task::class)->listDashboardNull($id, $user, $today, 20, $index * 20);
+        $tasks = $this->em->getRepository(ActivityDeal::class)->listDashboardNotNull($id, $user, $today, 20, $index * 20);
+        $tasksNull = $this->em->getRepository(ActivityDeal::class)->listDashboardNull($id, $user, $today, 20, $index * 20);
         $total = array_merge($tasks, $tasksNull);
 
         return $response->withJson([

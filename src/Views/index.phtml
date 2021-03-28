@@ -90,11 +90,11 @@
         return `<div class="col-md-4 my-2" id="cardTask${task.id}">
                     <div class="row bg-white p-3 card-task">
                         <div class="col-md-4 my-auto">
-                            ${actionIcon(task.action)}
+                            ${actionIcon(task.type)}
                         </div>
                         <div class="col-md-8 card-date">
                             <div class="row">
-                                <div class="col"> <b>${time} ${actionStr(task.action)}</b></div>
+                                <div class="col"> <b>${time} ${actionStr(task.type)}</b></div>
                             </div>
                             <div class="row">
                                 <div class="col"> ${task.deal}</div>
@@ -110,14 +110,16 @@
 
     function actionStr(action) {
         switch (parseInt(action)) {
-            case 1:
-                return 'Call';
             case 2:
-                return 'Meeting';
+                return 'Call';
             case 3:
-                return 'Email';
+                return 'Meeting';
             case 4:
+                return 'Email';
+            case 5:
                 return 'Lunch';
+            case 6:
+                return 'Task';
             default:
                 return 'Unknown';
 
@@ -126,14 +128,16 @@
 
     function actionIcon(action) {
         switch (parseInt(action)) {
-            case 1:
-                return `<i class="fa fa-3x fa-phone text-gray"></i>`;
             case 2:
-                return `<i class="fa fa-3x fa-users text-gray"></i>`;
+                return `<i class="fa fa-3x fa-phone text-gray"></i>`;
             case 3:
-                return `<i class="fa fa-3x fa-paper-plane text-gray"></i>`;
+                return `<i class="fa fa-3x fa-users text-gray"></i>`;
             case 4:
+                return `<i class="fa fa-3x fa-paper-plane text-gray"></i>`;
+            case 5:
                 return `<i class="fa fa-3x fa-utensils text-gray"></i>`;
+            case 6:
+                return `<i class="fa fa-3x fa-clock text-gray"></i>`;
             default:
                 return `<i class="fa fa-3x fa-phone text-gray"></i>`;
         }

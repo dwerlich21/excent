@@ -13,9 +13,9 @@ class DocumentController extends Controller
     public function document(Request $request, Response $response)
     {
         $user = $this->getLogged();
-        $deal = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId()]);
+        $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId(), 'type' => 0], ['name' => 'asc']);
         return $this->renderer->render($response, 'default.phtml', ['page' => 'documents/index.phtml', 'menuActive' => ['documents'],
-            'user' => $user, 'deal' => $deal]);
+            'user' => $user, 'deals' => $deals]);
     }
 
     private function saveDocumentFile($files, Document $document): Document

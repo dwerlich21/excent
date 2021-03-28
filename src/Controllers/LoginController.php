@@ -99,8 +99,8 @@ class LoginController extends Controller
                 throw new \Exception('Token Inválido');
             }
             $fields = [
-                'password2' => 'Confirme a senha',
-                'password' => 'Senha',
+                'password2' => 'Confirm the Password',
+                'password' => 'Password',
             ];
             Validator::requireValidator($fields, $data);
             Validator::validatePassword($data);
@@ -111,7 +111,7 @@ class LoginController extends Controller
             $this->em->getRepository(RecoverPassword::class)->save($recover);
             return $response->withJson([
                 'status' => 'ok',
-                'message' => 'Senha alterada com sucesso.',
+                'message' => 'Password changed successfully!',
             ], 201)
                 ->withHeader('Content-type', 'application/json');
         } catch (\Exception $e) {

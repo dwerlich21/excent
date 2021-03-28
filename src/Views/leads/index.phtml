@@ -4,8 +4,8 @@
             <form id="filter">
                 <div class="row">
                     <div class="col-md-2">
-                            <a class="btn btn-primary text-white" href="#" onclick="openModal()"><i
-                                        class="fa fa-plus"></i> Lead</a>
+                        <a class="btn btn-primary text-white" href="#" onclick="openModal()"><i
+                                    class="fa fa-plus"></i> Lead</a>
                     </div>
                     <div class="col-md-4 my-auto">
                         <div class="form-group mt-2">
@@ -17,7 +17,7 @@
                             <select class="form-control" id="countryFilter" name="country" type="text">
                                 <option value="0">Select Country</option>
                                 <?php foreach ($countries as $country): ?>
-                                <option value="<?= $country->getId() ?>"><?= $country->getName() ?></option>
+                                    <option value="<?= $country->getId() ?>"><?= $country->getName() ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -48,7 +48,6 @@
     </div>
 </div>
 
-
 <!-- Modal Cadastro-->
 <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="subscriptionModal"
      aria-hidden="true">
@@ -65,26 +64,26 @@
                     <input type="hidden" name="leadId" id="leadId">
                     <div class="row">
                         <div class="col">
-                            <label for="name">Name</label>
-                            <input id="name" name="name" class="form-control" type="text" placeholder="Name">
+                            <label for="nameLead">Name</label>
+                            <input id="nameLead" name="nameLead" class="form-control" type="text" placeholder="Name">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col">
-                            <label for="email">Email</label>
-                            <input id="email" name="email" class="form-control" type="email" placeholder="Email">
+                            <label for="emailLead">Email</label>
+                            <input id="emailLead" name="emailLead" class="form-control" type="email" placeholder="Email">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col">
-                            <label for="phone">Phone</label>
-                            <input id="phone" name="phone" class="form-control" type="text" placeholder="Phone">
+                            <label for="phoneLead">Phone</label>
+                            <input id="phoneLead" name="phoneLead" class="form-control" type="text" placeholder="Phone">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col">
-                            <label for="country">Country</label>
-                            <select class="form-control" id="country" name="country" type="text">
+                            <label for="countryLead">Country</label>
+                            <select class="form-control" id="countryLead" name="countryLead" type="text">
                                 <option value="0">Select Country</option>
                                 <?php foreach ($countries as $country): ?>
                                     <option value="<?= $country->getId() ?>>"><?= $country->getName() ?></option>
@@ -104,18 +103,77 @@
     </div>
 </div>
 
-<!--Modal de informaões do Lead-->
-<div class="modal fade" id="modalLead" tabindex="-1" role="dialog" aria-labelledby="subscriptionModal"
+<!-- Modal To Deal-->
+<div class="modal fade" id="modalToDeal" tabindex="-1" role="dialog" aria-labelledby="subscriptionModal"
      aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-center">Lead Informations</h5>
+                <h5 class="modal-title">Convert to Deal</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body" id="modalLeadBody"></div>
+            <form class="form-control" id="addDeal" method="post">
+                <div class="form-group">
+                    <input type="hidden" name="dealId" id="dealToId">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="nameDeal">Name</label>
+                            <input id="nameDeal" name="name" class="form-control" type="text" placeholder="Name">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="companyDeal">Company</label>
+                            <input id="companyDeal" name="company" class="form-control" type="text"
+                                   placeholder="Company">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="emailDeal">Email</label>
+                            <input id="emailDeal" name="email" class="form-control" type="email" placeholder="Email">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="countryDeal">Country</label>
+                            <select class="form-control" id="countryDeal" name="country" type="text">
+                                <option value="0">Select Country</option>
+                                <?php foreach ($countries as $country): ?>
+                                    <option value="<?= $country->getId() ?>"><?= $country->getName() ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="phoneDeal">Phone</label>
+                            <input id="phoneDeal" name="phone" class="form-control" type="text"
+                                   placeholder="+99 99 9999-9999">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="statusDeal">Status</label>
+                            <select id="statusDeal" name="status" class="form-control">
+                                <option value="0">Select</option>
+                                <option value="1">Follow Up</option>
+                                <option value="2">Pending Agreement</option>
+                                <option value="3">Approved Terms</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="officeDeal">Office</label>
+                            <input id="officeDeal" name="office" class="form-control" type="text" placeholder="Office">
+                        </div>
+                        <input type="hidden" value="0" name="type" id="type">
+                        <input type="hidden" value="Deal created" name="activityDeal" id="activityDeal">
+                        <input type="hidden" value="1" name="typeDeal" id="typeDeal">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col text-right">
+                        <button type="submit" class="btn btn-primary">Save Deal</button>
+                    </div>
+                </div>
+                <div style="display: none" id="messageDeal" class="alert alert-danger" role="alert"></div>
+            </form>
         </div>
     </div>
 </div>
@@ -127,40 +185,12 @@
     var total = 1;
     var country = 0;
     var name = 0;
+    var activity = 0;
 
     function openModal() {
         $('#modal').modal('show');
         $('#message').hide();
         document.getElementById('addLead').reset();
-    }
-
-    function openModalEdit(id) {
-
-        document.getElementById('addLead').reset();
-        document.getElementById('leadId').value = id;
-        $('#modalLead').modal('show');
-        $('#message').hide();
-        if (id > 0) {
-            showLoading();
-            fetch(`<?= BASEURL ?>leads/api/${id}`, {
-                method: "GET",
-                credentials: 'same-origin',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            }).then(response => {
-                response.json().then(json => {
-                    json = json.message[0];
-                    closeLoading();
-                    document.getElementById('email').value = json.email;
-                    document.getElementById('name').value = json.name;
-                    document.getElementById('country').value = json.country;
-                    document.getElementById('phone').value = json.phone;
-                    alert(json.country)
-                });
-            });
-        }
     }
 
     const formAdd = document.getElementById('addLead');
@@ -198,6 +228,41 @@
         });
     });
 
+    const formAddDeal = document.getElementById('addDeal');
+    const divMessageDeal = document.getElementById('messageDeal');
+
+    formAddDeal.addEventListener('submit', e => {
+        e.preventDefault();
+        showLoading();
+        let formData = formDataToJson('addDeal');
+        fetch("<?= BASEURL ?>deals/register", {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        }).then(response => {
+            closeLoading();
+            divMessageDeal.classList.add("alert-danger");
+            divMessageDeal.classList.remove("alert-success");
+            response.json().then(json => {
+                divMessageDeal.textContent = json.message;
+                divMessageDeal.style.display = 'block';
+                if (response.status === 201) {
+                    $('#modalToDeal').modal('hide');
+                    divMessageDeal.classList.add("alert-success");
+                    divMessageDeal.classList.remove("alert-danger");
+                    formAddDeal.reset();
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1500);
+                }
+            });
+        });
+    });
+
     const form = document.getElementById('filter');
 
     form.addEventListener('submit', e => {
@@ -224,8 +289,8 @@
 
     function generateLeadsTable(lead) {
         let actions = '';
-        actions += `<i class="fa fa-search text-info" title="View" onclick="openModalEdit(${lead.id})"></i> `;
-        actions += `<i class="fa fa-times text-danger" title="Delete" onclick="deleteLead(${document.id})"></i> `;
+        actions += `<a class="btn btn-primary text-white" onclick="openModalToDeal(${lead.id})">To Deal</a>`;
+        actions += `<i class="fa fa-times text-danger ml-2" title="Delete" onclick="deleteLead(${lead.id})"></i> `;
         actions = `<td class="text-center">${actions} </td>`;
         return `<tr>
                     <td class="text-center">${lead.name}</td>
@@ -236,10 +301,42 @@
                     ${actions}
                 </tr>`;
     }
+    
+    function openModalToDeal(id) {
+        $('#modalToDeal').modal('show');
+        $('#message').hide();
+        if (id > 0) {
+            showLoading();
+            fetch(`<?= BASEURL ?>leads/api/${id}`, {
+                method: "GET",
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                response.json().then(json => {
+                    json = json.message[0];
+                    closeLoading();
+                    console.log(json.phone);
+                    console.log(json.email);
+                    console.log(json.country);
+                    console.log(json.name);
+                    console.log(json.id);
+
+                    document.getElementById('phoneDeal').value = json.phone;
+                    document.getElementById('emailDeal').value = json.email;
+                    document.getElementById('countryDeal').value = json.country;
+                    document.getElementById('nameDeal').value = json.name;
+                    document.getElementById('dealToId').value = json.id;
+                });
+            });
+        }
+    }
 
     function deleteLead(id) {
         $('#loader').show();
-        fetch(`<?= BASEURL ?>documents/delete/api/${id}`, {
+        fetch(`<?= BASEURL ?>deals/delete/api/${id}`, {
             method: "GET",
             credentials: 'same-origin',
             headers: {
@@ -283,5 +380,4 @@
             }
         });
     });
-
 </script>

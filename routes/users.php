@@ -16,4 +16,8 @@ $app->group('/users', function () use ($app) {
     $app->get('/api/[{id}/]', function (Request $request, Response $response) {
         return $this->ApiController->usersTable($request, $response);
     });
+
+    $app->post('/edit/{id}/', function (Request $request, Response $response) {
+        return $this->UserController->editUser($request, $response);
+    });
 });

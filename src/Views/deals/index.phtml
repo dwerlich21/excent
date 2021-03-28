@@ -107,9 +107,18 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col">
+                        <div class="col-md-6">
                             <label for="email">Email</label>
                             <input id="email" name="email" class="form-control" type="email" placeholder="Email">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="country">Country</label>
+                            <select class="form-control" id="country" name="country" type="text">
+                                <option value="0">Select Country</option>
+                                <?php foreach ($countries as $country): ?>
+                                    <option value="<?= $country->getId() ?>>"><?= $country->getName() ?></option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
                     </div>
                     <div class="row">
@@ -131,6 +140,9 @@
                             <label for="office">Office</label>
                             <input id="office" name="office" class="form-control" type="text" placeholder="Office">
                         </div>
+                        <input type="hidden" value="0" name="type" id="type">
+                        <input type="hidden" value="Deal created" name="activityDeal" id="activityDeal">
+                        <input type="hidden" value="1" name="typeDeal" id="typeDeal">
                     </div>
                 </div>
                 <div class="row">
