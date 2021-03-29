@@ -7,6 +7,7 @@ use App\helpers\Validator;
 use App\Models\Entities\ActivityDeal;
 use App\Models\Entities\Deal;
 use App\Models\Entities\User;
+use Exception;
 use \Psr\Http\Message\ResponseInterface as Response;
 use \Psr\Http\Message\ServerRequestInterface as Request;
 class UserController extends Controller
@@ -61,6 +62,10 @@ class UserController extends Controller
                 'type' => 'Type'
             ];
             Validator::requireValidator($fields, $data);
+            if ($data['userId'] == 0) {
+                $user = $this->em->getRepository(User::class)->findOneBy(['email' => $data['email']]);
+                if($user) throw new Exception('E-mail already registered');
+            }
             $users = new User();
             if ($data['userId'] > 0) {
                 $users = $this->em->getRepository(User::class)->find($data['userId']);

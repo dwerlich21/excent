@@ -9,6 +9,7 @@ use App\Models\Entities\ActivityDeal;
 use App\Models\Entities\Countries;
 use App\Models\Entities\Deal;
 use App\Models\Entities\User;
+use Exception;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -38,6 +39,10 @@ class LeadController extends Controller
                 'countryLead' => 'Country'
             ];
             Validator::requireValidator($fields, $data);
+            if ($data['leadId'] == 0) {
+                $user = $this->em->getRepository(Deal::class)->findOneBy(['email' => $data['emailLead']]);
+                if($user) throw new Exception('E-mail already registered');
+            }
             $leads = new Deal();
             if ($data['leadId'] > 0) {
                 $leads = $this->em->getRepository(Deal::class)->find($data['leadId']);

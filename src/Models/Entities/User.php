@@ -42,6 +42,12 @@ class User
      */
     private string $email;
 
+    /**
+     * @ManyToOne(targetEntity="Countries")
+     * @JoinColumn(name="country", referencedColumnName="id")
+     */
+    private Countries $country;
+
     public function getId(): int
     {
         return $this->id;
@@ -110,4 +116,17 @@ class User
         $this->email = $email;
         return $this;
     }
+
+    public function getCountry(): Countries
+    {
+        return $this->country;
+    }
+
+    public function setCountry(Countries $country): User
+    {
+        $this->country = $country;
+        return $this;
+    }
+
+
 }

@@ -32,6 +32,13 @@
                         <i class="fa fa-dashboard"></i> Dashboard
                     </a>
                 </li>
+                <?php if ($user->getType() == 1): ?>
+                <li <?= in_array('transactions', $menuActive) ? 'class="active"' : '' ?>>
+                    <a href="<?= BASEURL ?>transactions">
+                        <i class="fa fa-money-bill-wave"></i> Transactions
+                    </a>
+                </li>
+                <?php endif; ?>
                 <li <?= in_array('deals', $menuActive) ? 'class="active"' : '' ?>>
                     <a href="<?= BASEURL ?>deals">
                         <i class="fa fa-dollar"></i> Deals
@@ -227,7 +234,7 @@
                             </div>
                         </div>
                         <div class="modal-body">
-                            <form id="addUser" method="post">
+                            <form id="editUser" method="post">
                                 <div class="form-group">
                                     <input type="hidden" name="userId" id="userId">
                                     <div class="row">
@@ -308,13 +315,13 @@
                     });
                 });
 
-                const formEditUser = document.getElementById('addUser');
+                const formEditUser = document.getElementById('editUser');
                 const divMessageUser = document.getElementById('messageUser');
 
                 formEditUser.addEventListener('submit', e => {
                     e.preventDefault();
                     showLoading();
-                    let formData = formDataToJson('addUser');
+                    let formData = formDataToJson('editUser');
                     fetch(`<?= BASEURL ?>users/edit/<?= $user->getId() ?>`, {
                         method: 'POST',
                         credentials: 'same-origin',

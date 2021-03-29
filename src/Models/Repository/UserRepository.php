@@ -71,7 +71,6 @@ class UserRepository extends EntityRepository
                 WHERE 1 = 1 {$where}
                 ORDER BY name ASC {$limitSql}
                ";
-
         $sth = $pdo->prepare($sql);
         $sth->execute($params);
         return $sth->fetchAll(\PDO::FETCH_ASSOC);

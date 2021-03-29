@@ -7,6 +7,8 @@ use App\helpers\Validator;
 use App\Models\Entities\ActivityDeal;
 use App\Models\Entities\Countries;
 use App\Models\Entities\Deal;
+use App\Models\Entities\User;
+use Exception;
 use \Psr\Http\Message\ResponseInterface as Response;
 use \Psr\Http\Message\ServerRequestInterface as Request;
 class DealController extends Controller
@@ -48,6 +50,10 @@ class DealController extends Controller
                 'office' => 'Office'
             ];
             Validator::requireValidator($fields, $data);
+            if ($data['dealId'] == 0) {
+                $user = $this->em->getRepository(Deal::class)->findOneBy(['email' => $data['email']]);
+                if($user) throw new Exception('E-mail already registered');
+            }
             $deal = new Deal();
             if ($data['dealId'] > 0) {
                 $deal = $this->em->getRepository(Deal::class)->find($data['dealId']);

@@ -101,17 +101,13 @@ class Utils
         return count($doc) > 1 ? BASEURL . "uploads/{$doc[1]}" : '';
     }
 
-    public static function dateInFull($date)
+    public static function saveMoney($value)
     {
-        $dates = explode('/', $date);
-        setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'pt_BR.utf-8', 'portuguese');
-        date_default_timezone_set('America/Sao_Paulo');
-        $extenso = strftime('%d de %B de %Y', mktime(0, 0, 0, $dates[1], $dates[0], $dates[2]));
+        $money = str_replace('$ ', '', $value);
+        $money = str_replace('.', '', $money);
+        $string = str_replace(',', '.', $money);
+        $float = floatval($string);
 
-        return $extenso;
-    }
-
-    public static function randColor() {
-        return '#' . str_pad(dechex(mt_Rand(0, 0xFFFFFF)), 6, '0', STR_PAD_LEFT);
+        return $float;
     }
 }

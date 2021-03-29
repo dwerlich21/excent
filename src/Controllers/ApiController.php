@@ -8,6 +8,7 @@ use App\Models\Entities\Deal;
 use App\Models\Entities\Document;
 use App\Models\Entities\Message;
 use App\Models\Entities\Task;
+use App\Models\Entities\Transaction;
 use App\Models\Entities\User;
 use \Psr\Http\Message\ResponseInterface as Response;
 use \Psr\Http\Message\ServerRequestInterface as Request;
@@ -237,5 +238,34 @@ class ApiController extends Controller
         $id = $request->getAttribute('route')->getArgument('id');
         $this->em->getRepository(Deal::class)->dealDelete($id);
         die();
+    }
+
+    public function transactionsDelete(Request $request, Response $response)
+    {
+        $this->getLogged(true);
+        $id = $request->getAttribute('route')->getArgument('id');
+        $this->em->getRepository(Transaction::class)->messageDelete($id);
+        die();
+    }
+
+    public function transactionssTable(Request $request, Response $response)
+    {
+        $this->getLogged(true);
+        $id = $request->getAttribute('route')->getArgument('id');
+        $index = $request->getQueryParam('index');
+        $user = $request->getQueryParam('user');
+        $country = $request->getQueryParam('country');
+        $transactions = $this->em->getRepository(Transaction::class)->list($id, $user, $country, 20, $index * 20);
+        $total = $this->em->getRepository(Transaction::class)->listTotal($id, $user, $country)['total'];
+        $partial = ($index * 20) + sizeof($transactions);
+        $partial = $partial <= $total ? $partial : $total;
+
+        return $response->withJson([
+            'status' => 'ok',
+            'message' => $transactions,
+            'total' => (int)$total,
+            'partial' => $partial,
+        ], 200)
+            ->withHeader('Content-type', 'application/json');
     }
 }

@@ -65,40 +65,41 @@
             </div>
             <form class="form-control" id="addUser" method="post">
                 <div class="form-group">
-                    <input type="hidden" name="userId" id="userId">
+                    <input type="hidden" name="userId" id="userIdEdit">
                     <div class="row">
                         <div class="col">
-                            <label for="name">Name</label>
-                            <input id="name" name="name" class="form-control" type="text" placeholder="Name">
+                            <label for="nameEdit">Name</label>
+                            <input id="nameEdit" name="name" class="form-control" type="text" placeholder="Name">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col">
-                            <label for="email">Email</label>
-                            <input id="email" name="email" class="form-control" type="email" placeholder="Email">
+                            <label for="emailEdit">Email</label>
+                            <input id="emailEdit" name="email" class="form-control" type="email" placeholder="Email">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col">
-                            <label for="password">Password</label>
-                            <input id="password" name="password" class="form-control" type="text" placeholder="Password">
+                            <label for="passwordEdit">Password</label>
+                            <input id="passwordEdit" name="password" class="form-control" type="text" placeholder="Password">
                             <span style="font-size: 8px; color: grey; margin-left: 5px">Minimum 8 characters</span>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6">
-                            <label for="type">Type</label>
-                            <select id="type" name="type" class="form-control">
+                            <label for="typeEdit">Type</label>
+                            <select id="typeEdit" name="type" class="form-control">
                                 <option value="0">Selecione</option>
-                                <option value="1">Admin</option>
-                                <option value="2">Manager</option>
-                                <option value="3">Advisor</option>
-                                <option value="4">Human Resources</option>
+                                <option value="1">Master</option>
+                                <option value="2">Admin</option>
+                                <option value="3">Manager</option>
+                                <option value="4">Advisor</option>
+                                <option value="5">Human Resources</option>
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label for="active">Status</label>
-                            <select id="active" name="active" class="form-control">
+                            <label for="activeEdit">Status</label>
+                            <select id="activeEdit" name="active" class="form-control">
                                 <option value="1">Active</option>
                                 <option value="0">Inactive</option>
                             </select>
@@ -152,19 +153,20 @@
                 response.json().then(json => {
                     json = json.message[0];
                     closeLoading();
-                    document.getElementById('email').value = json.email;
-                    document.getElementById('type').value = json.type;
-                    document.getElementById('name').value = json.name;
-                    document.getElementById('active').value = json.active;
+                    document.getElementById('emailEdit').value = json.email;
+                    document.getElementById('userIdEdit').value = json.id;
+                    document.getElementById('typeEdit').value = json.type;
+                    document.getElementById('nameEdit').value = json.name;
+                    document.getElementById('activeEdit').value = json.active;
                 });
             });
         }
     }
 
-    const formAdd = document.getElementById('addUser');
+    const formAddUser = document.getElementById('addUser');
     const divMessage = document.getElementById('message');
 
-    formAdd.addEventListener('submit', e => {
+    formAddUser.addEventListener('submit', e => {
         e.preventDefault();
         showLoading();
         let formData = formDataToJson('addUser');
@@ -187,7 +189,7 @@
                     $('#modal').modal('hide');
                     divMessage.classList.add("alert-success");
                     divMessage.classList.remove("alert-danger");
-                    formAdd.reset();
+                    formAddUser.reset();
                     setTimeout(function () {
                         location.reload();
                     }, 1500);
