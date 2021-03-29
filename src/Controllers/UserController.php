@@ -3,8 +3,7 @@
 
 namespace App\Controllers;
 
-use App\helpers\Validator;
-use App\Models\Entities\ActivityDeal;
+use App\Helpers\Validator;
 use App\Models\Entities\Deal;
 use App\Models\Entities\User;
 use Exception;
