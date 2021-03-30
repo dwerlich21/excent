@@ -5,7 +5,7 @@ namespace App\Controllers;
 
 
 use App\Helpers\Utils;
-use App\helpers\Validator;
+use App\Helpers\Validator;
 use App\Models\Entities\Countries;
 use App\Models\Entities\Deal;
 use App\Models\Entities\Transaction;
