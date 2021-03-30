@@ -3,7 +3,7 @@
 
 namespace App\Controllers;
 
-use App\helpers\Validator;
+use App\Helpers\Validator;
 use App\Models\Entities\ActivityDeal;
 use App\Models\Entities\Countries;
 use App\Models\Entities\Deal;

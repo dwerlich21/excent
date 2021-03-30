@@ -7,7 +7,6 @@ use App\Models\Entities\ActivityDeal;
 use App\Models\Entities\Deal;
 use App\Models\Entities\Document;
 use App\Models\Entities\Message;
-use App\Models\Entities\Task;
 use App\Models\Entities\Transaction;
 use App\Models\Entities\User;
 use \Psr\Http\Message\ResponseInterface as Response;

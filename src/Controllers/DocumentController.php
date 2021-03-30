@@ -3,7 +3,7 @@
 
 namespace App\Controllers;
 
-use App\helpers\Validator;
+use App\Helpers\Validator;
 use App\Models\Entities\Deal;
 use App\Models\Entities\Document;
 use \Psr\Http\Message\ResponseInterface as Response;
