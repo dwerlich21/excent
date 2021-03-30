@@ -215,3 +215,7 @@ html, body {
     border: solid 2px white;
     border-radius: 20px;
 }
+
+.tab-pane{
+    background: white;!important;
+}

@@ -18,3 +18,7 @@ $app->get('/dashboard/tasks/api/[{id}/]', function (Request $request, Response $
 $app->get('/dashboard/tasks/status/{id}/', function (Request $request, Response $response) {
     return $this->AdminController->taskStatus($request, $response);
 });
+
+$app->get('/dashboard/transations/advisors/api/[{id}/]', function (Request $request, Response $response) {
+    return $this->ApiController->rankingAdvisors($request, $response);
+});

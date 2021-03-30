@@ -86,4 +86,23 @@ class TransactionRepository extends EntityRepository
         $sth->execute($params);
         return $sth->fetch(\PDO::FETCH_ASSOC);
     }
+
+    public function rankingAdvisors($limit = null, $offset = null): array
+    {
+        $params = [];
+        $limitSql = $this->generateLimit($limit, $offset);
+        $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
+        $sql = "SELECT COUNT(transaction.id) AS accounts, SUM(transaction.value) AS totalCapture, 
+                countries.name AS country, users.name AS user                  
+                FROM transaction
+                JOIN users ON users.id = transaction.user
+                JOIN countries ON countries.id = transaction.country
+                GROUP BY user, country, user
+                ORDER BY totalCapture DESC {$limitSql}
+               ";
+
+        $sth = $pdo->prepare($sql);
+        $sth->execute($params);
+        return $sth->fetch(\PDO::FETCH_ASSOC);
+    }
 }

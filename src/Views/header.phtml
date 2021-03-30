@@ -29,39 +29,39 @@
 
                 <li <?= in_array('dashboard', $menuActive) ? 'class="active"' : '' ?>>
                     <a href="<?= BASEURL ?>">
-                        <i class="fa fa-dashboard"></i> Dashboard
+                        <i class="fa fa-dashboard"></i> <b>Dashboard</b>
                     </a>
                 </li>
                 <?php if ($user->getType() == 1): ?>
                 <li <?= in_array('transactions', $menuActive) ? 'class="active"' : '' ?>>
                     <a href="<?= BASEURL ?>transactions">
-                        <i class="fa fa-money-bill-wave"></i> Transactions
+                        <i class="fa fa-money-bill-wave"></i> <b>Transactions</b>
                     </a>
                 </li>
                 <?php endif; ?>
                 <li <?= in_array('deals', $menuActive) ? 'class="active"' : '' ?>>
                     <a href="<?= BASEURL ?>deals">
-                        <i class="fa fa-dollar"></i> Deals
+                        <i class="fa fa-dollar"></i> <b>Deals</b>
                     </a>
                 </li>
                 <li <?= in_array('leads', $menuActive) ? 'class="active"' : '' ?>>
                     <a href="<?= BASEURL ?>leads">
-                        <i class="fa fa-crosshairs"></i> Leads
+                        <i class="fa fa-crosshairs"></i> <b>Leads</b>
                     </a>
                 </li>
                 <li <?= in_array('users', $menuActive) ? 'class="active"' : '' ?>>
                     <a href="<?= BASEURL ?>users">
-                        <span class="sidebar-normal"><i class="fa fa-users"></i> Users</span>
+                        <i class="fa fa-users"></i> <b>Users</b>
                     </a>
                 </li>
                 <li <?= in_array('documents', $menuActive) ? 'class="active"' : '' ?>>
                     <a href="<?= BASEURL ?>documents">
-                        <span class="sidebar-normal"><i class="fa fa-file"></i> Documents</span>
+                        <i class="fa fa-file"></i> <b>Documents</b>
                     </a>
                 </li>
                 <li <?= in_array('messages', $menuActive) ? 'class="active"' : '' ?>>
                     <a href="<?= BASEURL ?>messages">
-                        <span class="sidebar-normal"><i class="fa fa-envelope"></i> Messages</span>
+                        <i class="fa fa-envelope"></i> <b>Messages</b>
                     </a>
                 </li>
             </ul>

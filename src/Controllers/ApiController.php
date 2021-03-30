@@ -244,7 +244,7 @@ class ApiController extends Controller
     {
         $this->getLogged(true);
         $id = $request->getAttribute('route')->getArgument('id');
-        $this->em->getRepository(Transaction::class)->messageDelete($id);
+        $this->em->getRepository(Transaction::class)->transactionsDelete($id);
         die();
     }
 
@@ -265,6 +265,20 @@ class ApiController extends Controller
             'message' => $transactions,
             'total' => (int)$total,
             'partial' => $partial,
+        ], 200)
+            ->withHeader('Content-type', 'application/json');
+    }
+
+    public function rankingAdvisors(Request $request, Response $response)
+    {
+        $this->getLogged(true);
+        $id = $request->getAttribute('route')->getArgument('id');
+        $index = $request->getQueryParam('index');
+        $transactions = $this->em->getRepository(Transaction::class)->rankingAdvisors(20, $index * 20);
+
+        return $response->withJson([
+            'status' => 'ok',
+            'message' => $transactions,
         ], 200)
             ->withHeader('Content-type', 'application/json');
     }

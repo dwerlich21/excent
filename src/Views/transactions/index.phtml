@@ -186,7 +186,7 @@
     function generateTransactionsTable(transaction) {
         let actions = '';
         actions += `<i class="fa fa-pencil text-info" title="Edit" onclick="openModalEdit(${transaction.id})"></i> `
-        actions += `<i class="fa fa-times text-danger ml-2" title="Delete" onclick="deleteMessage(${transaction.id})"></i> `;
+        actions += `<i class="fa fa-times text-danger ml-2" title="Delete" onclick="deleteTransaction(${transaction.id})"></i> `;
         actions = `<td class="text-center">${actions} </td>`;
         return `<tr>
                     <td class="text-center">${transaction.date}</td>
@@ -198,7 +198,7 @@
                 </tr>`;
     }
 
-    function deleteMessage(id) {
+    function deleteTransaction(id) {
         $('#loader').show();
         fetch(`<?= BASEURL ?>transactions/delete/api/${id}`, {
             method: "GET",
