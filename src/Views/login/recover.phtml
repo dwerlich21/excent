@@ -26,7 +26,7 @@
         <div class="row mx-auto my-auto" style="height: 100%; width: 100%">
             <div class="col-md-2"></div>
             <div class="col-md-8 my-auto mx-auto">
-                <form id="recover">
+                <form id="recoverPassword">
                     <div id="message" class="alert" style="display: none"></div>
                     <div class="form-group">
                         <label for="email">Email</label>
@@ -49,14 +49,14 @@
 </body>
 
 <script>
-    const form = document.getElementById('recover');
+    const form = document.getElementById('recoverPassword');
     const message = document.getElementById('message');
 
     form.addEventListener('submit', e => {
         $('#recoverButton').addClass('disabled');
         $('#loader').show();
         e.preventDefault();
-        let formData = formDataToJson('recover');
+        let formData = formDataToJson('recoverPassword');
         fetch('<?= BASEURL ?>recuperar/', {
             method: 'POST',
             credentials: 'same-origin',

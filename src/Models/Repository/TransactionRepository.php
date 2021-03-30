@@ -50,7 +50,8 @@ class TransactionRepository extends EntityRepository
         $where = $this->generateWhere($id, $user, $country, $params);
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
         $sql = "SELECT responsible.name AS responsible, users.name AS user, transaction.id, transaction.value, 
-                DATE_FORMAT(transaction.date, '%d/%m/%Y') AS date, countries.name AS country, transaction.user AS userId        
+                DATE_FORMAT(transaction.date, '%d/%m/%Y') AS date, countries.name AS country, 
+                transaction.user AS userId, transaction.deposit        
                 FROM transaction
                 JOIN users ON users.id = transaction.user
                 JOIN countries ON countries.id = transaction.country
@@ -93,12 +94,13 @@ class TransactionRepository extends EntityRepository
         $limitSql = $this->generateLimit($limit, $offset);
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
         $sql = "SELECT COUNT(transaction.id) AS accounts, SUM(transaction.value) AS totalCapture, 
-                countries.name AS country, users.name AS user                  
+                SUM(transaction.deposit) AS totalDeposit,
+                (SUM(transaction.value) + SUM(transaction.deposit)) AS marginIn, countries.name AS country, users.name AS user                  
                 FROM transaction
                 JOIN users ON users.id = transaction.user
                 JOIN countries ON countries.id = transaction.country
-                GROUP BY user, country, user
-                ORDER BY totalCapture DESC {$limitSql}
+                GROUP BY user, country
+                ORDER BY marginIn DESC {$limitSql}
                ";
         $sth = $pdo->prepare($sql);
         $sth->execute($params);

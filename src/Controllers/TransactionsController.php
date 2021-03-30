@@ -35,8 +35,7 @@ class TransactionsController extends Controller
             $us = $this->em->getRepository(User::class)->find($id);
             $country = $us->getCountry()->getId();
             $fields = [
-                'user' => 'User',
-                'value' => 'Value'
+                'user' => 'User'
             ];
             Validator::requireValidator($fields, $data);
             $message = new Transaction();
@@ -44,6 +43,7 @@ class TransactionsController extends Controller
                 $message = $this->em->getRepository(Transaction::class)->find($data['transactionId']);
             }
             $message->setValue(Utils::saveMoney($data['value']))
+                ->setDeposit(Utils::saveMoney($data['deposit']))
                 ->setUser($this->em->getReference(User::class, ($data['user'])))
                 ->setResponsible($user)
                 ->setCountry($this->em->getReference(Countries::class, $country));

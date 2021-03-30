@@ -18,9 +18,14 @@ class Transaction
     private ?int $id = null;
 
     /**
-     * @Column(type="float")
+     * @Column(type="float", nullable=true)
      */
-    private float $value;
+    private ?float $value = null;
+
+    /**
+     * @Column(type="float", nullable=true)
+     */
+    private ?float $deposit = null;
 
     /**
      * @ManyToOne(targetEntity="User")
@@ -56,12 +61,12 @@ class Transaction
         return $this->id;
     }
 
-    public function getValue(): float
+    public function getValue(): ?float
     {
         return $this->value;
     }
 
-    public function setValue(float $value): Transaction
+    public function setValue(?float $value): Transaction
     {
         $this->value = $value;
         return $this;
@@ -102,6 +107,17 @@ class Transaction
     public function setCountry(Countries $country): Transaction
     {
         $this->country = $country;
+        return $this;
+    }
+
+    public function getDeposit():?float
+    {
+        return $this->deposit;
+    }
+
+    public function setDeposit(?float $deposit): Transaction
+    {
+        $this->deposit = $deposit;
         return $this;
     }
 

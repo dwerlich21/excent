@@ -51,8 +51,8 @@ class DealController extends Controller
             ];
             Validator::requireValidator($fields, $data);
             if ($data['dealId'] == 0) {
-                $user = $this->em->getRepository(Deal::class)->findOneBy(['email' => $data['email']]);
-                if($user) throw new Exception('E-mail already registered');
+                $us = $this->em->getRepository(Deal::class)->findOneBy(['email' => $data['email']]);
+                if($us) throw new Exception('E-mail already registered');
             }
             $deal = new Deal();
             if ($data['dealId'] > 0) {

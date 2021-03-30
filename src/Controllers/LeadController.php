@@ -32,6 +32,7 @@ class LeadController extends Controller
             $data['leadId'] ?? 0;
             $date = date('Y-m-d');
             $hour = \date('H:i');
+
             $fields = [
                 'emailLead' => 'Email',
                 'nameLead' => 'Name',
@@ -40,8 +41,8 @@ class LeadController extends Controller
             ];
             Validator::requireValidator($fields, $data);
             if ($data['leadId'] == 0) {
-                $user = $this->em->getRepository(Deal::class)->findOneBy(['email' => $data['emailLead']]);
-                if($user) throw new Exception('E-mail already registered');
+                $us = $this->em->getRepository(Deal::class)->findOneBy(['email' => $data['emailLead']]);
+                if($us) throw new Exception('E-mail already registered');
             }
             $leads = new Deal();
             if ($data['leadId'] > 0) {
