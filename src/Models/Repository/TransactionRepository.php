@@ -100,9 +100,8 @@ class TransactionRepository extends EntityRepository
                 GROUP BY user, country, user
                 ORDER BY totalCapture DESC {$limitSql}
                ";
-
         $sth = $pdo->prepare($sql);
         $sth->execute($params);
-        return $sth->fetch(\PDO::FETCH_ASSOC);
+        return $sth->fetchAll(\PDO::FETCH_ASSOC);
     }
 }

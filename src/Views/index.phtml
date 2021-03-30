@@ -29,12 +29,13 @@
                                 <table class="table table-sm table-hover" id="rankingAdvisor">
                                     <thead>
                                     <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">User</th>
-                                        <th scope="col">Country</th>
-                                        <th scope="col">Accounts</th>
-                                        <th scope="col">Top-Up</th>
-                                        <th scope="col">Total Capture</th>
+                                        <th scope="col" class="text-center">#</th>
+                                        <th scope="col" class="text-center">User</th>
+                                        <th scope="col" class="text-center">Country</th>
+                                        <th scope="col" class="text-center">Accounts</th>
+                                        <th scope="col" class="text-center">Top-Up</th>
+                                        <th class="text-center">Deposits</th>
+                                        <th class="text-center">Total Margin In</th>
                                     </tr>
                                     </thead>
                                     <tbody></tbody>
@@ -202,6 +203,20 @@
         }
     }
 
+    function generateRankingAdvisorsTable(transaction) {
+
+        return `<tr>
+                    <td class="text-center"></td>
+                    <td class="text-center">${transaction.user}</td>
+                    <td class="text-center">${transaction.country}</td>
+                    <td class="text-center">${transaction.accounts}</td>
+                    <td class="text-center"></td>
+                    <td class="text-center"></td>
+                    <td class="text-center">${maskMoneyTable(transaction.totalCapture)}</td>
+                </tr>
+        `;
+    }
+
     function generateRankingAdvisors() {
         $('#loader').show();
         fetch(`<?= BASEURL ?>dashboard/transations/advisors/api/?index=${index}`, {
@@ -214,8 +229,8 @@
         }).then(response => {
             response.json().then(json => {
                 $('#loader').hide();
-                let options = json.message.map(generateTasksCard);
-                $("#tasksDiv").append(options);
+                let options = json.message.map(generateRankingAdvisorsTable);
+                $("#rankingAdvisor tbody").append(options);
             });
         });
     }
@@ -258,6 +273,14 @@
             }
         });
         document.getElementById(`cardTask${id}`).classList.add("d-none");
+    }
+
+    function maskMoneyTable(value) {
+        var money = parseFloat(value);
+
+        money = money.toLocaleString('en-us', {style: 'currency', currency: 'USD'});
+
+        return money;
     }
 
 </script>
