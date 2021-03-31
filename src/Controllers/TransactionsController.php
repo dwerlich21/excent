@@ -42,7 +42,7 @@ class TransactionsController extends Controller
             if ($data['transactionId'] > 0) {
                 $message = $this->em->getRepository(Transaction::class)->find($data['transactionId']);
             }
-            $message->setValue(Utils::saveMoney($data['value']))
+            $message->setWithdrawals(Utils::saveMoney($data['withdrawals']))
                 ->setDeposit(Utils::saveMoney($data['deposit']))
                 ->setUser($this->em->getReference(User::class, ($data['user'])))
                 ->setResponsible($user)

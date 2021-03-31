@@ -49,7 +49,7 @@ class TransactionRepository extends EntityRepository
         $limitSql = $this->generateLimit($limit, $offset);
         $where = $this->generateWhere($id, $user, $country, $params);
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
-        $sql = "SELECT responsible.name AS responsible, users.name AS user, transaction.id, transaction.value, 
+        $sql = "SELECT responsible.name AS responsible, users.name AS user, transaction.id, transaction.withdrawals, 
                 DATE_FORMAT(transaction.date, '%d/%m/%Y') AS date, countries.name AS country, 
                 transaction.user AS userId, transaction.deposit        
                 FROM transaction
@@ -93,13 +93,52 @@ class TransactionRepository extends EntityRepository
         $params = [];
         $limitSql = $this->generateLimit($limit, $offset);
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
-        $sql = "SELECT COUNT(transaction.id) AS accounts, SUM(transaction.value) AS totalCapture, 
+        $sql = "SELECT COUNT(transaction.id) AS accounts, SUM(transaction.withdrawals) AS totalCapture, 
                 SUM(transaction.deposit) AS totalDeposit,
-                (SUM(transaction.value) + SUM(transaction.deposit)) AS marginIn, countries.name AS country, users.name AS user                  
+                (SUM(transaction.deposit) - SUM(transaction.withdrawals)) AS marginIn, countries.name AS country, users.name AS user                  
                 FROM transaction
                 JOIN users ON users.id = transaction.user
                 JOIN countries ON countries.id = transaction.country
                 GROUP BY user, country
+                ORDER BY marginIn DESC {$limitSql}
+               ";
+        $sth = $pdo->prepare($sql);
+        $sth->execute($params);
+        return $sth->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function rankingManagersGroup($id, $limit = null, $offset = null): array
+    {
+        $params = [];
+        $limitSql = $this->generateLimit($limit, $offset);
+        $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
+        $sql = "SELECT COUNT(transaction.id) AS accounts, SUM(transaction.withdrawals) AS totalCapture, 
+                SUM(transaction.deposit) AS totalDeposit,
+                (SUM(transaction.deposit) - SUM(transaction.withdrawals)) AS marginIn, countries.name AS country, users.name AS user                  
+                FROM transaction
+                JOIN users ON users.id = transaction.user
+                JOIN countries ON countries.id = transaction.country
+                WHERE users.manager = {$id}
+                GROUP BY user, country
+                ORDER BY marginIn DESC {$limitSql}
+               ";
+        $sth = $pdo->prepare($sql);
+        $sth->execute($params);
+        return $sth->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function rankingManagers($limit = null, $offset = null): array
+    {
+        $params = [];
+        $limitSql = $this->generateLimit($limit, $offset);
+        $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
+        $sql = "SELECT COUNT(transaction.id) AS accounts, SUM(transaction.withdrawals) AS totalCapture, 
+                SUM(transaction.deposit) AS totalDeposit,
+                (SUM(transaction.deposit) - SUM(transaction.withdrawals)) AS marginIn, countries.name AS country, users.name AS user                  
+                FROM transaction
+                JOIN users ON users.id = transaction.user
+                JOIN countries ON countries.id = transaction.country
+                GROUP BY users.manager, country
                 ORDER BY marginIn DESC {$limitSql}
                ";
         $sth = $pdo->prepare($sql);

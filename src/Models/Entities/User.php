@@ -48,6 +48,12 @@ class User
      */
     private Countries $country;
 
+    /**
+     * @ManyToOne(targetEntity="User")
+     * @JoinColumn(name="manager", referencedColumnName="id", nullable=true)
+     */
+    private ?User $manager = null;
+
     public function getId(): int
     {
         return $this->id;
@@ -125,6 +131,17 @@ class User
     public function setCountry(Countries $country): User
     {
         $this->country = $country;
+        return $this;
+    }
+
+    public function getManager(): ?User
+    {
+        return $this->manager;
+    }
+
+    public function setManager(?User $manager): User
+    {
+        $this->manager = $manager;
         return $this;
     }
 

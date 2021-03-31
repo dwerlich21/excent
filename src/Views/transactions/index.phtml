@@ -46,8 +46,8 @@
                     <th class="text-center">Date</th>
                     <th class="text-center">User</th>
                     <th class="text-center">Country</th>
-                    <th class="text-center">Withdrawals</th>
                     <th class="text-center">New Deposits</th>
+                    <th class="text-center">Withdrawals</th>
                     <th class="text-center">Resposible</th>
                     <th class="text-center">Actions</th>
                 </tr>
@@ -85,14 +85,14 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                            <label for="valueTransaction">Withdrawals</label>
-                            <input class="form-control" id="valueTransaction" name="value" placeholder="Withdrawals">
+                            <label for="depositTransaction">Deposit</label>
+                            <input class="form-control" id="depositTransaction" name="deposit" placeholder="Deposit">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col">
-                            <label for="depositTransaction">Deposit</label>
-                            <input class="form-control" id="depositTransaction" name="deposit" placeholder="Value">
+                            <label for="withdrawalsTransaction">Withdrawals</label>
+                            <input class="form-control" id="withdrawalsTransaction" name="withdrawals" placeholder="Withdrawals">
                         </div>
                     </div>
                 </div>
@@ -119,7 +119,7 @@
         $('#modal').modal('show');
         $('#transaction').hide();
         document.getElementById('addTransaction').reset();
-        $("#valueTransaction").maskMoney({
+        $("#withdrawalsTransaction").maskMoney({
             prefix: '$ ',
             allowNegative: true,
             thousands: '.',
@@ -200,8 +200,8 @@
     function generateTransactionsTable(transaction) {
         let deposit = '';
         if (transaction.deposit != 0) deposit = maskMoneyTable(transaction.deposit);
-        let value = '';
-        if (transaction.value != 0) value = maskMoneyTable(transaction.value);
+        let withdrawals = '';
+        if (transaction.withdrawals != 0) withdrawals = maskMoneyTable(transaction.withdrawals);
         let actions = '';
         actions += `<i class="fa fa-pencil text-info" title="Edit" onclick="openModalEdit(${transaction.id})"></i> `
         actions += `<i class="fa fa-times text-danger ml-2" title="Delete" onclick="deleteTransaction(${transaction.id})"></i> `;
@@ -210,8 +210,8 @@
                     <td class="text-center">${transaction.date}</td>
                     <td class="text-center">${transaction.user}</td>
                     <td class="text-center">${transaction.country}</td>
-                    <td class="text-center">${value}</td>
                     <td class="text-center">${deposit}</td>
+                    <td class="text-center">${withdrawals}</td>
                     <td class="text-center">${transaction.responsible}</td>
                     ${actions}
                 </tr>`;

@@ -4,6 +4,7 @@
 namespace App\Controllers;
 
 use App\Helpers\Validator;
+use App\Models\Entities\Countries;
 use App\Models\Entities\Deal;
 use App\Models\Entities\User;
 use Exception;
@@ -15,8 +16,10 @@ class UserController extends Controller
     {
         $user = $this->getLogged();
         $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId(), 'type' => 0], ['name' => 'asc']);
+        $users = $this->em->getRepository(User::class)->findBy(['type' => 3], ['name' => 'asc']);
+        $countries = $this->em->getRepository(Countries::class)->findBy([], ['name' => 'asc']);
         return $this->renderer->render($response, 'default.phtml', ['page' => 'users/index.phtml', 'menuActive' => ['users'],
-            'user' => $user, 'deals' => $deals]);
+            'user' => $user, 'deals' => $deals, 'users' => $users, 'countries' => $countries]);
     }
 
     public function editUser(Request $request, Response $response)
@@ -35,6 +38,7 @@ class UserController extends Controller
             if ($us->getId() != $user->getId()) $this->redirect();
             $us->setEmail($data['email'])
                 ->setName($data['name'])
+                ->setCountry($this->em->getReference(Countries::class, $data['type']))
                 ->setPassword(password_hash($data['password'], PASSWORD_ARGON2I));
             $this->em->getRepository(User::class)->save($us);
             return $response->withJson([
@@ -57,7 +61,8 @@ class UserController extends Controller
             $fields = [
                 'email' => 'Email',
                 'name' => 'Name',
-                'password' => 'password',
+                'password' => 'Password',
+                'country' => 'Country',
                 'type' => 'Type'
             ];
             Validator::requireValidator($fields, $data);
@@ -69,10 +74,14 @@ class UserController extends Controller
             if ($data['userId'] > 0) {
                 $users = $this->em->getRepository(User::class)->find($data['userId']);
             }
+            $manager = null;
+            if ($data['manager'] != 0) $manager = $this->em->getReference(User::class, $data['manager']);
             $users->setEmail($data['email'])
                 ->setName($data['name'])
                 ->setActive($data['active'])
                 ->setType($data['type'])
+                ->setCountry($this->em->getReference(Countries::class, $data['type']))
+                ->setManager($manager)
                 ->setPassword(password_hash($data['password'], PASSWORD_ARGON2I));
             $this->em->getRepository(User::class)->save($users);
             return $response->withJson([

@@ -281,4 +281,32 @@ class ApiController extends Controller
         ], 200)
             ->withHeader('Content-type', 'application/json');
     }
+
+    public function rankingManagers(Request $request, Response $response)
+    {
+        $this->getLogged(true);
+        $id = $request->getAttribute('route')->getArgument('id');
+        $index = $request->getQueryParam('index');
+        $transactions = $this->em->getRepository(Transaction::class)->rankingManagers(20, $index * 20);
+
+        return $response->withJson([
+            'status' => 'ok',
+            'message' => $transactions,
+        ], 200)
+            ->withHeader('Content-type', 'application/json');
+    }
+
+    public function rankingManagersGroup(Request $request, Response $response)
+    {
+        $user = $this->getLogged(true);
+        $id = $user->getId();
+        $index = $request->getQueryParam('index');
+        $transactions = $this->em->getRepository(Transaction::class)->rankingManagersGroup($id, 20, $index * 20);
+
+        return $response->withJson([
+            'status' => 'ok',
+            'message' => $transactions,
+        ], 200)
+            ->withHeader('Content-type', 'application/json');
+    }
 }

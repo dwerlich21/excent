@@ -79,17 +79,10 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col">
-                            <label for="passwordEdit">Password</label>
-                            <input id="passwordEdit" name="password" class="form-control" type="text" placeholder="Password">
-                            <span style="font-size: 8px; color: grey; margin-left: 5px">Minimum 8 characters</span>
-                        </div>
-                    </div>
-                    <div class="row">
                         <div class="col-md-6">
                             <label for="typeEdit">Type</label>
-                            <select id="typeEdit" name="type" class="form-control">
-                                <option value="0">Selecione</option>
+                            <select id="typeEdit" name="type" class="form-control" onchange="selectManager()">
+                                <option value="0">Select Type</option>
                                 <option value="1">Master</option>
                                 <option value="2">Admin</option>
                                 <option value="3">Manager</option>
@@ -97,7 +90,35 @@
                                 <option value="5">Human Resources</option>
                             </select>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6" id="userManager" style="display: none">
+                            <label for="managerEdit">Manager</label>
+                            <select id="managerEdit" name="manager" class="form-control">
+                                <option value="0">Select Manager</option>
+                                <?php foreach ($users as $us): ?>
+                                <option value="<?= $us->getId() ?>"><?= $us->getName() ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="countryEdit">Country</label>
+                            <select id="countryEdit" name="country" class="form-control">
+                                <option value="0">Select Country</option>
+                                <?php foreach ($countries as $country): ?>
+                                    <option value="<?= $country->getId() ?>"><?= $country->getName() ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label for="passwordEdit">Password</label>
+                            <input id="passwordEdit" name="password" class="form-control" type="text"
+                                   placeholder="Password">
+                            <span style="font-size: 8px; color: grey; margin-left: 5px">Minimum 8 characters</span>
+                        </div>
+                        <div class="col-md-4">
                             <label for="activeEdit">Status</label>
                             <select id="activeEdit" name="active" class="form-control">
                                 <option value="1">Active</option>
@@ -239,11 +260,15 @@
 
     function typeStr(type) {
         if (type == 1) {
-            return 'Admin';
+            return 'Master';
         } else if (type == 2) {
-            return 'Manager';
+            return 'Admin';
         } else if (type == 3) {
+            return 'Manager';
+        } else if (type == 4) {
             return 'Advisor';
+        } else if (type == 5) {
+            return 'Human Resources';
         }
     }
 
@@ -276,6 +301,15 @@
                     $("#usersTable tbody").append(options);
                 });
             });
+        }
+    }
+
+    function selectManager() {
+        var userType = document.getElementById('typeEdit').value;
+        document.getElementById('userManager').style.display = 'none';
+
+        if (userType == 4) {
+            document.getElementById('userManager').style.display = 'block';
         }
     }
 

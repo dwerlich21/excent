@@ -20,12 +20,12 @@ class Transaction
     /**
      * @Column(type="float", nullable=true)
      */
-    private ?float $value = null;
+    private ?float $withdrawals = 0;
 
     /**
      * @Column(type="float", nullable=true)
      */
-    private ?float $deposit = null;
+    private ?float $deposit = 0;
 
     /**
      * @ManyToOne(targetEntity="User")
@@ -61,14 +61,14 @@ class Transaction
         return $this->id;
     }
 
-    public function getValue(): ?float
+    public function getWithdrawals(): ?float
     {
-        return $this->value;
+        return $this->withdrawals;
     }
 
-    public function setValue(?float $value): Transaction
+    public function setWithdrawals(?float $withdrawals): Transaction
     {
-        $this->value = $value;
+        $this->withdrawals = $withdrawals;
         return $this;
     }
 

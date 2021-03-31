@@ -69,7 +69,7 @@ class UserRepository extends EntityRepository
         $sql = "SELECT users.id, users.name, users.email, users.type, users.active               
                 FROM users
                 WHERE 1 = 1 {$where}
-                ORDER BY name ASC {$limitSql}
+                ORDER BY type ASC, name ASC {$limitSql}
                ";
         $sth = $pdo->prepare($sql);
         $sth->execute($params);
