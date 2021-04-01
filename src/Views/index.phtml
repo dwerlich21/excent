@@ -33,9 +33,9 @@
                                         <th scope="col" class="text-center">User</th>
                                         <th scope="col" class="text-center">Country</th>
                                         <th scope="col" class="text-center">New Accounts</th>
-                                        <th class="text-center">New Deposits</th>
+                                        <th class="text-center" scope="col">New Deposits</th>
                                         <th scope="col" class="text-center">Withdrawals</th>
-                                        <th class="text-center">Net Margin In</th>
+                                        <th class="text-center" scope="col">Net Margin In</th>
                                     </tr>
                                     </thead>
                                     <tbody></tbody>
@@ -237,10 +237,10 @@
         }
     }
 
-    function generateRankingAdvisorsTable(transaction) {
+    function generateRankingTable(transaction) {
 
         return `<tr>
-                    <td class="text-center"></td>
+                    <td class="text-center" scope="row"></td>
                     <td class="text-center">${transaction.user}</td>
                     <td class="text-center">${transaction.country}</td>
                     <td class="text-center">${transaction.accounts}</td>
@@ -263,24 +263,10 @@
         }).then(response => {
             response.json().then(json => {
                 $('#loader').hide();
-                let options = json.message.map(generateRankingAdvisorsTable);
+                let options = json.message.map(generateRankingTable);
                 $("#advRanking tbody").append(options);
             });
         });
-    }
-
-    function generateRankingManagersTable(transaction) {
-
-        return `<tr>
-                    <td class="text-center"></td>
-                    <td class="text-center">${transaction.user}</td>
-                    <td class="text-center">${transaction.country}</td>
-                    <td class="text-center">${transaction.accounts}</td>
-                    <td class="text-center">${maskMoneyTable(transaction.totalDeposit)}</td>
-                    <td class="text-center">${maskMoneyTable(transaction.totalCapture)}</td>
-                    <td class="text-center">${maskMoneyTable(transaction.marginIn)}</td>
-                </tr>
-        `;
     }
 
     function generateRankingManagers() {
@@ -295,7 +281,7 @@
         }).then(response => {
             response.json().then(json => {
                 $('#loader').hide();
-                let options = json.message.map(generateRankingManagersTable);
+                let options = json.message.map(generateRankingTable);
                 $("#managersTable tbody").append(options);
             });
         });

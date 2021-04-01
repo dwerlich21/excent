@@ -6,6 +6,7 @@ namespace App\Controllers;
 use App\Models\Entities\ActivityDeal;
 use App\Models\Entities\Deal;
 use App\Models\Entities\Document;
+use App\Models\Entities\DocumentCategory;
 use App\Models\Entities\Message;
 use App\Models\Entities\Transaction;
 use App\Models\Entities\User;
@@ -126,8 +127,9 @@ class ApiController extends Controller
         $id = $request->getAttribute('route')->getArgument('id');
         $index = $request->getQueryParam('index');
         $title = $request->getQueryParam('title');
-        $documents = $this->em->getRepository(Document::class)->list($id, $title, 20, $index * 20);
-        $total = $this->em->getRepository(Document::class)->listTotal()['total'];
+        $type = $request->getQueryParam('type');
+        $documents = $this->em->getRepository(Document::class)->list($id, $title, $type, 20, $index * 20);
+        $total = $this->em->getRepository(Document::class)->listTotal($id, $title, $type)['total'];
         $partial = ($index * 20) + sizeof($documents);
         $partial = $partial <= $total ? $partial : $total;
 
@@ -140,11 +142,37 @@ class ApiController extends Controller
             ->withHeader('Content-type', 'application/json');
     }
 
+    public function documentsCategoryTable(Request $request, Response $response)
+    {
+        $this->getLogged(true);
+        $index = $request->getQueryParam('index');
+        $categories = $this->em->getRepository(DocumentCategory::class)->list(20, $index * 20);
+        $total = $this->em->getRepository(DocumentCategory::class)->listTotal()['total'];
+        $partial = ($index * 20) + sizeof($categories);
+        $partial = $partial <= $total ? $partial : $total;
+
+        return $response->withJson([
+            'status' => 'ok',
+            'message' => $categories,
+            'total' => (int)$total,
+            'partial' => $partial,
+        ], 200)
+            ->withHeader('Content-type', 'application/json');
+    }
+
     public function documentDelete(Request $request, Response $response)
     {
         $this->getLogged(true);
         $id = $request->getAttribute('route')->getArgument('id');
         $this->em->getRepository(Document::class)->documentDelete($id);
+        die();
+    }
+
+    public function categoryDelete(Request $request, Response $response)
+    {
+        $this->getLogged(true);
+        $id = $request->getAttribute('route')->getArgument('id');
+        $this->em->getRepository(DocumentCategory::class)->categoryDelete($id);
         die();
     }
 

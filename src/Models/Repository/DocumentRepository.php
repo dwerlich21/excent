@@ -14,7 +14,7 @@ class DocumentRepository extends EntityRepository
         return $entity;
     }
 
-    private function generateWhere($id = 0, $title = null,  &$params): string
+    private function generateWhere($id = 0, $title = null, $type = null,  &$params): string
     {
         $where = '';
         if ($id) {
@@ -24,6 +24,10 @@ class DocumentRepository extends EntityRepository
         if ($title) {
             $params[':title'] = "%$title%";
             $where .= " AND document.title LIKE :title";
+        }
+        if ($type) {
+            $params[':type'] = $type;
+            $where .= " AND document.type = :type";
         }
         return $where;
     }
@@ -39,11 +43,11 @@ class DocumentRepository extends EntityRepository
         return $limitSql;
     }
 
-    public function list($id, $title = null, $limit = null, $offset = null): array
+    public function list($id, $title = null, $type = null, $limit = null, $offset = null): array
     {
         $params = [];
         $limitSql = $this->generateLimit($limit, $offset);
-        $where = $this->generateWhere($id, $title, $params);
+        $where = $this->generateWhere($id, $title, $type, $params);
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
         $sql = "SELECT document.title, document.description, document.documentFile, document.id           
                 FROM document
@@ -55,12 +59,14 @@ class DocumentRepository extends EntityRepository
         return $sth->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    public function listTotal(): array
+    public function listTotal($id, $title, $type): array
     {
         $params = [];
+        $where = $this->generateWhere($id, $title, $type, $params);
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
         $sql = "SELECT COUNT(document.id) AS total                  
                 FROM document
+                WHERE 1 = 1 {$where}
                ";
         $sth = $pdo->prepare($sql);
         $sth->execute($params);

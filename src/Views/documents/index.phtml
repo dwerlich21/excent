@@ -3,15 +3,13 @@
         <div class="card p-3">
             <form id="filter">
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="row">
                             <a class="btn btn-primary text-white" href="#" onclick="openModal()"><i
                                         class="fa fa-plus"></i> Document</a>
-                            <a class="btn ml-3" href="#" onclick="openModal()"><i
-                                    class="fa fa-plus"></i> Category</a>
                         </div>
                     </div>
-                    <div class="col-md-5 my-auto">
+                    <div class="col-md-6 my-auto">
                         <div class="form-group mt-2">
                             <input class="form-control" id="titleFilter" name="title" type="text" placeholder="Title">
                         </div>
@@ -28,28 +26,47 @@
 <div class="row">
     <div class="col">
         <div class="card p-3">
-            <p id="text">Showing <span id="partial"></span> of <span id="total"></span></p>
-            <table class="table table-bordered table-striped" id="documentsTable" width="100%" cellspacing="0">
-                <thead>
-                <tr>
-                    <th class="text-center"></th>
-                    <th class="text-center">Description</th>
-                    <th class="text-center">Actions</th>
-                </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+            <div class="row">
+                <div class="col">
+                    <ul class="nav nav-tabs nav-justified">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#all" onclick="selectCategory(0)">All</a>
+                        </li>
+                        <?php foreach ($categories as $category): ?>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#all"
+                                   onclick="selectCategory(<?= $category->getId() ?>)"><?= $category->getNameCategory() ?></a>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            </div>
+            <div class="row mt-5">
+                <div class="col">
+                    <p id="text">Showing <span id="partial"></span> of <span id="total"></span></p>
+                    <table class="table table-bordered table-striped" id="documentsTable" width="100%" cellspacing="0">
+                        <thead>
+                        <tr>
+                            <th class="text-center"></th>
+                            <th class="text-center">Description</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Modal Cadastro-->
+<!------------------------- Modal Cadastro-------------------------------------->
 <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="subscriptionModal"
      aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Document registration</h5>
+                <h5 class="modal-title">Document Registration</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -72,11 +89,12 @@
                     </div>
                     <div class="row">
                         <div class="col-md-6 mt-1">
-                            <label for="type">Type</label>
+                            <label for="type">Category</label>
                             <select id="type" name="type" class="form-control">
-                                <option value="0">Selecione</option>
-                                <option value=""></option>
-                                <option value=""></option>
+                                <option value="0">Select Category</option>
+                                <?php foreach ($categories as $category): ?>
+                                    <option value="<?= $category->getId() ?>"><?= $category->getNameCategory() ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="col-md-6 mt-4">
@@ -99,11 +117,12 @@
                         <button type="submit" class="btn btn-primary">Save Document</button>
                     </div>
                 </div>
-                <div style="display: none" id="message" class="alert alert-danger" role="alert"></div>
+                <div style="display: none" id="messageDocument" class="alert alert-danger" role="alert"></div>
             </form>
         </div>
     </div>
 </div>
+
 
 <script src="<?= BASEURL ?>assets/js/plugins/tinymce/jquery.tinymce.min.js"></script>
 <script src="<?= BASEURL ?>assets/js/plugins/tinymce/tinymce.min.js"></script>
@@ -129,6 +148,7 @@
     var partial = 0;
     var total = 1;
     var title = 0;
+    var type = 0;
 
     function openModal() {
         $('#modal').modal('show');
@@ -136,12 +156,10 @@
         document.getElementById('addDocument').reset();
     }
 
-    const formAdd = document.getElementById('addDocument');
-    const divMessage = document.getElementById('message');
+    const formAddDocument = document.getElementById('addDocument');
+    const divMessageDocument = document.getElementById('messageDocument');
 
-    formAdd.addEventListener('submit', e => {
-        var teste = document.getElementById('projectFile');
-        console.log(teste);
+    formAddDocument.addEventListener('submit', e => {
         e.preventDefault();
         showLoading();
         let method = 'POST';
@@ -152,19 +170,19 @@
             headers: {
                 'Accept': 'application/json',
             },
-            body: new FormData(formAdd)
+            body: new FormData(formAddDocument)
         }).then(response => {
             closeLoading();
-            divMessage.classList.add("alert-danger");
-            divMessage.classList.remove("alert-success");
+            divMessageDocument.classList.add("alert-danger");
+            divMessageDocument.classList.remove("alert-success");
             $('#save').removeClass('disabled');
             response.json().then(json => {
-                divMessage.textContent = json.message;
-                divMessage.style.display = 'block';
+                divMessageDocument.textContent = json.message;
+                divMessageDocument.style.display = 'block';
                 if (response.status === 201) {
-                    divMessage.classList.add("alert-success");
-                    divMessage.classList.remove("alert-danger");
-                    formAdd.reset();
+                    divMessageDocument.classList.add("alert-success");
+                    divMessageDocument.classList.remove("alert-danger");
+                    formAddDocument.reset();
                     setTimeout(function () {
                         location.reload();
                     }, 1500);
@@ -250,29 +268,35 @@
         location.reload();
     }
 
-    function generateTable() {
-        if (total > partial) {
-            $('#loader').show();
-            fetch(`<?= BASEURL ?>documents/api/?index=${index}&title=${title}`, {
-                method: "GET",
-                credentials: 'same-origin',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            }).then(response => {
-                response.json().then(json => {
-                    $('#loader').hide();
-                    $('#total').text(json.total);
-                    $('#partial').text(json.partial);
-                    total = json.total;
-                    partial = json.partial;
-                    let options = json.message.map(generateDocumentsTable);
-                    $("#documentsTable tbody").append(options);
+    function selectCategory(id) {
+        index = 0;
+        type = id;
+        $("#documentsTable tbody").empty();
+        generateTable();
+    }
 
-                });
+    function generateTable() {
+
+        $('#loader').show();
+        fetch(`<?= BASEURL ?>documents/api/?index=${index}&title=${title}&type=${type}`, {
+            method: "GET",
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => {
+            response.json().then(json => {
+                $('#loader').hide();
+                $('#total').text(json.total);
+                $('#partial').text(json.partial);
+                total = json.total;
+                partial = json.partial;
+                let options = json.message.map(generateDocumentsTable);
+                $("#documentsTable tbody").append(options);
+
             });
-        }
+        });
     }
 
     $(document).ready(function () {

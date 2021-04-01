@@ -33,11 +33,11 @@
                     </a>
                 </li>
                 <?php if ($user->getType() == 1): ?>
-                <li <?= in_array('transactions', $menuActive) ? 'class="active"' : '' ?>>
-                    <a href="<?= BASEURL ?>transactions">
-                        <i class="fa fa-money-bill-wave"></i> <b>Transactions</b>
-                    </a>
-                </li>
+                    <li <?= in_array('transactions', $menuActive) ? 'class="active"' : '' ?>>
+                        <a href="<?= BASEURL ?>transactions">
+                            <i class="fa fa-money-bill-wave"></i> <b>Transactions</b>
+                        </a>
+                    </li>
                 <?php endif; ?>
                 <li <?= in_array('deals', $menuActive) ? 'class="active"' : '' ?>>
                     <a href="<?= BASEURL ?>deals">
@@ -54,11 +54,38 @@
                         <i class="fa fa-users"></i> <b>Users</b>
                     </a>
                 </li>
+                <?php if ($user->getType() != 1): ?>
+                    <li <?= in_array('documents', $menuActive) ? 'class="active"' : '' ?>>
+                        <a href="<?= BASEURL ?>documents">
+                            <i class="fa fa-file"></i> <b>Documents</b>
+                        </a>
+                    </li>
+                <?php endif; ?>
+                <?php if ($user->getType() == 1): ?>
                 <li <?= in_array('documents', $menuActive) ? 'class="active"' : '' ?>>
-                    <a href="<?= BASEURL ?>documents">
-                        <i class="fa fa-file"></i> <b>Documents</b>
+                    <a data-toggle="collapse" href="#maintenance"
+                       aria-expanded="<?= isset($subMenu) && $subMenu == 'maintenance' ? 'true' : 'false' ?>"
+                       class="<?= isset($subMenu) && $subMenu == 'maintenance' ? 'subMenuActive' : '' ?>">
+                        <i class="fa fa-file"></i>
+                        <p><b>Documents</b><b class="caret mt-2"></b></p>
                     </a>
+                    <div class="collapse pl-3 <?= isset($subMenu) && $subMenu == 'maintenance' ? 'show' : '' ?>"
+                         id="maintenance">
+                        <ul class="nav">
+                            <li class="<?= $section == 'managementRecords' ? 'active' : '' ?>">
+                                <a href="<?= BASEURL ?>documents/category">
+                                    <i class="fa fa-plus"></i> Category
+                                </a>
+                            </li>
+                            <li class="<?= $section == 'managementCommunicated' ? 'active' : '' ?>">
+                                <a href="<?= BASEURL ?>documents">
+                                    <i class="fa fa-pencil"></i> New
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
+                <?php endif; ?>
                 <li <?= in_array('messages', $menuActive) ? 'class="active"' : '' ?>>
                     <a href="<?= BASEURL ?>messages">
                         <i class="fa fa-envelope"></i> <b>Messages</b>
@@ -147,7 +174,7 @@
                                         <select id="dealId" name="dealId" class="form-control">
                                             <option value="0">Select lead</option>
                                             <?php foreach ($deals as $deal): ?>
-                                            <option value="<?= $deal->getId() ?>"><?= $deal->getName() ?></option>
+                                                <option value="<?= $deal->getId() ?>"><?= $deal->getName() ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -155,32 +182,38 @@
                                 <div class="row">
                                     <div class="col">
                                         <label for="activity">Activity</label>
-                                        <input name="activity" id="activity" placeholder="Activity" class="form-control mb-1">
+                                        <input name="activity" id="activity" placeholder="Activity"
+                                               class="form-control mb-1">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col">
                                         <div class="btn-group btn-group-toggle" data-toggle="buttons">
                                             <label class="btn btn-white active" title="Call">
-                                                <input type="radio" name="options" id="hatchback" autocomplete="off" value="2"
-                                                       checked >
+                                                <input type="radio" name="options" id="hatchback" autocomplete="off"
+                                                       value="2"
+                                                       checked>
                                                 <i class="fa fa-phone text-gray"></i>
                                             </label>
                                             <label class="btn btn-white" title="Meeting">
-                                                <input type="radio" name="options" id="sedan" autocomplete="off" value="3">
-                                                <i class="fa fa-users text-gray" ></i>
+                                                <input type="radio" name="options" id="sedan" autocomplete="off"
+                                                       value="3">
+                                                <i class="fa fa-users text-gray"></i>
                                             </label>
                                             <label class="btn btn-white" title="Email">
-                                                <input type="radio" name="options" id="suv" autocomplete="off" value="4">
-                                                <i class="fa fa-paper-plane text-gray" ></i>
+                                                <input type="radio" name="options" id="suv" autocomplete="off"
+                                                       value="4">
+                                                <i class="fa fa-paper-plane text-gray"></i>
                                             </label>
                                             <label class="btn btn-white" title="Launch">
-                                                <input type="radio" name="options" id="suv" autocomplete="off" value="5">
-                                                <i class="fa fa-utensils text-gray" ></i>
+                                                <input type="radio" name="options" id="suv" autocomplete="off"
+                                                       value="5">
+                                                <i class="fa fa-utensils text-gray"></i>
                                             </label>
                                             <label class="btn btn-white" title="Task">
-                                                <input type="radio" name="options" id="suv" autocomplete="off" value="6">
-                                                <i class="fa fa-clock text-gray" ></i>
+                                                <input type="radio" name="options" id="suv" autocomplete="off"
+                                                       value="6">
+                                                <i class="fa fa-clock text-gray"></i>
                                             </label>
                                         </div>
                                     </div>
@@ -197,13 +230,13 @@
                                                class="form-control mb-1">
                                     </div>
                                 </div>
-<!--                                <div class="row">-->
-<!--                                    <div class="col">-->
-<!--                                        <label for="description">Description</label>-->
-<!--                                        <textarea name="description" id="description" placeholder="Description"-->
-<!--                                                  class="form-control mb-1"></textarea>-->
-<!--                                    </div>-->
-<!--                                </div>-->
+                                <!--                                <div class="row">-->
+                                <!--                                    <div class="col">-->
+                                <!--                                        <label for="description">Description</label>-->
+                                <!--                                        <textarea name="description" id="description" placeholder="Description"-->
+                                <!--                                                  class="form-control mb-1"></textarea>-->
+                                <!--                                    </div>-->
+                                <!--                                </div>-->
                                 <input name="status" id="status" type="hidden" value="1">
                                 <div class="row">
                                     <div class="col text-right">

@@ -32,6 +32,12 @@ class Document
      */
     private string $documentFile;
 
+    /**
+     * @ManyToOne(targetEntity="DocumentCategory")
+     * @JoinColumn(name="type", referencedColumnName="id")
+     */
+    private DocumentCategory $type;
+
     
     public function getId(): int
     {
@@ -68,6 +74,17 @@ class Document
     public function setTitle(string $title): Document
     {
         $this->title = $title;
+        return $this;
+    }
+
+    public function getType(): DocumentCategory
+    {
+        return $this->type;
+    }
+
+    public function setType(DocumentCategory $type): Document
+    {
+        $this->type = $type;
         return $this;
     }
 

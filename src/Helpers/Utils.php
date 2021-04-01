@@ -103,7 +103,7 @@ class Utils
 
     public static function saveMoney($value)
     {
-        $money = str_replace('$ ', '', $value);
+        $money = str_replace('$', '', $value);
         $money = str_replace('.', '', $money);
         $string = str_replace(',', '.', $money);
         $float = floatval($string);

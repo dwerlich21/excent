@@ -203,7 +203,6 @@
         let withdrawals = '';
         if (transaction.withdrawals != 0) withdrawals = maskMoneyTable(transaction.withdrawals);
         let actions = '';
-        actions += `<i class="fa fa-pencil text-info" title="Edit" onclick="openModalEdit(${transaction.id})"></i> `
         actions += `<i class="fa fa-times text-danger ml-2" title="Delete" onclick="deleteTransaction(${transaction.id})"></i> `;
         actions = `<td class="text-center">${actions} </td>`;
         return `<tr>
@@ -264,32 +263,6 @@
             }
         });
     });
-
-    function openModalEdit(id) {
-
-        document.getElementById('addTransaction').reset();
-        document.getElementById('transactionId').value = id;
-        $('#modal').modal('show');
-        $('#transaction').hide();
-        if (id > 0) {
-            showLoading();
-            fetch(`<?= BASEURL ?>transactions/api/${id}`, {
-                method: "GET",
-                credentials: 'same-origin',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            }).then(response => {
-                response.json().then(json => {
-                    json = json.message[0];
-                    closeLoading();
-                    document.getElementById('valueTransaction').value = maskMoneyTable(json.value);
-                    document.getElementById('userTransaction').value = json.userId;
-                });
-            });
-        }
-    }
 
     function maskMoneyTable(value) {
         var money = parseFloat(value);
