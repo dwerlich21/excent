@@ -7,6 +7,8 @@ use App\Helpers\Validator;
 use App\Models\Entities\Deal;
 use App\Models\Entities\Document;
 use App\Models\Entities\DocumentCategory;
+use App\Models\Entities\DocumentDestiny;
+use App\Models\Entities\User;
 use \Psr\Http\Message\ResponseInterface as Response;
 use \Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -18,7 +20,7 @@ class DocumentController extends Controller
         $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId(), 'type' => 0], ['name' => 'asc']);
         $categories = $this->em->getRepository(DocumentCategory::class)->findBy([], ['nameCategory' => 'asc']);
         return $this->renderer->render($response, 'default.phtml', ['page' => 'documents/index.phtml', 'menuActive' => ['documents'],
-            'user' => $user, 'deals' => $deals, 'categories' => $categories]);
+            'section' => ['DocumentsSubmit'], 'subMenu' => ['documentsGroup'], 'user' => $user, 'deals' => $deals, 'categories' => $categories]);
     }
 
     public function category(Request $request, Response $response)
@@ -29,13 +31,22 @@ class DocumentController extends Controller
             'user' => $user, 'deals' => $deals]);
     }
 
+    public function received(Request $request, Response $response)
+    {
+        $user = $this->getLogged();
+        $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId(), 'type' => 0], ['name' => 'asc']);
+        $categories = $this->em->getRepository(DocumentCategory::class)->findBy([], ['nameCategory' => 'asc']);
+        return $this->renderer->render($response, 'default.phtml', ['page' => 'documents/received.phtml', 'menuActive' => ['documents'],
+            'section' => ['DocumentsSubmit'], 'subMenu' => ['documentsGroup'], 'user' => $user, 'deals' => $deals, 'categories' => $categories]);
+    }
+
     private function saveDocumentFile($files, Document $document): Document
     {
         $folder = UPLOAD_FOLDER;
         $documentFile = $files['projectFile'];
-        if ($documentFile && $documentFile->getDealFilename()) {
+        if ($documentFile && $documentFile->getClientFilename()) {
             $time = time();
-            $extension = explode('.', $documentFile->getDealFilename());
+            $extension = explode('.', $documentFile->getClientFilename());
             $extension = end($extension);
             $target = "{$folder}{$time}documentFile.{$extension}";
             $documentFile->moveTo($target);
@@ -48,7 +59,8 @@ class DocumentController extends Controller
     public function saveDocument(Request $request, Response $response)
     {
         try {
-            $this->getLogged();
+            $user = $this->getLogged();
+            $date = date('Y-m-d H:i');
             $this->em->beginTransaction();
             $data = (array)$request->getParams();
             $files = $request->getUploadedFiles();
@@ -62,9 +74,20 @@ class DocumentController extends Controller
             $document = $this->saveDocumentFile($files, $document);
             $document->setTitle($data['title'])
                 ->setType($this->em->getReference(DocumentCategory::class, $data['type']))
+                ->setResponsible($user)
+                ->setCreated(\DateTime::createFromFormat('Y-m-d H:i', $date))
                 ->setDescription($data['description']);
             $this->em->getRepository(Document::class)->save($document);
             $this->em->commit();
+            $destinations = $this->em->getRepository(User::class)->findBy(['type' => $data['destiny']]);
+            $oldDocument = $this->em->getRepository(Document::class)->findOneBy(['responsible' => $user->getId()], ['id' => 'desc']);
+            foreach ($destinations as $destiny):
+                $documentDestiny = new DocumentDestiny;
+                $documentDestiny->setDocument($oldDocument)
+                    ->setStatus(1)
+                    ->setDestiny($destiny);
+                $this->em->getRepository(DocumentDestiny::class)->save($documentDestiny);
+            endforeach;
             return $response->withJson([
                 'status' => 'ok',
                 'message' => 'Successfully Registered Document!',

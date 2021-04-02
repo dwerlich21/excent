@@ -88,7 +88,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-6 mt-1">
+                        <div class="col-md-4 mt-1">
                             <label for="type">Category</label>
                             <select id="type" name="type" class="form-control">
                                 <option value="0">Select Category</option>
@@ -97,7 +97,21 @@
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                        <div class="col-md-6 mt-4">
+                        <?php if ($user->getType() == 1 || $user->getTtpe() == 2): ?>
+                        <div class="col-md-4 mt-1">
+                            <label for="destiny">Destiny</label>
+                            <select id="destiny" name="destiny" class="form-control">
+                                <option value="0">Select Destiny</option>
+                                <?php if ($user->getType() == 1): ?>
+                                <option value="2">Admin</option>
+                                <?php endif; ?>
+                                <option value="3">Manager</option>
+                                <option value="4">Advisor</option>
+                                <option value="5">Human Resources</option>
+                            </select>
+                        </div>
+                        <?php endif; ?>
+                        <div class="col-md-4 mt-4">
                             <div class="form-group mt-3">
                                 <span class="fileselector">
                                     <label class="btn btn-block btn-danger text-white" style="margin-top: 5px"
@@ -242,30 +256,18 @@
     function generateDocumentsTable(document) {
         let actions = '';
         actions += `<i class="fa fa-pencil text-info" title="Edit" onclick="openModalEdit(${document.id})"></i> `
-        actions += `<i class="fa fa-times text-danger ml-2" title="Delete" onclick="deleteDoc(${document.id})"></i> `;
         actions = `<td class="text-center">${actions} </td>`;
         return `<tr>
                     <td class="text-center px-4"><a href="${documentView(document.documentFile)}" target="_blank"><i class="fa fa-3x fa-file-pdf-o"></i><a></td>
-                    <td ><b>${document.title}</b><br>${document.description}</td>
+                    <td ><b>${document.title}</b><br>${document.description}
+                    <div class="float-right" style="font-size: 12px"><i class="fa fa-calendar py-2"></i> ${document.date}
+                            <i class="fa fa-clock ml-2 py-2"> </i> ${document.time}</div></td>
                     ${actions}
                 </tr>`;
     }
 
     function documentView(id) {
         return `<?= BASEURL ?>uploads/${id}`;
-    }
-
-    function deleteDoc(id) {
-        $('#loader').show();
-        fetch(`<?= BASEURL ?>documents/delete/api/${id}`, {
-            method: "GET",
-            credentials: 'same-origin',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        });
-        location.reload();
     }
 
     function selectCategory(id) {
@@ -278,7 +280,7 @@
     function generateTable() {
 
         $('#loader').show();
-        fetch(`<?= BASEURL ?>documents/api/?index=${index}&title=${title}&type=${type}`, {
+        fetch(`<?= BASEURL ?>documents/sent/api/?index=${index}&title=${title}&type=${type}`, {
             method: "GET",
             credentials: 'same-origin',
             headers: {

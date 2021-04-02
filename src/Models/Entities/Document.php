@@ -28,6 +28,11 @@ class Document
     private string $description;
 
     /**
+     * @Column(type="datetime")
+     */
+    private \DateTime $created;
+
+    /**
      * @Column(type="string")
      */
     private string $documentFile;
@@ -37,6 +42,12 @@ class Document
      * @JoinColumn(name="type", referencedColumnName="id")
      */
     private DocumentCategory $type;
+
+    /**
+     * @ManyToOne(targetEntity="User")
+     * @JoinColumn(name="responsible", referencedColumnName="id")
+     */
+    private User $responsible;
 
     
     public function getId(): int
@@ -85,6 +96,28 @@ class Document
     public function setType(DocumentCategory $type): Document
     {
         $this->type = $type;
+        return $this;
+    }
+
+    public function getResponsible(): User
+    {
+        return $this->responsible;
+    }
+
+    public function setResponsible(User $responsible): Document
+    {
+        $this->responsible = $responsible;
+        return $this;
+    }
+
+    public function getCreated(): \DateTime
+    {
+        return $this->created;
+    }
+
+    public function setCreated(\DateTime $created): Document
+    {
+        $this->created = $created;
         return $this;
     }
 

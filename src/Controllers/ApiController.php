@@ -7,6 +7,7 @@ use App\Models\Entities\ActivityDeal;
 use App\Models\Entities\Deal;
 use App\Models\Entities\Document;
 use App\Models\Entities\DocumentCategory;
+use App\Models\Entities\DocumentDestiny;
 use App\Models\Entities\Message;
 use App\Models\Entities\Transaction;
 use App\Models\Entities\User;
@@ -120,16 +121,38 @@ class ApiController extends Controller
             ->withHeader('Content-type', 'application/json');
     }
 
-
-    public function documentsTable(Request $request, Response $response)
+    public function documentsSentTable(Request $request, Response $response)
     {
-        $this->getLogged(true);
+        $user = $this->getLogged(true);
+        $resposible = $user->getId();
         $id = $request->getAttribute('route')->getArgument('id');
         $index = $request->getQueryParam('index');
         $title = $request->getQueryParam('title');
         $type = $request->getQueryParam('type');
-        $documents = $this->em->getRepository(Document::class)->list($id, $title, $type, 20, $index * 20);
-        $total = $this->em->getRepository(Document::class)->listTotal($id, $title, $type)['total'];
+        $documents = $this->em->getRepository(Document::class)->list($id, $resposible, $title, $type, 20, $index * 20);
+        $total = $this->em->getRepository(Document::class)->listTotal($id, $resposible, $title, $type)['total'];
+        $partial = ($index * 20) + sizeof($documents);
+        $partial = $partial <= $total ? $partial : $total;
+
+        return $response->withJson([
+            'status' => 'ok',
+            'message' => $documents,
+            'total' => (int)$total,
+            'partial' => $partial,
+        ], 200)
+            ->withHeader('Content-type', 'application/json');
+    }
+
+    public function documentsReceivedTable(Request $request, Response $response)
+    {
+        $user = $this->getLogged(true);
+        $destiny = $user->getId();
+        $id = $request->getAttribute('route')->getArgument('id');
+        $index = $request->getQueryParam('index');
+        $title = $request->getQueryParam('title');
+        $type = $request->getQueryParam('type');
+        $documents = $this->em->getRepository(DocumentDestiny::class)->list($id, $destiny, $title, $type, 20, $index * 20);
+        $total = $this->em->getRepository(DocumentDestiny::class)->listTotal($id, $destiny, $title, $type)['total'];
         $partial = ($index * 20) + sizeof($documents);
         $partial = $partial <= $total ? $partial : $total;
 
@@ -160,14 +183,6 @@ class ApiController extends Controller
             ->withHeader('Content-type', 'application/json');
     }
 
-    public function documentDelete(Request $request, Response $response)
-    {
-        $this->getLogged(true);
-        $id = $request->getAttribute('route')->getArgument('id');
-        $this->em->getRepository(Document::class)->documentDelete($id);
-        die();
-    }
-
     public function categoryDelete(Request $request, Response $response)
     {
         $this->getLogged(true);
@@ -176,165 +191,197 @@ class ApiController extends Controller
         die();
     }
 
-    public function messagesTable(Request $request, Response $response)
+    public function updateStatus(Request $request, Response $response)
     {
-        $this->getLogged(true);
-        $id = $request->getAttribute('route')->getArgument('id');
-        $index = $request->getQueryParam('index');
-        $title = $request->getQueryParam('title');
-        $active = $request->getQueryParam('active');
-        $messages = $this->em->getRepository(Message::class)->list($id, $title, $active, 20, $index * 20);
-        $total = $this->em->getRepository(Message::class)->listTotal()['total'];
-        $partial = ($index * 20) + sizeof($messages);
-        $partial = $partial <= $total ? $partial : $total;
+        try {
+            $id = $request->getAttribute('route')->getArgument('id');
 
-        return $response->withJson([
-            'status' => 'ok',
-            'message' => $messages,
-            'total' => (int)$total,
-            'partial' => $partial,
-        ], 200)
-            ->withHeader('Content-type', 'application/json');
+            $destiny = $this->em->getRepository(DocumentDestiny::class)->find($id);
+            $destiny->setStatus(0);
+            $this->em->getRepository(DocumentDestiny::class)->save($destiny);
+            return $response->withJson([
+                'status' => 'ok',
+                'message' => 'Successfully Update Status!',
+            ], 201)
+                ->withHeader('Content-type', 'application/json');
+        } catch (\Exception $e) {
+            return $response->withJson(['status' => 'error',
+                'message' => $e->getMessage(),])->withStatus(500);
+        }
     }
 
-    public function messageDelete(Request $request, Response $response)
-    {
-        $this->getLogged(true);
-        $id = $request->getAttribute('route')->getArgument('id');
-        $this->em->getRepository(Message::class)->messageDelete($id);
-        die();
-    }
 
-    public function messagesDashboard(Request $request, Response $response)
-    {
-        $this->getLogged(true);
-        $id = $request->getAttribute('route')->getArgument('id');
-        $index = $request->getQueryParam('index');
-        $title = $request->getQueryParam('title');
-        $active = $request->getQueryParam('active');
-        $messages = $this->em->getRepository(Message::class)->listDashboard($id, $title, $active, 20, $index * 20);
 
-        return $response->withJson([
-            'status' => 'ok',
-            'message' => $messages,
-        ], 200)
-            ->withHeader('Content-type', 'application/json');
-    }
+public
+function messagesTable(Request $request, Response $response)
+{
+    $this->getLogged(true);
+    $id = $request->getAttribute('route')->getArgument('id');
+    $index = $request->getQueryParam('index');
+    $title = $request->getQueryParam('title');
+    $active = $request->getQueryParam('active');
+    $messages = $this->em->getRepository(Message::class)->list($id, $title, $active, 20, $index * 20);
+    $total = $this->em->getRepository(Message::class)->listTotal()['total'];
+    $partial = ($index * 20) + sizeof($messages);
+    $partial = $partial <= $total ? $partial : $total;
 
-    public function tasksDashboard(Request $request, Response $response)
-    {
-        $user = $this->getLogged(true);
-        $id = $request->getAttribute('route')->getArgument('id');
-        $index = $request->getQueryParam('index');
-        $today = date('Y-m-d');
-        $tasks = $this->em->getRepository(ActivityDeal::class)->listDashboardNotNull($id, $user, $today, 20, $index * 20);
-        $tasksNull = $this->em->getRepository(ActivityDeal::class)->listDashboardNull($id, $user, $today, 20, $index * 20);
-        $total = array_merge($tasks, $tasksNull);
+    return $response->withJson([
+        'status' => 'ok',
+        'message' => $messages,
+        'total' => (int)$total,
+        'partial' => $partial,
+    ], 200)
+        ->withHeader('Content-type', 'application/json');
+}
 
-        return $response->withJson([
-            'status' => 'ok',
-            'message' => $total,
-        ], 200)
-            ->withHeader('Content-type', 'application/json');
-    }
+public
+function messageDelete(Request $request, Response $response)
+{
+    $this->getLogged(true);
+    $id = $request->getAttribute('route')->getArgument('id');
+    $this->em->getRepository(Message::class)->messageDelete($id);
+    die();
+}
 
-    public function leadsTable(Request $request, Response $response)
-    {
-        $this->getLogged(true);
-        $id = $request->getAttribute('route')->getArgument('id');
-        $index = $request->getQueryParam('index');
-        $name = $request->getQueryParam('name');
-        $country = $request->getQueryParam('country');
-        $messages = $this->em->getRepository(Deal::class)->listLead($id, $name, $country, 20, $index * 20);
-        $total = $this->em->getRepository(Deal::class)->listTotalLead($id, $name, $country)['total'];
-        $partial = ($index * 20) + sizeof($messages);
-        $partial = $partial <= $total ? $partial : $total;
+public
+function messagesDashboard(Request $request, Response $response)
+{
+    $this->getLogged(true);
+    $id = $request->getAttribute('route')->getArgument('id');
+    $index = $request->getQueryParam('index');
+    $title = $request->getQueryParam('title');
+    $active = $request->getQueryParam('active');
+    $messages = $this->em->getRepository(Message::class)->listDashboard($id, $title, $active, 20, $index * 20);
 
-        return $response->withJson([
-            'status' => 'ok',
-            'message' => $messages,
-            'total' => (int)$total,
-            'partial' => $partial,
-        ], 200)
-            ->withHeader('Content-type', 'application/json');
-    }
+    return $response->withJson([
+        'status' => 'ok',
+        'message' => $messages,
+    ], 200)
+        ->withHeader('Content-type', 'application/json');
+}
 
-    public function leadDelete(Request $request, Response $response)
-    {
-        $this->getLogged(true);
-        $id = $request->getAttribute('route')->getArgument('id');
-        $this->em->getRepository(Deal::class)->dealDelete($id);
-        die();
-    }
+public
+function tasksDashboard(Request $request, Response $response)
+{
+    $user = $this->getLogged(true);
+    $id = $request->getAttribute('route')->getArgument('id');
+    $index = $request->getQueryParam('index');
+    $today = date('Y-m-d');
+    $tasks = $this->em->getRepository(ActivityDeal::class)->listDashboardNotNull($id, $user, $today, 20, $index * 20);
+    $tasksNull = $this->em->getRepository(ActivityDeal::class)->listDashboardNull($id, $user, $today, 20, $index * 20);
+    $total = array_merge($tasks, $tasksNull);
 
-    public function transactionsDelete(Request $request, Response $response)
-    {
-        $this->getLogged(true);
-        $id = $request->getAttribute('route')->getArgument('id');
-        $this->em->getRepository(Transaction::class)->transactionsDelete($id);
-        die();
-    }
+    return $response->withJson([
+        'status' => 'ok',
+        'message' => $total,
+    ], 200)
+        ->withHeader('Content-type', 'application/json');
+}
 
-    public function transactionssTable(Request $request, Response $response)
-    {
-        $this->getLogged(true);
-        $id = $request->getAttribute('route')->getArgument('id');
-        $index = $request->getQueryParam('index');
-        $user = $request->getQueryParam('user');
-        $country = $request->getQueryParam('country');
-        $transactions = $this->em->getRepository(Transaction::class)->list($id, $user, $country, 20, $index * 20);
-        $total = $this->em->getRepository(Transaction::class)->listTotal($id, $user, $country)['total'];
-        $partial = ($index * 20) + sizeof($transactions);
-        $partial = $partial <= $total ? $partial : $total;
+public
+function leadsTable(Request $request, Response $response)
+{
+    $this->getLogged(true);
+    $id = $request->getAttribute('route')->getArgument('id');
+    $index = $request->getQueryParam('index');
+    $name = $request->getQueryParam('name');
+    $country = $request->getQueryParam('country');
+    $messages = $this->em->getRepository(Deal::class)->listLead($id, $name, $country, 20, $index * 20);
+    $total = $this->em->getRepository(Deal::class)->listTotalLead($id, $name, $country)['total'];
+    $partial = ($index * 20) + sizeof($messages);
+    $partial = $partial <= $total ? $partial : $total;
 
-        return $response->withJson([
-            'status' => 'ok',
-            'message' => $transactions,
-            'total' => (int)$total,
-            'partial' => $partial,
-        ], 200)
-            ->withHeader('Content-type', 'application/json');
-    }
+    return $response->withJson([
+        'status' => 'ok',
+        'message' => $messages,
+        'total' => (int)$total,
+        'partial' => $partial,
+    ], 200)
+        ->withHeader('Content-type', 'application/json');
+}
 
-    public function rankingAdvisors(Request $request, Response $response)
-    {
-        $this->getLogged(true);
-        $id = $request->getAttribute('route')->getArgument('id');
-        $index = $request->getQueryParam('index');
-        $transactions = $this->em->getRepository(Transaction::class)->rankingAdvisors(20, $index * 20);
+public
+function leadDelete(Request $request, Response $response)
+{
+    $this->getLogged(true);
+    $id = $request->getAttribute('route')->getArgument('id');
+    $this->em->getRepository(Deal::class)->dealDelete($id);
+    die();
+}
 
-        return $response->withJson([
-            'status' => 'ok',
-            'message' => $transactions,
-        ], 200)
-            ->withHeader('Content-type', 'application/json');
-    }
+public
+function transactionsDelete(Request $request, Response $response)
+{
+    $this->getLogged(true);
+    $id = $request->getAttribute('route')->getArgument('id');
+    $this->em->getRepository(Transaction::class)->transactionsDelete($id);
+    die();
+}
 
-    public function rankingManagers(Request $request, Response $response)
-    {
-        $this->getLogged(true);
-        $id = $request->getAttribute('route')->getArgument('id');
-        $index = $request->getQueryParam('index');
-        $transactions = $this->em->getRepository(Transaction::class)->rankingManagers(20, $index * 20);
+public
+function transactionssTable(Request $request, Response $response)
+{
+    $this->getLogged(true);
+    $id = $request->getAttribute('route')->getArgument('id');
+    $index = $request->getQueryParam('index');
+    $user = $request->getQueryParam('user');
+    $country = $request->getQueryParam('country');
+    $transactions = $this->em->getRepository(Transaction::class)->list($id, $user, $country, 20, $index * 20);
+    $total = $this->em->getRepository(Transaction::class)->listTotal($id, $user, $country)['total'];
+    $partial = ($index * 20) + sizeof($transactions);
+    $partial = $partial <= $total ? $partial : $total;
 
-        return $response->withJson([
-            'status' => 'ok',
-            'message' => $transactions,
-        ], 200)
-            ->withHeader('Content-type', 'application/json');
-    }
+    return $response->withJson([
+        'status' => 'ok',
+        'message' => $transactions,
+        'total' => (int)$total,
+        'partial' => $partial,
+    ], 200)
+        ->withHeader('Content-type', 'application/json');
+}
 
-    public function rankingManagersGroup(Request $request, Response $response)
-    {
-        $user = $this->getLogged(true);
-        $id = $user->getId();
-        $index = $request->getQueryParam('index');
-        $transactions = $this->em->getRepository(Transaction::class)->rankingManagersGroup($id, 20, $index * 20);
+public
+function rankingAdvisors(Request $request, Response $response)
+{
+    $this->getLogged(true);
+    $id = $request->getAttribute('route')->getArgument('id');
+    $index = $request->getQueryParam('index');
+    $transactions = $this->em->getRepository(Transaction::class)->rankingAdvisors(20, $index * 20);
 
-        return $response->withJson([
-            'status' => 'ok',
-            'message' => $transactions,
-        ], 200)
-            ->withHeader('Content-type', 'application/json');
-    }
+    return $response->withJson([
+        'status' => 'ok',
+        'message' => $transactions,
+    ], 200)
+        ->withHeader('Content-type', 'application/json');
+}
+
+public
+function rankingManagers(Request $request, Response $response)
+{
+    $this->getLogged(true);
+    $id = $request->getAttribute('route')->getArgument('id');
+    $index = $request->getQueryParam('index');
+    $transactions = $this->em->getRepository(Transaction::class)->rankingManagers(20, $index * 20);
+
+    return $response->withJson([
+        'status' => 'ok',
+        'message' => $transactions,
+    ], 200)
+        ->withHeader('Content-type', 'application/json');
+}
+
+public
+function rankingManagersGroup(Request $request, Response $response)
+{
+    $user = $this->getLogged(true);
+    $id = $user->getId();
+    $index = $request->getQueryParam('index');
+    $transactions = $this->em->getRepository(Transaction::class)->rankingManagersGroup($id, 20, $index * 20);
+
+    return $response->withJson([
+        'status' => 'ok',
+        'message' => $transactions,
+    ], 200)
+        ->withHeader('Content-type', 'application/json');
+}
 }

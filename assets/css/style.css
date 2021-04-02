@@ -96,6 +96,11 @@
     font-weight: bold;
 }
 
+.active-group {
+    background-color: #005075;!important;
+    font-weight: bold;
+}
+
 label{
     padding-top: 10px !important;
 }

@@ -5,8 +5,12 @@ use \Psr\Http\Message\ServerRequestInterface as Request;
 
 $app->group('/documents', function () use ($app) {
 
-    $app->get('/', function (Request $request, Response $response) {
+    $app->get('/sent/', function (Request $request, Response $response) {
         return $this->DocumentController->document($request, $response);
+    });
+
+    $app->get('/received/', function (Request $request, Response $response) {
+        return $this->DocumentController->received($request, $response);
     });
 
     $app->get('/category/', function (Request $request, Response $response) {
@@ -25,12 +29,20 @@ $app->group('/documents', function () use ($app) {
         return $this->ApiController->documentDelete($request, $response);
     });
 
+    $app->get('/update/api/{id}/', function (Request $request, Response $response) {
+        return $this->ApiController->updateStatus($request, $response);
+    });
+
     $app->get('/category/delete/api/{id}/', function (Request $request, Response $response) {
         return $this->ApiController->categoryDelete($request, $response);
     });
 
-    $app->get('/api/[{id}/]', function (Request $request, Response $response) {
-        return $this->ApiController->documentsTable($request, $response);
+    $app->get('/sent/api/[{id}/]', function (Request $request, Response $response) {
+        return $this->ApiController->documentsSentTable($request, $response);
+    });
+
+    $app->get('/received/api/[{id}/]', function (Request $request, Response $response) {
+        return $this->ApiController->documentsReceivedTable($request, $response);
     });
 
     $app->get('/category/api/[{id}/]', function (Request $request, Response $response) {
