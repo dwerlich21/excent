@@ -19,16 +19,16 @@ class DocumentController extends Controller
         $user = $this->getLogged();
         $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId(), 'type' => 0], ['name' => 'asc']);
         $categories = $this->em->getRepository(DocumentCategory::class)->findBy([], ['nameCategory' => 'asc']);
-        return $this->renderer->render($response, 'default.phtml', ['page' => 'documents/index.phtml', 'menuActive' => ['documents'],
-            'section' => ['DocumentsSubmit'], 'subMenu' => ['documentsGroup'], 'user' => $user, 'deals' => $deals, 'categories' => $categories]);
+        return $this->renderer->render($response, 'default.phtml', ['page' => 'documents/index.phtml', 'menuActive' => 'documents',
+            'section' => 'DocumentsSubmit', 'subMenu' => 'documentsGroup', 'user' => $user, 'deals' => $deals, 'categories' => $categories]);
     }
 
     public function category(Request $request, Response $response)
     {
         $user = $this->getLogged();
         $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId(), 'type' => 0], ['name' => 'asc']);
-        return $this->renderer->render($response, 'default.phtml', ['page' => 'documents/category.phtml', 'menuActive' => ['documents'],
-            'user' => $user, 'deals' => $deals]);
+        return $this->renderer->render($response, 'default.phtml', ['page' => 'documents/category.phtml', 'menuActive' => 'documents',
+            'section' => 'DocumentsCategory', 'subMenu' => 'documentsGroup', 'user' => $user, 'deals' => $deals]);
     }
 
     public function received(Request $request, Response $response)
@@ -37,7 +37,7 @@ class DocumentController extends Controller
         $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId(), 'type' => 0], ['name' => 'asc']);
         $categories = $this->em->getRepository(DocumentCategory::class)->findBy([], ['nameCategory' => 'asc']);
         return $this->renderer->render($response, 'default.phtml', ['page' => 'documents/received.phtml', 'menuActive' => ['documents'],
-            'section' => ['DocumentsSubmit'], 'subMenu' => ['documentsGroup'], 'user' => $user, 'deals' => $deals, 'categories' => $categories]);
+            'section' => 'DocumentsReceived', 'subMenu' => 'documentsGroup', 'user' => $user, 'deals' => $deals, 'categories' => $categories]);
     }
 
     private function saveDocumentFile($files, Document $document): Document

@@ -64,10 +64,9 @@
                     </li>
                 <?php endif; ?>
                 <?php if ($user->getType() != 4): ?>
-                <li <?= in_array('documents', $menuActive) ? 'class="active-group"' : '' ?>>
-                    <a data-toggle="collapse" href="#documentsGroup"
-                       aria-expanded="<?= isset($subMenu) && $subMenu == 'documentsGroup' ? 'true' : 'false' ?>"
-                       class="<?= isset($subMenu) && $subMenu == 'documentsGroup' ? 'subMenuActive' : '' ?>">
+                <li data-toggle="collapse" href="#documentsGroup">
+                    <a
+                       aria-expanded="<?= isset($subMenu) && $subMenu == 'documentsGroup' ? 'true' : 'false' ?>">
                         <i class="fa fa-file"></i>
                         <p><b>Documents</b><b class="caret mt-2"></b></p>
                     </a>
@@ -81,7 +80,7 @@
                                 </a>
                             </li>
                             <?php endif; ?>
-                            <li class="<?= $section == 'DocumentsSubmit' ? 'active' : '' ?>">
+                            <li class="<?= $section == 'DocumentsReceived' ? 'active' : '' ?>">
                                 <a href="<?= BASEURL ?>documents/received">
                                     <i class="fa fa-laptop"></i> Received
                                 </a>

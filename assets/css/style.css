@@ -241,3 +241,7 @@ html, body {
 
     background-size: cover;
 }
+
+.active-group {
+    background: #EBECEC;!important;
+}
