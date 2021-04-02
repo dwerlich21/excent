@@ -18,6 +18,7 @@ class TransactionsController extends Controller
     public function transactions(Request $request, Response $response)
     {
         $user = $this->getLogged();
+        if ($user->getType() != 1) $this->redirect();
         $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId(), 'type' => 0], ['name' => 'asc']);
         $countries = $this->em->getRepository(Countries::class)->findBy([], ['name' => 'asc']);
         $users = $this->em->getRepository(User::class)->findBy(['type' => 4, 'active' => 1], ['name' => 'asc']);

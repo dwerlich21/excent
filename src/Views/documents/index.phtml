@@ -97,7 +97,7 @@
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                        <?php if ($user->getType() == 1 || $user->getTtpe() == 2): ?>
+                        <?php if ($user->getType() == 1 || $user->getType() == 2): ?>
                         <div class="col-md-4 mt-1">
                             <label for="destiny">Destiny</label>
                             <select id="destiny" name="destiny" class="form-control">
@@ -110,6 +110,9 @@
                                 <option value="5">Human Resources</option>
                             </select>
                         </div>
+                        <?php endif; ?>
+                        <?php if ($user->getType() == 3): ?>
+                        <input type="hidden" name="destiny" id="destiny" value="4">
                         <?php endif; ?>
                         <div class="col-md-4 mt-4">
                             <div class="form-group mt-3">
@@ -198,7 +201,7 @@
                     divMessageDocument.classList.remove("alert-danger");
                     formAddDocument.reset();
                     setTimeout(function () {
-                        location.reload();
+                        // location.reload();
                     }, 1500);
                 }
             });

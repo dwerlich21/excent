@@ -31,6 +31,11 @@ class Countries
      */
     private string $alpha3;
 
+    /**
+     * @Column(type="string")
+     */
+    private string $flag;
+
 
     public function getId(): int
     {
@@ -51,5 +56,17 @@ class Countries
     {
         return $this->alpha3;
     }
+
+    public function getFlag(): string
+    {
+        return $this->flag;
+    }
+
+    public function setFlag(string $flag): Countries
+    {
+        $this->flag = $flag;
+        return $this;
+    }
+
 
 }

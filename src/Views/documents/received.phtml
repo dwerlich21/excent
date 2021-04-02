@@ -134,7 +134,10 @@
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             }
-        })
+        });
+        index = 0;
+        $("#documentsTable tbody").empty();
+        generateTable();
     }
 
     function generateTable() {

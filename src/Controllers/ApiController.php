@@ -18,15 +18,15 @@ class ApiController extends Controller
 {
     public function usersTable(Request $request, Response $response)
     {
-        $this->getLogged(true);
+        $user = $this->getLogged(true);
+        $manager = 0;
+        if ($user->getType() == 3) $manager = $user->getId();
         $id = $request->getAttribute('route')->getArgument('id');
         $name = $request->getQueryParam('name');
-        $email = $request->getQueryParam('email');
         $type = $request->getQueryParam('type');
-        $active = $request->getQueryParam('active');
         $index = $request->getQueryParam('index');
-        $users = $this->em->getRepository(User::class)->list($id, $name, $email, $type, $active, 20, $index * 20);
-        $total = $this->em->getRepository(User::class)->listTotal($id, $name, $email, $type, $active)['total'];
+        $users = $this->em->getRepository(User::class)->list($id, $name, $manager, $type, 20, $index * 20);
+        $total = $this->em->getRepository(User::class)->listTotal($id, $name, $manager, $type)['total'];
         $partial = ($index * 20) + sizeof($users);
         $partial = $partial <= $total ? $partial : $total;
         return $response->withJson([

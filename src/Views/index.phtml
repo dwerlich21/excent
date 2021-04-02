@@ -6,6 +6,7 @@
                     <h5 class="title">Leader Board</h5>
                 </div>
             </div>
+            <?php if ($user->getType() == 1 || $user->getType() == 2 || $user->getType() == 3): ?>
             <div class="row">
                 <div class="col">
                     <ul class="nav nav-tabs nav-justified">
@@ -21,6 +22,7 @@
                     </ul>
                 </div>
             </div>
+            <?php endif; ?>
             <div class="card-body">
                 <div class="tab-content">
                     <div class="tab-pane container active" id="advisors">
@@ -237,12 +239,17 @@
         }
     }
 
+    function viewFlag(flag) {
+        let destiny = `<?= BASEURL ?>${flag}`;
+        return `<img src="${destiny}">`;
+    }
+
     function generateRankingTable(transaction) {
 
         return `<tr>
                     <td class="text-center" scope="row"></td>
                     <td class="text-center">${transaction.user}</td>
-                    <td class="text-center">${transaction.country}</td>
+                    <td class="text-center">${viewFlag(transaction.country)}</td>
                     <td class="text-center">${transaction.accounts}</td>
                     <td class="text-center">${maskMoneyTable(transaction.totalDeposit)}</td>
                     <td class="text-center">${maskMoneyTable(transaction.totalCapture)}</td>
@@ -287,20 +294,6 @@
         });
     }
 
-    function generateRankingManagersGroupTable(transaction) {
-
-        return `<tr>
-                    <td class="text-center"></td>
-                    <td class="text-center">${transaction.user}</td>
-                    <td class="text-center">${transaction.country}</td>
-                    <td class="text-center">${transaction.accounts}</td>
-                    <td class="text-center">${maskMoneyTable(transaction.totalDeposit)}</td>
-                    <td class="text-center">${maskMoneyTable(transaction.totalCapture)}</td>
-                    <td class="text-center">${maskMoneyTable(transaction.marginIn)}</td>
-                </tr>
-        `;
-    }
-
     function generateRankingManagersGroup() {
         $('#loader').show();
         fetch(`<?= BASEURL ?>dashboard/transations/managers/group/api/?index=${index}`, {
@@ -313,7 +306,7 @@
         }).then(response => {
             response.json().then(json => {
                 $('#loader').hide();
-                let options = json.message.map(generateRankingManagersGroupTable);
+                let options = json.message.map(generateRankingTable);
                 $("#managersGroupTable tbody").append(options);
             });
         });

@@ -15,6 +15,7 @@ class UserController extends Controller
     public function user(Request $request, Response $response)
     {
         $user = $this->getLogged();
+        if ($user->getType() == 4 || $user->getType() == 5) $this->redirect();
         $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId(), 'type' => 0], ['name' => 'asc']);
         $users = $this->em->getRepository(User::class)->findBy(['type' => 3], ['name' => 'asc']);
         $countries = $this->em->getRepository(Countries::class)->findBy([], ['name' => 'asc']);

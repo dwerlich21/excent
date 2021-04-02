@@ -95,7 +95,7 @@ class TransactionRepository extends EntityRepository
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
         $sql = "SELECT COUNT(transaction.id) AS accounts, SUM(transaction.withdrawals) AS totalCapture, 
                 SUM(transaction.deposit) AS totalDeposit,
-                (SUM(transaction.deposit) - SUM(transaction.withdrawals)) AS marginIn, countries.name AS country, users.name AS user                  
+                (SUM(transaction.deposit) - SUM(transaction.withdrawals)) AS marginIn, countries.flag AS country, users.name AS user                  
                 FROM transaction
                 JOIN users ON users.id = transaction.user
                 JOIN countries ON countries.id = transaction.country
@@ -114,7 +114,7 @@ class TransactionRepository extends EntityRepository
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
         $sql = "SELECT COUNT(transaction.id) AS accounts, SUM(transaction.withdrawals) AS totalCapture, 
                 SUM(transaction.deposit) AS totalDeposit,
-                (SUM(transaction.deposit) - SUM(transaction.withdrawals)) AS marginIn, countries.name AS country, users.name AS user                  
+                (SUM(transaction.deposit) - SUM(transaction.withdrawals)) AS marginIn, countries.flag AS country, users.name AS user                  
                 FROM transaction
                 JOIN users ON users.id = transaction.user
                 JOIN countries ON countries.id = transaction.country
@@ -134,7 +134,7 @@ class TransactionRepository extends EntityRepository
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
         $sql = "SELECT COUNT(transaction.id) AS accounts, SUM(transaction.withdrawals) AS totalCapture, 
                 SUM(transaction.deposit) AS totalDeposit,
-                (SUM(transaction.deposit) - SUM(transaction.withdrawals)) AS marginIn, countries.name AS country, users.name AS user                  
+                (SUM(transaction.deposit) - SUM(transaction.withdrawals)) AS marginIn, countries.flag AS country, users.name AS user                  
                 FROM transaction
                 JOIN users ON users.id = transaction.user
                 JOIN countries ON countries.id = transaction.country

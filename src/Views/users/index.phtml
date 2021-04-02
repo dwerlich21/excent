@@ -12,18 +12,23 @@
                             <input class="form-control" id="nameFilter" name="name" type="text" placeholder="Name">
                         </div>
                     </div>
+                    <?php if ($user->getType() == 1 || $user->getType() == 2): ?>
                     <div class="col-md-3 my-auto">
                         <div class="form-group mt-2">
                             <select name="type" id="typeFilter" class="form-control">
                                 <option value="0">Select Type</option>
-                                <option value="1">Admin</option>
-                                <option value="2">Manager</option>
-                                <option value="3">Advisor</option>
-                                <option value="4">Human Resources</option>
+                                <?php if ($user->getType() == 1): ?>
+                                    <option value="1">Master</option>
+                                    <option value="2">Admin</option>
+                                <?php endif;?>
+                                <option value="3">Manager</option>
+                                <option value="4">Advisor</option>
+                                <option value="5">Human Resources</option>
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-3 text-right">
+                    <?php endif;?>
+                    <div class="col text-right">
                         <button class="btn btn-danger" type="reset" onclick="resetTable()">Cancel</button>
                         <button class="btn btn-primary" type="submit">Search</button>
                     </div>
@@ -78,13 +83,16 @@
                             <input id="emailEdit" name="email" class="form-control" type="email" placeholder="Email">
                         </div>
                     </div>
+                    <?php if ($user->getType() == 1 || $user->getType() == 2): ?>
                     <div class="row">
                         <div class="col-md-6">
                             <label for="typeEdit">Type</label>
                             <select id="typeEdit" name="type" class="form-control" onchange="selectManager()">
                                 <option value="0">Select Type</option>
+                                <?php if ($user->getType() == 1): ?>
                                 <option value="1">Master</option>
                                 <option value="2">Admin</option>
+                                <?php endif;?>
                                 <option value="3">Manager</option>
                                 <option value="4">Advisor</option>
                                 <option value="5">Human Resources</option>
@@ -100,6 +108,11 @@
                             </select>
                         </div>
                     </div>
+                    <?php endif;?>
+                    <?php if ($user->getType() == 3): ?>
+                    <input type="hidden" name="manager" value="<?= $user->getId() ?>">
+                    <input type="hidden" name="type" value="4">
+                    <?php endif;?>
                     <div class="row">
                         <div class="col">
                             <label for="countryEdit">Country</label>

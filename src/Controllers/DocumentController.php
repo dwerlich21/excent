@@ -79,7 +79,8 @@ class DocumentController extends Controller
                 ->setDescription($data['description']);
             $this->em->getRepository(Document::class)->save($document);
             $this->em->commit();
-            $destinations = $this->em->getRepository(User::class)->findBy(['type' => $data['destiny']]);
+            if ($user->getType() != 3) $destinations = $this->em->getRepository(User::class)->findBy(['type' => $data['destiny']]);
+            if ($user->getType() == 3) $destinations = $this->em->getRepository(User::class)->findBy(['type' => $data['destiny'], 'manager' => $user->getId()]);
             $oldDocument = $this->em->getRepository(Document::class)->findOneBy(['responsible' => $user->getId()], ['id' => 'desc']);
             foreach ($destinations as $destiny):
                 $documentDestiny = new DocumentDestiny;

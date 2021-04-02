@@ -34,7 +34,7 @@ class UserRepository extends EntityRepository
         return $limitSql;
     }
 
-    private function generateWhere($id = 0, $name = null, $email = null, $type = null, $active = null, &$params): string
+    private function generateWhere($id = 0, $name = null, $manager = null, $type = null, &$params): string
     {
         $where = '';
         if ($id) {
@@ -45,26 +45,22 @@ class UserRepository extends EntityRepository
             $params[':name'] = "%$name%";
             $where .= " AND users.name LIKE :name";
         }
-        if ($email) {
-            $params[':email'] = "%$email%";
-            $where .= " AND users.email LIKE :email";
+        if ($manager) {
+            $params[':manager'] = $manager;
+            $where .= " AND users.manager = :manager";
         }
         if ($type > 0) {
             $params[':type'] = $type;
             $where .= " AND users.type = :type";
         }
-        if ($active > -1) {
-            $params[':active'] = $active;
-            $where .= " AND users.active = :active";
-        }
         return $where;
     }
 
-    public function list($id = 0, $name = null, $email = null, $type = null, $active = null, $limit = null, $offset = null): array
+    public function list($id = 0, $name = null, $manager = null, $type = null, $limit = null, $offset = null): array
     {
         $params = [];
         $limitSql = $this->generateLimit($limit, $offset);
-        $where = $this->generateWhere($id, $name, $email, $type, $active, $params);
+        $where = $this->generateWhere($id, $name, $manager, $type, $params);
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
         $sql = "SELECT users.id, users.name, users.email, users.type, users.active               
                 FROM users
@@ -76,10 +72,10 @@ class UserRepository extends EntityRepository
         return $sth->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    public function listTotal($id = 0, $name = null, $email = null, $type = null, $active = null): array
+    public function listTotal($id = 0, $name = null, $manager = null, $type = null): array
     {
         $params = [];
-        $where = $this->generateWhere($id, $name, $email, $type, $active, $params);
+        $where = $this->generateWhere($id, $name, $manager, $type, $params);
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
         $sql = "SELECT COUNT(users.id) AS total                  
                 FROM users
