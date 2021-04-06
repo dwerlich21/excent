@@ -1,89 +1,40 @@
 <div class="row">
-    <div class="col">
-        <div class="card p-3">
-            <div class="row">
-                <div class="col">
-                    <h5 class="title">Leader Board</h5>
-                </div>
-            </div>
-            <?php if ($user->getType() == 1 || $user->getType() == 2 || $user->getType() == 3): ?>
-            <div class="row">
-                <div class="col">
-                    <ul class="nav nav-tabs nav-justified">
-                        <li class="nav-item">
-                            <a class="nav-link" data-toggle="tab" href="#managers">Managers</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-toggle="tab" href="#managersGroup">Group of Manager</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link active" data-toggle="tab" href="#advisors">Advisors</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <?php endif; ?>
-            <div class="card-body">
-                <div class="tab-content">
-                    <div class="tab-pane container active" id="advisors">
-                        <div class="row">
-                            <div class="col">
-                                <table class="table table-sm table-hover" id="advRanking">
-                                    <thead>
-                                    <tr>
-                                        <th scope="col" class="text-center">#</th>
-                                        <th scope="col" class="text-center">User</th>
-                                        <th scope="col" class="text-center">Country</th>
-                                        <th scope="col" class="text-center">New Accounts</th>
-                                        <th class="text-center" scope="col">New Deposits</th>
-                                        <th scope="col" class="text-center">Withdrawals</th>
-                                        <th class="text-center" scope="col">Net Margin In</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody></tbody>
-                                </table>
-                            </div>
+    <div class="col-md-6">
+        <div class="card p-3" style="height: 90%">
+            <div class="row" style="height: 100%">
+                <div class="col" >
+                    <div class="row">
+                        <i class=" fa fa-2x fa-medal"> </i> <h5 class="title ml-3"> Leader Board</h5>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col">
+                            Resumo do Ranking
                         </div>
                     </div>
-                    <div class="tab-pane container" id="managers">
-                        <div class="row">
-                            <div class="col">
-                                <table class="table table-sm table-hover" id="managersTable">
-                                    <thead>
-                                    <tr>
-                                        <th scope="col" class="text-center">#</th>
-                                        <th scope="col" class="text-center">User</th>
-                                        <th scope="col" class="text-center">Country</th>
-                                        <th scope="col" class="text-center">New Accounts</th>
-                                        <th class="text-center">New Deposits</th>
-                                        <th scope="col" class="text-center">Withdrawals</th>
-                                        <th class="text-center">Net Margin In</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody></tbody>
-                                </table>
-                            </div>
+                    <div style="position: absolute; bottom: 0; right: 0">
+                        <a href="#" >View more</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card p-3" style="height: 90%">
+            <div class="row" style="height: 100%">
+                <div class="col">
+                    <div class="row">
+                        <i class=" fa fa-2x fa-clock"> </i> <h5 class="title ml-3"> Tasks</h5>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col">
+                            Descrição de tarefas diárias agrupadas por tipo:<br>
+                            2 call;<br>
+                            3 e-mails;<br>
+                            1 meeting;<br>
                         </div>
                     </div>
-                    <div class="tab-pane container" id="managersGroup">
-                        <div class="row">
-                            <div class="col">
-                                <table class="table table-sm table-hover" id="managersGroupTable">
-                                    <thead>
-                                    <tr>
-                                        <th scope="col" class="text-center">#</th>
-                                        <th scope="col" class="text-center">User</th>
-                                        <th scope="col" class="text-center">Country</th>
-                                        <th scope="col" class="text-center">New Accounts</th>
-                                        <th class="text-center">New Deposits</th>
-                                        <th scope="col" class="text-center">Withdrawals</th>
-                                        <th class="text-center">Net Margin In</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody></tbody>
-                                </table>
-                            </div>
-                        </div>
+                    <div style="position: absolute; bottom: 0; right: 0">
+                        <a href="#" >View more</a>
                     </div>
                 </div>
             </div>
@@ -91,38 +42,159 @@
     </div>
 </div>
 <div class="row">
-    <div class="col">
-        <?php if ($messages != null): ?>
-        <div class="card p-3">
-            <div class="row">
-                <div class="col-md-8">
-                    <h5 class="title">Messages</h5>
+    <div class="col-md-6">
+        <div class="card p-3" style="height: 90%">
+            <div class="row" style="height: 100%">
+                <div class="col" style="position: relative">
+                    <div class="row">
+                        <i class=" fa fa-2x fa-envelope"> </i> <h5 class="title ml-3"> Messages</h5>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col">
+                            Aparece as três últimas mensagens recebidas
+                        </div>
+                    </div>
+                    <div style="position: absolute; bottom: 0; right: 0;">
+                        <a href="#" >View more</a>
+                    </div>
                 </div>
             </div>
-            <div class="card-body" id="messagesDiv">
-
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card p-3" style="height: 90%">
+            <div class="row" style="height: 100%">
+                <div class="col">
+                    <div class="row">
+                        <i class=" fa fa-2x fa-file"> </i> <h5 class="title ml-3"> Documents</h5>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col">
+                            Aparece as três últimas documentos recebidos
+                        </div>
+                    </div>
+                    <div style="position: absolute; bottom: 0; right: 0">
+                        <a href="#" >View more</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
-<?php endif; ?>
-<div class="row">
-    <div class="col">
-        <?php if ($tasks != null): ?>
-            <div class="card p-3">
-                <div class="row">
-                    <div class="col-md-8">
-                        <h5 class="title">Tasks</h5>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="row" id="tasksDiv"></div>
-
-                </div>
-            </div>
-        <?php endif; ?>
-    </div>
-</div>
+<?php //if ($user->getType() == 1 || $user->getType() == 2 || $user->getType() == 3): ?>
+<!--    <div class="row">-->
+<!--        <div class="col">-->
+<!--            <ul class="nav nav-tabs nav-justified">-->
+<!--                <li class="nav-item">-->
+<!--                    <a class="nav-link" data-toggle="tab" href="#managers">Managers</a>-->
+<!--                </li>-->
+<!--                <li class="nav-item">-->
+<!--                    <a class="nav-link" data-toggle="tab" href="#managersGroup">Group of Manager</a>-->
+<!--                </li>-->
+<!--                <li class="nav-item">-->
+<!--                    <a class="nav-link active" data-toggle="tab" href="#advisors">Advisors</a>-->
+<!--                </li>-->
+<!--            </ul>-->
+<!--        </div>-->
+<!--    </div>-->
+<?php //endif; ?>
+<!--<div class="card-body">-->
+<!--    <div class="tab-content">-->
+<!--        <div class="tab-pane container active" id="advisors">-->
+<!--            <div class="row">-->
+<!--                <div class="col">-->
+<!--                    <table class="table table-sm table-hover" id="advRanking">-->
+<!--                        <thead>-->
+<!--                        <tr>-->
+<!--                            <th scope="col" class="text-center">#</th>-->
+<!--                            <th scope="col" class="text-center">User</th>-->
+<!--                            <th scope="col" class="text-center">Country</th>-->
+<!--                            <th scope="col" class="text-center">New Accounts</th>-->
+<!--                            <th class="text-center" scope="col">New Deposits</th>-->
+<!--                            <th scope="col" class="text-center">Withdrawals</th>-->
+<!--                            <th class="text-center" scope="col">Net Margin In</th>-->
+<!--                        </tr>-->
+<!--                        </thead>-->
+<!--                        <tbody></tbody>-->
+<!--                    </table>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="tab-pane container" id="managers">-->
+<!--            <div class="row">-->
+<!--                <div class="col">-->
+<!--                    <table class="table table-sm table-hover" id="managersTable">-->
+<!--                        <thead>-->
+<!--                        <tr>-->
+<!--                            <th scope="col" class="text-center">#</th>-->
+<!--                            <th scope="col" class="text-center">User</th>-->
+<!--                            <th scope="col" class="text-center">Country</th>-->
+<!--                            <th scope="col" class="text-center">New Accounts</th>-->
+<!--                            <th class="text-center">New Deposits</th>-->
+<!--                            <th scope="col" class="text-center">Withdrawals</th>-->
+<!--                            <th class="text-center">Net Margin In</th>-->
+<!--                        </tr>-->
+<!--                        </thead>-->
+<!--                        <tbody></tbody>-->
+<!--                    </table>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="tab-pane container" id="managersGroup">-->
+<!--            <div class="row">-->
+<!--                <div class="col">-->
+<!--                    <table class="table table-sm table-hover" id="managersGroupTable">-->
+<!--                        <thead>-->
+<!--                        <tr>-->
+<!--                            <th scope="col" class="text-center">#</th>-->
+<!--                            <th scope="col" class="text-center">User</th>-->
+<!--                            <th scope="col" class="text-center">Country</th>-->
+<!--                            <th scope="col" class="text-center">New Accounts</th>-->
+<!--                            <th class="text-center">New Deposits</th>-->
+<!--                            <th scope="col" class="text-center">Withdrawals</th>-->
+<!--                            <th class="text-center">Net Margin In</th>-->
+<!--                        </tr>-->
+<!--                        </thead>-->
+<!--                        <tbody></tbody>-->
+<!--                    </table>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+<!--<div class="row">-->
+<!--    <div class="col">-->
+<!--        --><?php //if ($messages != null): ?>
+<!--        <div class="card p-3">-->
+<!--            <div class="row">-->
+<!--                <div class="col-md-8">-->
+<!--                    <h5 class="title">Messages</h5>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="card-body" id="messagesDiv">-->
+<!---->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+<?php //endif; ?>
+<!--<div class="row">-->
+<!--    <div class="col">-->
+<!--        --><?php //if ($tasks != null): ?>
+<!--            <div class="card p-3">-->
+<!--                <div class="row">-->
+<!--                    <div class="col-md-8">-->
+<!--                        <h5 class="title">Tasks</h5>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="card-body">-->
+<!--                    <div class="row" id="tasksDiv"></div>-->
+<!---->
+<!--                </div>-->
+<!--            </div>-->
+<!--        --><?php //endif; ?>
+<!--    </div>-->
+<!--</div>-->
 
 <script>
 

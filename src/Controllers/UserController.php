@@ -39,7 +39,7 @@ class UserController extends Controller
             if ($us->getId() != $user->getId()) $this->redirect();
             $us->setEmail($data['email'])
                 ->setName($data['name'])
-                ->setCountry($this->em->getReference(Countries::class, $data['type']))
+                ->setCountry($this->em->getReference(Countries::class, $data['country']))
                 ->setPassword(password_hash($data['password'], PASSWORD_ARGON2I));
             $this->em->getRepository(User::class)->save($us);
             return $response->withJson([
@@ -81,7 +81,7 @@ class UserController extends Controller
                 ->setName($data['name'])
                 ->setActive($data['active'])
                 ->setType($data['type'])
-                ->setCountry($this->em->getReference(Countries::class, $data['type']))
+                ->setCountry($this->em->getReference(Countries::class, $data['country']))
                 ->setManager($manager)
                 ->setPassword(password_hash($data['password'], PASSWORD_ARGON2I));
             $this->em->getRepository(User::class)->save($users);

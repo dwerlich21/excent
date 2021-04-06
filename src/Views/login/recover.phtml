@@ -17,30 +17,32 @@
 <body>
 
 <div class="row" style="height: 100%">
-    <div class="col-md-6 bg-dark">
-        <div class="row mx-auto my-auto" style="height: 100%; width: 100%">
-            <img src="<?= BASEURL ?>assets/img/logobranco.png" class="my-auto mx-auto" style="height: 100px"
-                 alt="logo Excent">
-        </div>
+    <div class="banner">
+        <video playsinline="playsinline" autoplay="autoplay" muted="muted" loop="loop">
+            <source src="<?= BASEURL ?>assets/img/video/login.mp4" type="video/mp4">
+        </video>
     </div>
-    <div class="col-md-6">
-        <div class="row mx-auto my-auto" style="height: 100%; width: 100%">
-            <div class="col-md-2"></div>
-            <div class="col-md-8 my-auto mx-auto">
-                <form id="recoverPassword">
-                    <div id="message" class="alert" style="display: none"></div>
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input name="email" type="email" required id="email" class="form-control">
+    <div class="col">
+        <div class="row mx-auto my-auto" style="height: 100%; width: 100%; position: relative; z-index: 2;">
+            <div class="col-md-4"></div>
+            <div class="col-md-4 my-auto mx-auto">
+                <div class="row">
+                    <div class="col text-center">
+                        <img src="<?= BASEURL ?>assets/img/logobranco.png" alt="logo Excent">
+                        <form id="recoverPassword">
+                            <div id="message" class="alert" style="display: none"></div>
+                            <div class="form-group mt-4">
+                                <input name="email" type="email" required id="email" class="form-control" placeholder="Email">
+                            </div>
+                            <button class="btn btn-primary btn-block" id="recoverButton">Recover</button>
+                            <div class="text-center mt-2">
+                                <a href="<?= BASEURL?>login" class="d-block small">Sign In</a>
+                            </div>
+                        </form>
                     </div>
-                    <button class="btn btn-primary btn-block" id="recoverButton">Recover</button>
-                    <div class="text-center mt-2">
-                        <a href="<?= BASEURL?>login" class="d-block small">Sign In</a>
-                    </div>
-                </form>
-                <div id="loader" class="loader"></div>
+                </div>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-4">
 
             </div>
         </div>

@@ -31,7 +31,7 @@ class LoginController extends Controller
             $data = (array)$request->getParams();
             $fields = [
                 'email' => 'Email',
-                'password' => 'Senha',
+                'password' => 'Password',
             ];
             Validator::requireValidator($fields, $data);
             $user = $this->em->getRepository(User::class)->login($data['email'], $data['password']);
@@ -96,7 +96,7 @@ class LoginController extends Controller
             $data = (array)$request->getParams();
             $recover = $this->em->getRepository(RecoverPassword::class)->findOneBy(['token' => $data['id'], 'used' => 0]);
             if (!$recover) {
-                throw new \Exception('Token Inválido');
+                throw new \Exception('Token Invalid.');
             }
             $fields = [
                 'password2' => 'Confirm the Password',
@@ -133,20 +133,20 @@ class LoginController extends Controller
             Validator::requireValidator($fields, $data);
             $user = $this->em->getRepository(User::class)->findOneBy(['email' => $data['email'], 'active' => 1]);
             if (!$user) {
-                throw new \Exception('Email inválido.');
+                throw new \Exception('Invalid email.');
             }
             $recoverPassword = new RecoverPassword();
             $recoverPassword->setUser($user)
                 ->setToken(Utils::generateToken())
                 ->setUsed(false);
             $this->em->getRepository(RecoverPassword::class)->save($recoverPassword);
-            $msg = "<p>Olá {$user->getName()}.</p>
-                    <p>Segue <a href='{$this->baseUrl}recuperar/{$recoverPassword->getToken()}' target='_blank'>link</a> para redefinição de senha.</p>
-                    <p>Enviado por Excent.</p>";
-            Email::send($user->getEmail(), $user->getName(), 'Recuperação de Senha', $msg);
+            $msg = "<p>Dear {$user->getName()}.</p>
+                    <p>Please see below <a href='{$this->baseUrl}recover/{$recoverPassword->getToken()}' target='_blank'>link</a> to reset your password.</p>
+                    <p>Sent by Excent Capital</p>";
+            Email::send($user->getEmail(), $user->getName(), 'Password Recovery', $msg);
             return $response->withJson([
                 'status' => 'ok',
-                'message' => 'Foi enviado um e-mail para redefinição de senha.',
+                'message' => 'An email has been sent to reset your password.',
             ], 201)
                 ->withHeader('Content-type', 'application/json');
         } catch (\Exception $e) {
@@ -156,5 +156,4 @@ class LoginController extends Controller
             ])->withStatus(500);
         }
     }
-
 }
