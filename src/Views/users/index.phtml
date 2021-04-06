@@ -12,7 +12,7 @@
                             <input class="form-control" id="nameFilter" name="name" type="text" placeholder="Name">
                         </div>
                     </div>
-                    <?php if ($user->getType() == 1 || $user->getType() == 2): ?>
+                    <?php if ($user->getType() < 3): ?>
                     <div class="col-md-3 my-auto">
                         <div class="form-group mt-2">
                             <select name="type" id="typeFilter" class="form-control">
@@ -83,7 +83,7 @@
                             <input id="emailEdit" name="email" class="form-control" type="email" placeholder="Email">
                         </div>
                     </div>
-                    <?php if ($user->getType() == 1 || $user->getType() == 2): ?>
+                    <?php if ($user->getType() < 3): ?>
                     <div class="row">
                         <div class="col-md-6">
                             <label for="typeEdit">Type</label>
