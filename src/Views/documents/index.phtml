@@ -214,7 +214,7 @@
         $('#message').hide();
         if (id > 0) {
             showLoading();
-            fetch(`<?= BASEURL ?>documents/api/${id}`, {
+            fetch(`<?= BASEURL ?>api/documents/${id}`, {
                 method: "GET",
                 credentials: 'same-origin',
                 headers: {
@@ -283,7 +283,7 @@
     function generateTable() {
 
         $('#loader').show();
-        fetch(`<?= BASEURL ?>documents/sent/api/?index=${index}&title=${title}&type=${type}`, {
+        fetch(`<?= BASEURL ?>api/documents/sent/?index=${index}&title=${title}&type=${type}`, {
             method: "GET",
             credentials: 'same-origin',
             headers: {

@@ -19,13 +19,12 @@ class AdminController extends Controller
     {
         $user = $this->getLogged();
         $today = date('Y-m-d');
-        $date = \DateTime::createFromFormat('Y-m-d', $today);
+        $activities = $this->em->getRepository(ActivityDeal::class)->totalCalendar(0, $user, $today);
         $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId(), 'type' => 0], ['name' => 'asc']);
-        $tasks = $this->em->getRepository(ActivityDeal::class)->findBy(['date' => $date, 'status' => 1, 'user' => $user->getId()]);
         $messages = $this->em->getRepository(Message::class)->findBy(['active' => 1], ['date' => 'desc'], 3);
         $docs = $this->em->getRepository(DocumentDestiny::class)->findBy(['destiny' => $user->getId()], ['id' => 'desc'], 3);
         return $this->renderer->render($response, 'default.phtml', ['page' => 'index.phtml', 'menuActive' => ['dashboard'],
-            'user' => $user, 'deals' => $deals, 'tasks' => $tasks, 'messages' => $messages, 'docs' => $docs]);
+            'user' => $user, 'deals' => $deals, 'messages' => $messages, 'docs' => $docs, 'activities' => $activities]);
     }
 
     public function taskStatus(Request $request, Response $response)

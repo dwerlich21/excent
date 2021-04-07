@@ -4,6 +4,7 @@
 namespace App\Controllers;
 
 use App\Helpers\Validator;
+use App\Models\Entities\ActivityDeal;
 use App\Models\Entities\Countries;
 use App\Models\Entities\Deal;
 use App\Models\Entities\User;
@@ -16,11 +17,13 @@ class UserController extends Controller
     {
         $user = $this->getLogged();
         if ($user->getType() == 4 || $user->getType() == 5) $this->redirect();
+        $today = date('Y-m-d');
+        $activities = $this->em->getRepository(ActivityDeal::class)->totalCalendar(0, $user, $today);
         $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId(), 'type' => 0], ['name' => 'asc']);
         $users = $this->em->getRepository(User::class)->findBy(['type' => 3], ['name' => 'asc']);
         $countries = $this->em->getRepository(Countries::class)->findBy([], ['name' => 'asc']);
         return $this->renderer->render($response, 'default.phtml', ['page' => 'users/index.phtml', 'menuActive' => ['users'],
-            'user' => $user, 'deals' => $deals, 'users' => $users, 'countries' => $countries]);
+            'user' => $user, 'deals' => $deals, 'users' => $users, 'countries' => $countries, 'activities' => $activities]);
     }
 
     public function editUser(Request $request, Response $response)
@@ -39,7 +42,7 @@ class UserController extends Controller
             if ($us->getId() != $user->getId()) $this->redirect();
             $us->setEmail($data['email'])
                 ->setName($data['name'])
-                ->setCountry($this->em->getReference(Countries::class, $data['country']))
+                ->setCountry($this->em->getReference(Countries::class, $data['userCountry']))
                 ->setPassword(password_hash($data['password'], PASSWORD_ARGON2I));
             $this->em->getRepository(User::class)->save($us);
             return $response->withJson([

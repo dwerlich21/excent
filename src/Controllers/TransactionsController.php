@@ -6,6 +6,7 @@ namespace App\Controllers;
 
 use App\Helpers\Utils;
 use App\Helpers\Validator;
+use App\Models\Entities\ActivityDeal;
 use App\Models\Entities\Countries;
 use App\Models\Entities\Deal;
 use App\Models\Entities\Transaction;
@@ -19,11 +20,13 @@ class TransactionsController extends Controller
     {
         $user = $this->getLogged();
         if ($user->getType() != 1) $this->redirect();
+        $today = date('Y-m-d');
+        $activities = $this->em->getRepository(ActivityDeal::class)->totalCalendar(0, $user, $today);
         $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId(), 'type' => 0], ['name' => 'asc']);
         $countries = $this->em->getRepository(Countries::class)->findBy([], ['name' => 'asc']);
         $users = $this->em->getRepository(User::class)->findBy(['type' => 4, 'active' => 1], ['name' => 'asc']);
         return $this->renderer->render($response, 'default.phtml', ['page' => 'transactions/index.phtml', 'menuActive' => ['transactions'],
-            'user' => $user, 'deals' => $deals, 'countries' => $countries, 'users' => $users]);
+            'user' => $user, 'deals' => $deals, 'countries' => $countries, 'users' => $users, 'activities' => $activities]);
     }
 
     public function saveTransactions(Request $request, Response $response)

@@ -18,10 +18,12 @@ class LeadController extends Controller
     public function lead(Request $request, Response $response)
     {
         $user = $this->getLogged();
+        $today = date('Y-m-d');
+        $activities = $this->em->getRepository(ActivityDeal::class)->totalCalendar(0, $user, $today);
         $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId(), 'type' => 0], ['name' => 'asc']);
         $countries = $this->em->getRepository(Countries::class)->findBy([], ['name' => 'asc']);
         return $this->renderer->render($response, 'default.phtml', ['page' => 'leads/index.phtml', 'menuActive' => ['leads'],
-            'user' => $user, 'deals' => $deals, 'countries' => $countries]);
+            'user' => $user, 'deals' => $deals, 'countries' => $countries, 'activities' => $activities]);
     }
 
     public function saveLead(Request $request, Response $response)

@@ -13,11 +13,7 @@ $app->group('/messages', function () use ($app) {
         return $this->MessageController->saveMessage($request, $response);
     });
 
-    $app->get('/delete/api/{id}/', function (Request $request, Response $response) {
-        return $this->ApiController->messageDelete($request, $response);
-    });
-
-    $app->get('/api/[{id}/]', function (Request $request, Response $response) {
-        return $this->ApiController->messagesTable($request, $response);
+    $app->get('/received/{id}/', function (Request $request, Response $response) {
+        return $this->MessageController->viewReceived($request, $response);
     });
 });

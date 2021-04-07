@@ -52,6 +52,9 @@
                 <li <?= in_array('calendar', $menuActive) ? 'class="active"' : '' ?>>
                     <a href="<?= BASEURL ?>calendar">
                         <i class="fa fa-calendar"></i> <b>Calendar</b>
+<!--                    --><?php //if ($activities): ?>
+                        <span class="p-1 ml-3" style="background: #F24B39; border-radius: 5px"><b><?= $activities[0]['total'] ?></b></span>
+<!--                    --><?php //endif; ?>
                     </a>
                 </li>
                 <?php if ($user->getType() == 1 || $user->getType() == 2 || $user->getType() == 3): ?>
@@ -276,7 +279,8 @@
                         <div class="modal-body">
                             <form id="editUser" method="post">
                                 <div class="form-group">
-                                    <input type="hidden" name="userId" id="userId">
+                                    <input type="hidden" name="userId" id="userId" value="<?= $user->getId() ?>">
+                                    <input type="hidden" name="userCountry" id="userCountry" value="<?= $user->getCountry()->getId() ?>">
                                     <div class="row">
                                         <div class="col">
                                             <label for="name">Name</label>

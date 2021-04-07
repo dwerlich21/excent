@@ -25,27 +25,7 @@ $app->group('/documents', function () use ($app) {
         return $this->DocumentController->saveCategory($request, $response);
     });
 
-    $app->get('/delete/api/{id}/', function (Request $request, Response $response) {
-        return $this->ApiController->documentDelete($request, $response);
-    });
-
-    $app->get('/update/api/{id}/', function (Request $request, Response $response) {
-        return $this->ApiController->updateStatus($request, $response);
-    });
-
-    $app->get('/category/delete/api/{id}/', function (Request $request, Response $response) {
-        return $this->ApiController->categoryDelete($request, $response);
-    });
-
-    $app->get('/sent/api/[{id}/]', function (Request $request, Response $response) {
-        return $this->ApiController->documentsSentTable($request, $response);
-    });
-
-    $app->get('/received/api/[{id}/]', function (Request $request, Response $response) {
-        return $this->ApiController->documentsReceivedTable($request, $response);
-    });
-
-    $app->get('/category/api/[{id}/]', function (Request $request, Response $response) {
-        return $this->ApiController->documentsCategoryTable($request, $response);
+    $app->get('/received/{id}/', function (Request $request, Response $response) {
+        return $this->DocumentController->viewReceived($request, $response);
     });
 });

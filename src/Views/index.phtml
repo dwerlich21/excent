@@ -27,10 +27,10 @@
                     </div>
                     <div class="row mb-4">
                         <div class="col">
-                            Descrição de tarefas diárias agrupadas por tipo:<br>
-                            2 call;<br>
-                            3 e-mails;<br>
-                            1 meeting;<br>
+                            <div class="row">
+                                Pending tasks for today:
+                            </div>
+                            <div class="row" id="tasksList"></div>
                         </div>
                     </div>
                     <div style="position: absolute; bottom: 0; right: 0">
@@ -52,6 +52,7 @@
                     <div class="row mb-4">
                         <div class="col">
                             <?php foreach ($messages as $message): ?>
+                            <a  href="<?= BASEURL ?>messages/received/<?= $message->getId() ?>" style="text-decoration: none; color: black">
                                 <div class="row my-2" style="border: solid 1px rgb(0, 0, 0, 0.25);">
                                     <div class="col py-2">
                                         <div class="row"><b><?= $message->getTitle() ?></b></div>
@@ -61,8 +62,8 @@
                                             <i class="fa fa-user ml-2 my-auto mr-1"></i><?= $message->getUser()->getName() ?>
                                         </div>
                                     </div>
-
                                 </div>
+                            </a>
                             <?php endforeach; ?>
                         </div>
                     </div>
@@ -85,17 +86,18 @@
                     <div class="row mb-4">
                         <div class="col">
                             <?php foreach ($docs as $doc): ?>
-                                <div class="row my-2" style="border: solid 1px rgb(0, 0, 0, 0.25);">
-                                    <div class="col py-2">
-                                        <div class="row"><b><?= $doc->getDocument()->getTitle() ?></b></div>
-                                        <div class="row my-1" style="font-size: 12px">
-                                            <i class="fa fa-calendar my-auto mr-1"></i> <?= $doc->getDocument()->getCreated()->format('d/m/Y') ?>
-                                            <i class="fa fa-clock ml-2 my-auto mr-1"></i> <?= $doc->getDocument()->getCreated()->format('H:i') ?>
-                                            <i class="fa fa-user ml-2 my-auto mr-1"></i><?= $doc->getDocument()->getResponsible()->getName() ?>
+                                <a  href="<?= BASEURL ?>documents/received/<?= $doc->getDocument()->getId() ?>" style="text-decoration: none; color: black">
+                                    <div class="row my-2" style="border: solid 1px rgb(0, 0, 0, 0.25);">
+                                        <div class="col py-2">
+                                            <div class="row"><b><?= $doc->getDocument()->getTitle() ?></b></div>
+                                            <div class="row my-1" style="font-size: 12px">
+                                                <i class="fa fa-calendar my-auto mr-1"></i> <?= $doc->getDocument()->getCreated()->format('d/m/Y') ?>
+                                                <i class="fa fa-clock ml-2 my-auto mr-1"></i> <?= $doc->getDocument()->getCreated()->format('H:i') ?>
+                                                <i class="fa fa-user ml-2 my-auto mr-1"></i><?= $doc->getDocument()->getResponsible()->getName() ?>
+                                            </div>
                                         </div>
                                     </div>
-
-                                </div>
+                                </a>
                             <?php endforeach; ?>
                         </div>
                     </div>
@@ -116,21 +118,23 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">User Registration</h5>
+                <h5 class="modal-title">Monthly Ranking </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <?php if ($user->getType() == 1 || $user->getType() == 2 || $user->getType() == 3): ?>
+            <?php if ($user->getType() < 4): ?>
                 <div class="row mt-4">
                     <div class="col">
                         <ul class="nav nav-tabs nav-justified">
                             <li class="nav-item">
                                 <a class="nav-link" data-toggle="tab" href="#managers">Managers</a>
                             </li>
+                            <?php if ($user->getType() == 3): ?>
                             <li class="nav-item">
                                 <a class="nav-link" data-toggle="tab" href="#managersGroup">Group of Manager</a>
                             </li>
+                            <?php endif; ?>
                             <li class="nav-item">
                                 <a class="nav-link active" data-toggle="tab" href="#advisors">Advisors</a>
                             </li>
@@ -213,80 +217,27 @@
         $('#modalRanking').modal('show');
     }
 
-    function generateMessagesCard(message) {
-        return `<div class="bg-white p-3 mb-4" style="border: solid 1px rgb(0, 0, 0, 0.25);">
-                    <div class="col">
-                        <div class="row">
-                            <div class="col-md-11" data-toggle="collapse" data-target="#collapse${message.id}" aria-expanded="false" aria-controls="collapse${message.id}">
-                                <h6 class="my-auto">
-                                      ${message.title}
-                                </h6>
-                            </div>
-                            <div class="col-md-1 text-right">
-                                <a><i class="fa fa-check-circle" id="iconCheck"></i></a>
-                            </div>
-                        </div>
-                        <div class="row mt-2">
-                                <div class="col" style="font-size: 12px">
-                                    <i class="fa fa-calendar"></i> ${message.date}
-                                    <i class="fa fa-clock-o ml-2"></i> ${message.time}
-                                    <i class="fa fa-user ml-2"></i> ${message.user}
-                                </div>
-                            </div>
-                        <div class="row">
-                            <div id="collapse${message.id}" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
-                              <div class="card-body text-justify">
-                                ${message.description}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                    </div>
-                </div>
-        `;
-    }
-
-    function generateMessages() {
-        $('#loader').show();
-        fetch(`<?= BASEURL ?>dashboard/messages/api/?index=${index}`, {
-            method: "GET",
-            credentials: 'same-origin',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        }).then(response => {
-            response.json().then(json => {
-                $('#loader').hide();
-                let options = json.message.map(generateMessagesCard);
-                $("#messagesDiv").append(options);
-            });
-        });
-
-    }
-
     function generateTasksCard(task) {
-        let time = '';
-        if (task.time != null) time = `${task.time}:`;
-        return `<div class="col-md-4 my-2" id="cardTask${task.id}">
-                    <div class="row bg-white p-3 card-task">
-                        <div class="col-md-4 my-auto">
-                            ${actionIcon(task.type)}
-                        </div>
-                        <div class="col-md-8 card-date">
-                            <div class="row">
-                                <div class="col"> <b>${time} ${actionStr(task.type)}</b></div>
-                            </div>
-                            <div class="row">
-                                <div class="col"> ${task.deal}</div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-9"></div>
-                                <div class="col-md-3 text-right" onclick="taskStatus(${task.id})"><a><i class="fa fa-check-circle" id="iconCheck"></i></a></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
+        var style = '';
+
+        if (task.type == 2) {
+            style = "style ='color: blue'";
+        } if (task.type == 3) {
+            style = "style ='color: red'";
+        } if (task.type == 4) {
+            style = "style ='color: green'";
+        } if (task.type == 5) {
+            style = "style ='color: grey'";
+        } if (task.type == 6) {
+            style = "style ='color: purple'";
+        }
+        return `
+            <div class="row">
+                <div class="col my-2" ${style}>
+                    <b>${task.total}</b> ${actionStr(task.type)}
+                </div>
+            </div>
+        `;
     }
 
     function actionStr(action) {
@@ -303,24 +254,6 @@
                 return 'Task';
             default:
                 return 'Unknown';
-
-        }
-    }
-
-    function actionIcon(action) {
-        switch (parseInt(action)) {
-            case 2:
-                return `<i class="fa fa-3x fa-phone text-gray"></i>`;
-            case 3:
-                return `<i class="fa fa-3x fa-users text-gray"></i>`;
-            case 4:
-                return `<i class="fa fa-3x fa-paper-plane text-gray"></i>`;
-            case 5:
-                return `<i class="fa fa-3x fa-utensils text-gray"></i>`;
-            case 6:
-                return `<i class="fa fa-3x fa-clock text-gray"></i>`;
-            default:
-                return `<i class="fa fa-3x fa-phone text-gray"></i>`;
         }
     }
 
@@ -345,7 +278,7 @@
 
     function generateRankingAdvisors() {
         $('#loader').show();
-        fetch(`<?= BASEURL ?>dashboard/transations/advisors/api/?index=${index}`, {
+        fetch(`<?= BASEURL ?>api/dashboard/transations/advisors/?index=${index}`, {
             method: "GET",
             credentials: 'same-origin',
             headers: {
@@ -363,7 +296,7 @@
 
     function generateRankingManagers() {
         $('#loader').show();
-        fetch(`<?= BASEURL ?>dashboard/transations/managers/api/?index=${index}`, {
+        fetch(`<?= BASEURL ?>api/dashboard/transations/managers/?index=${index}`, {
             method: "GET",
             credentials: 'same-origin',
             headers: {
@@ -381,7 +314,7 @@
 
     function generateRankingManagersGroup() {
         $('#loader').show();
-        fetch(`<?= BASEURL ?>dashboard/transations/managers/group/api/?index=${index}`, {
+        fetch(`<?= BASEURL ?>api/dashboard/transations/managers/group/?index=${index}`, {
             method: "GET",
             credentials: 'same-origin',
             headers: {
@@ -400,7 +333,7 @@
 
     function generateTasks() {
         $('#loader').show();
-        fetch(`<?= BASEURL ?>dashboard/tasks/api/?index=${index}`, {
+        fetch(`<?= BASEURL ?>api/dashboard/tasks/?index=${index}`, {
             method: "GET",
             credentials: 'same-origin',
             headers: {
@@ -411,7 +344,7 @@
             response.json().then(json => {
                 $('#loader').hide();
                 let options = json.message.map(generateTasksCard);
-                $("#tasksDiv").append(options);
+                $("#tasksList").append(options);
             });
         });
     }
@@ -420,25 +353,12 @@
         generateRankingAdvisors();
         generateRankingManagersGroup();
         generateRankingManagers();
-        generateMessages();
         generateTasks();
     }
 
     $(document).ready(function () {
         dashboardData();
     });
-
-    function taskStatus(id) {
-        fetch(`<?= BASEURL ?>dashboard/tasks/status/${id}`, {
-            method: "GET",
-            credentials: 'same-origin',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        });
-        document.getElementById(`cardTask${id}`).classList.add("d-none");
-    }
 
     function maskMoneyTable(value) {
         var money = parseFloat(value);

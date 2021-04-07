@@ -127,7 +127,7 @@
     }
     
     function updateStatus(id) {
-        fetch(`<?= BASEURL ?>documents/update/api/${id}`, {
+        fetch(`<?= BASEURL ?>api/documents/update/${id}`, {
             method: "GET",
             credentials: 'same-origin',
             headers: {
@@ -143,7 +143,7 @@
     function generateTable() {
 
         $('#loader').show();
-        fetch(`<?= BASEURL ?>documents/received/api/?index=${index}&title=${title}&type=${type}&received=${received}`, {
+        fetch(`<?= BASEURL ?>api/documents/received/?index=${index}&title=${title}&type=${type}&received=${received}`, {
             method: "GET",
             credentials: 'same-origin',
             headers: {

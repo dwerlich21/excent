@@ -4,6 +4,7 @@
 namespace App\Controllers;
 
 use App\Helpers\Validator;
+use App\Models\Entities\ActivityDeal;
 use App\Models\Entities\Deal;
 use App\Models\Entities\Document;
 use App\Models\Entities\DocumentCategory;
@@ -17,27 +18,51 @@ class DocumentController extends Controller
     public function document(Request $request, Response $response)
     {
         $user = $this->getLogged();
+        $today = date('Y-m-d');
+        $activities = $this->em->getRepository(ActivityDeal::class)->totalCalendar(0, $user, $today);
         $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId(), 'type' => 0], ['name' => 'asc']);
         $categories = $this->em->getRepository(DocumentCategory::class)->findBy([], ['nameCategory' => 'asc']);
         return $this->renderer->render($response, 'default.phtml', ['page' => 'documents/index.phtml', 'menuActive' => 'documents',
-            'section' => 'DocumentsSubmit', 'subMenu' => 'documentsGroup', 'user' => $user, 'deals' => $deals, 'categories' => $categories]);
+            'section' => 'DocumentsSubmit', 'subMenu' => 'documentsGroup', 'user' => $user, 'deals' => $deals,
+            'categories' => $categories, 'activities' => $activities]);
     }
 
     public function category(Request $request, Response $response)
     {
         $user = $this->getLogged();
+        $today = date('Y-m-d');
+        $activities = $this->em->getRepository(ActivityDeal::class)->totalCalendar(0, $user, $today);
         $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId(), 'type' => 0], ['name' => 'asc']);
         return $this->renderer->render($response, 'default.phtml', ['page' => 'documents/category.phtml', 'menuActive' => 'documents',
-            'section' => 'DocumentsCategory', 'subMenu' => 'documentsGroup', 'user' => $user, 'deals' => $deals]);
+            'section' => 'DocumentsCategory', 'subMenu' => 'documentsGroup', 'user' => $user, 'deals' => $deals, 'activities' => $activities]);
     }
 
     public function received(Request $request, Response $response)
     {
         $user = $this->getLogged();
+        $today = date('Y-m-d');
+        $activities = $this->em->getRepository(ActivityDeal::class)->totalCalendar(0, $user, $today);
         $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId(), 'type' => 0], ['name' => 'asc']);
         $categories = $this->em->getRepository(DocumentCategory::class)->findBy([], ['nameCategory' => 'asc']);
         return $this->renderer->render($response, 'default.phtml', ['page' => 'documents/received.phtml', 'menuActive' => ['documents'],
-            'section' => 'DocumentsReceived', 'subMenu' => 'documentsGroup', 'user' => $user, 'deals' => $deals, 'categories' => $categories]);
+            'section' => 'DocumentsReceived', 'subMenu' => 'documentsGroup', 'user' => $user, 'deals' => $deals, 'categories' => $categories,
+            'activities' => $activities]);
+    }
+
+    public function viewReceived(Request $request, Response $response)
+    {
+        $user = $this->getLogged();
+        $id = $request->getAttribute('route')->getArgument('id');
+        $today = date('Y-m-d');
+        $activities = $this->em->getRepository(ActivityDeal::class)->totalCalendar(0, $user, $today);
+        $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId(), 'type' => 0], ['name' => 'asc']);
+        $categories = $this->em->getRepository(DocumentCategory::class)->findBy([], ['nameCategory' => 'asc']);
+        $doc = $this->em->getRepository(Document::class)->find($id);
+        $destiny = $this->em->getRepository(DocumentDestiny::class)->findBy(['document' => $id]);
+//        if ($destiny->getDestiny()->getId() != $user->getId()) $this->redirect('documents');
+        return $this->renderer->render($response, 'default.phtml', ['page' => 'documents/view.phtml', 'menuActive' => 'documents',
+            'section' => 'DocumentsReceived', 'subMenu' => 'documentsGroup', 'user' => $user, 'deals' => $deals,
+            'categories' => $categories, 'activities' => $activities, 'doc' => $doc]);
     }
 
     private function saveDocumentFile($files, Document $document): Document
@@ -53,7 +78,6 @@ class DocumentController extends Controller
             $document->setDocumentFile($target);
         }
         return $document;
-
     }
 
     public function saveDocument(Request $request, Response $response)

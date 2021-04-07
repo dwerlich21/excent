@@ -82,43 +82,42 @@ class ActivityDealRepository extends EntityRepository
         }
 
         if ($date) {
-            $params[':date'] = $date;
-            $where .= " AND activityDeal.date = :date";
+            $params[':date'] = "%$date%";
+            $where .= " AND activityDeal.date LIKE :date";
         }
         return $where;
     }
 
-    public function listDashboardNotNull($id = 0, User $user, $date = null, $limit = null, $offset = null): array
+    public function listDashboard($id = 0, User $user, $date = null, $limit = null, $offset = null): array
     {
         $params = [];
         $params[':user'] = $user->getId();
         $limitSql = $this->generateLimit($limit, $offset);
         $where = $this->generateWhereTask($id, $date, $params);
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
-        $sql = "SELECT TIME_FORMAT(activityDeal.time, '%H:%i') AS time, deal.name AS deal, activityDeal.id, 
-                activityDeal.activity, activityDeal.type           
-                FROM activityDeal
-                JOIN deal ON deal.id = activityDeal.deal
-                WHERE activityDeal.time IS NOT NULL AND activityDeal.user = :user AND activityDeal.status = 1 {$where} 
-                ORDER BY time ASC {$limitSql}
+        $sql = "SELECT COUNT(activityDeal.id) AS total, activityDeal.type, activityDeal.status           
+                FROM activityDeal 
+                WHERE activityDeal.user =  :user
+                AND activityDeal.status = 1 
+                AND activityDeal.type > 1 {$where}
+                GROUP BY type {$limitSql}
                ";
         $sth = $pdo->prepare($sql);
         $sth->execute($params);
         return $sth->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    public function listDashboardNull($id = 0, User $user, $date = null, $limit = null, $offset = null): array
+    public function totalCalendar($id = 0, User $user, $date = null): array
     {
         $params = [];
         $params[':user'] = $user->getId();
-        $limitSql = $this->generateLimit($limit, $offset);
         $where = $this->generateWhereTask($id, $date, $params);
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
-        $sql = "SELECT activityDeal.time, activityDeal.id, activityDeal.activity, deal.name AS deal, activityDeal.type           
-                FROM activityDeal
-                JOIN deal ON deal.id = activityDeal.deal
-                WHERE activityDeal.time IS NULL AND activityDeal.user = :user AND activityDeal.status = 1 {$where} 
-                ORDER BY id DESC {$limitSql}
+        $sql = "SELECT COUNT(activityDeal.id) AS total          
+                FROM activityDeal 
+                WHERE activityDeal.user =  :user
+                AND activityDeal.status = 1 
+                AND activityDeal.type > 1 {$where}
                ";
         $sth = $pdo->prepare($sql);
         $sth->execute($params);

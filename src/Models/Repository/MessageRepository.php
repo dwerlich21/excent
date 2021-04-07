@@ -84,24 +84,4 @@ class MessageRepository extends EntityRepository
         $sth->execute($params);
         return $sth->fetch(\PDO::FETCH_ASSOC);
     }
-
-    public function listDashboard($id = 0, $title = null, $active = null, $limit = null, $offset = null): array
-    {
-        $params = [];
-        $limitSql = $this->generateLimit($limit, $offset);
-        $where = $this->generateWhere($id, $title, $active, $params);
-        $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
-        $sql = "SELECT message.title, message.description, message.id, message.active, users.name AS user, 
-                DATE_FORMAT(message.date, '%d/%m/%Y') AS date, TIME_FORMAT(message.date, '%H:%i') AS time          
-                FROM message
-                JOIN users ON users.id = message.user
-                WHERE message.active = 1 {$where}
-                ORDER BY id DESC {$limitSql}
-               ";
-
-        $sth = $pdo->prepare($sql);
-        $sth->execute($params);
-        return $sth->fetchAll(\PDO::FETCH_ASSOC);
-    }
-
 }

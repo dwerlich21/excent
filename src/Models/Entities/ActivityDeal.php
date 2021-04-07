@@ -18,7 +18,7 @@ class ActivityDeal
     private ?int $id = null;
 
     /**
-     * @Column(type="date")
+     * @Column(type="datetime")
      */
     private \DateTime $date;
 

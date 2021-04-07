@@ -4,8 +4,8 @@
             <form id="filter">
                 <div class="row">
                     <div class="col-md-2">
-                            <a class="btn btn-primary text-white" href="#" onclick="openModal()"><i
-                                        class="fa fa-plus"></i> Message</a>
+                        <a class="btn btn-primary text-white" href="#" onclick="openModal()"><i
+                                    class="fa fa-plus"></i> Message</a>
                     </div>
                     <div class="col-md-7 my-auto">
                         <div class="form-group mt-2">
@@ -73,6 +73,19 @@
                                 <option value="1">Active</option>
                                 <option value="0">Inactive</option>
                             </select>
+                        </div>
+                        <div class="col-md-4 mt-4">
+                            <div class="form-group mt-2">
+                                <span class="fileselector mt-1">
+                                    <label class="btn btn-block btn-danger text-white" style="margin-top: 5px"
+                                           for="projectFile">
+                                        <input class="upload-file-selector" id="projectFile" type="file"
+                                               name="projectFile">
+                                        <i class="fa fa-paperclip margin-correction"></i>
+                                            <span id="projectFileLabel" default="Attach File">Attach File</span>
+                                    </label>
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -203,7 +216,7 @@
 
     function deleteMessage(id) {
         $('#loader').show();
-        fetch(`<?= BASEURL ?>messages/delete/api/${id}`, {
+        fetch(`<?= BASEURL ?>api/messages/delete/${id}`, {
             method: "GET",
             credentials: 'same-origin',
             headers: {
@@ -217,7 +230,7 @@
     function generateTable() {
         if (total > partial) {
             $('#loader').show();
-            fetch(`<?= BASEURL ?>messages/api/?index=${index}&title=${title}&active=${active}`, {
+            fetch(`<?= BASEURL ?>api/messages/?index=${index}&title=${title}&active=${active}`, {
                 method: "GET",
                 credentials: 'same-origin',
                 headers: {
@@ -257,7 +270,7 @@
         $('#message').hide();
         if (id > 0) {
             showLoading();
-            fetch(`<?= BASEURL ?>messages/api/${id}`, {
+            fetch(`<?= BASEURL ?>api/messages/${id}`, {
                 method: "GET",
                 credentials: 'same-origin',
                 headers: {
@@ -275,4 +288,24 @@
             });
         }
     }
+
+    $(document).ready(function () {
+        $('input:file').change(function (e) {
+            let input = e.target;
+
+            if (input.files.length > 0) {
+                input.parentElement.classList.remove('btn-primary');
+                input.parentElement.classList.remove('btn-danger');
+                input.parentElement.classList.add('btn-success');
+                input.text = input.value;
+                let labelId = input.getAttribute('id') + 'Label';
+                document.getElementById(labelId).textContent = input.value;
+            } else {
+                input.parentElement.classList.remove('btn-success');
+                input.parentElement.classList.add('btn-danger');
+                let labelId = input.getAttribute('id') + 'Label';
+                document.getElementById(labelId).textContent = document.getElementById(labelId).getAttribute('default');
+            }
+        });
+    });
 </script>

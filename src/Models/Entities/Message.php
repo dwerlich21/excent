@@ -43,6 +43,11 @@ class Message
      */
     private \DateTime $date;
 
+    /**
+     * @Column(type="string", nullable=true)
+     */
+    private ?string $documentFile = '';
+
     public function __construct()
     {
         $this->date = new \DateTime();
@@ -100,5 +105,16 @@ class Message
     public function getDate(): \DateTime
     {
         return $this->date;
+    }
+
+    public function getDocumentFile(): ?string
+    {
+        return $this->documentFile;
+    }
+
+    public function setDocumentFile(?string $documentFile): Message
+    {
+        $this->documentFile = substr($documentFile, strrpos($documentFile, '/') + 1);
+        return $this;
     }
 }

@@ -16,9 +16,11 @@ class CalendarController extends Controller
     public function calendar(Request $request, Response $response)
     {
         $user = $this->getLogged();
+        $today = date('Y-m-d');
+        $activities = $this->em->getRepository(ActivityDeal::class)->totalCalendar(0, $user, $today);
         $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId(), 'type' => 0], ['name' => 'asc']);
         return $this->renderer->render($response, 'default.phtml', ['page' => 'calendar/index.phtml', 'menuActive' => ['calendar'],
-            'user' => $user, 'deals' => $deals]);
+            'user' => $user, 'deals' => $deals, 'activities' => $activities]);
     }
 
     public function getTasks(Request $request, Response $response)

@@ -138,7 +138,7 @@
 
     function deleteCategory(id) {
         $('#loader').show();
-        fetch(`<?= BASEURL ?>documents/category/delete/api/${id}`, {
+        fetch(`<?= BASEURL ?>api/documents/category/delete/${id}`, {
             method: "GET",
             credentials: 'same-origin',
             headers: {
@@ -161,7 +161,7 @@
     function generateTable() {
         if (total > partial) {
             $('#loader').show();
-            fetch(`<?= BASEURL ?>documents/category/api/?index=${index}`, {
+            fetch(`<?= BASEURL ?>api/documents/category/?index=${index}`, {
                 method: "GET",
                 credentials: 'same-origin',
                 headers: {
