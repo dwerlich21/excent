@@ -1,0 +1,80 @@
+<div class="row">
+    <div class="col">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col">
+                        <h5 class="title">Calendar</h5>
+                    </div>
+                </div>
+
+            </div>
+            <div class="card-body" id="calendar">
+
+                <div id="fullCalModal" class="modal fade">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span> <span
+                                        class="sr-only">close</span></button>
+                                <h4 id="titulo" class="modal-title"></h4></div>
+                            <div class="modal-body">
+                                <b>Data/Hora: </b> <span id="data"></span>
+                                <br><b>Local: </b> <span id="local"></span>
+                                <br><b>Pauta: </b> <span id="descricao"></span><br></div>
+                            <div class="modal-footer"><a id="view" target="_blank" class="btn btn-primary">Visualizar</a>
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link href='<?= BASEURL ?>assets/libs/fullcalendar/core/main.css' rel='stylesheet'/>
+<link href='<?= BASEURL ?>assets/libs/fullcalendar/daygrid/main.css' rel='stylesheet'/>
+<script src='<?= BASEURL ?>assets/libs/fullcalendar/core/main.js'></script>
+<script src='<?= BASEURL ?>assets/libs/fullcalendar/core/locales/pt-br.js'></script>
+<script src='<?= BASEURL ?>assets/libs/fullcalendar/interaction/main.js'></script>
+<script src='<?= BASEURL ?>assets/libs/fullcalendar/daygrid/main.js'></script>
+
+<script>
+
+    function formatDate(date, type) {
+        if (type == 2) {
+            let month = `${date.getMonth() + 1}`;
+            if (month.length < 2) {
+                month = `0${month}`;
+            }
+            return `${date.getFullYear()}-${month}-${date.getDate()}T${date.getHours()}:00:00-02:00`;
+        }
+        return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()} - ${date.getHours()}:${date.getMinutes()}`;
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+        let calendarEl = document.getElementById('calendar');
+
+        let calendar = new FullCalendar.Calendar(calendarEl, {
+            locale: 'en-us',
+            plugins: ['interaction', 'dayGrid', 'mounthGrid'],
+            editable: true,
+            eventLimit: true, // allow "more" link when too many events
+            eventClick: function (info) {
+                let start = new Date(info.event.start);
+                let end = new Date(info.event.end);
+                end.setTime(end.getTime() + (60 * 60 * 1000));
+                $('#date').text(formatDate(info.event.start));
+                $('#dealId').text(info.event.extendedProps.deal);
+                $('#descricao').text(info.event.title);
+                $('#view').attr('href', '<?= BASEURL ?>eventos/visualizar/' + info.event.id);
+                $('#myModal').modal('show');
+            },
+            events: '<?= BASEURL ?>calendar/view/',
+        });
+        calendar.render();
+    });
+</script>

@@ -109,12 +109,9 @@ class DealController extends Controller
             ];
             Validator::requireValidator($fields, $data);
             $task = new ActivityDeal();
-            $time = null;
             $description = '';
             if ($data['description']) $description = $data['description'];
-            if ($data['time']) $time = \DateTime::createFromFormat('H:i', $data['time']);
-            $task->setDate(\DateTime::createFromFormat('d/m/Y', $data['date']))
-                ->setTime($time)
+            $task->setDate(\DateTime($data['date']))
                 ->setType($data['options'])
                 ->setStatus($data['status'])
                 ->setUser($user)

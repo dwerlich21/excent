@@ -2,7 +2,7 @@
     <div class="col-md-6">
         <div class="card p-3" style="height: 90%">
             <div class="row" style="height: 100%">
-                <div class="col" >
+                <div class="col">
                     <div class="row">
                         <i class=" fa fa-2x fa-medal"> </i> <h5 class="title ml-3"> Leader Board</h5>
                     </div>
@@ -34,7 +34,7 @@
                         </div>
                     </div>
                     <div style="position: absolute; bottom: 0; right: 0">
-                        <a href="#" >View more</a>
+                        <a href="<?= BASEURL ?>calendar">View more</a>
                     </div>
                 </div>
             </div>
@@ -45,17 +45,31 @@
     <div class="col-md-6">
         <div class="card p-3" style="height: 90%">
             <div class="row" style="height: 100%">
-                <div class="col" style="position: relative">
+                <div class="col">
                     <div class="row">
                         <i class=" fa fa-2x fa-envelope"> </i> <h5 class="title ml-3"> Messages</h5>
                     </div>
                     <div class="row mb-4">
                         <div class="col">
-                            Aparece as três últimas mensagens recebidas
+                            <?php foreach ($messages as $message): ?>
+                                <div class="row my-2" style="border: solid 1px rgb(0, 0, 0, 0.25);">
+                                    <div class="col py-2">
+                                        <div class="row"><b><?= $message->getTitle() ?></b></div>
+                                        <div class="row my-1" style="font-size: 12px">
+                                            <i class="fa fa-calendar my-auto mr-1"></i> <?= $message->getDate()->format('d/m/Y') ?>
+                                            <i class="fa fa-clock ml-2 my-auto mr-1"></i> <?= $message->getDate()->format('H:i') ?>
+                                            <i class="fa fa-user ml-2 my-auto mr-1"></i><?= $message->getUser()->getName() ?>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            <?php endforeach; ?>
                         </div>
                     </div>
-                    <div style="position: absolute; bottom: 0; right: 0;">
-                        <a href="#" >View more</a>
+                    <div class="row" >
+                        <div class="col text-right mb-3">
+                            <a href="<?= BASEURL ?>messages">View more</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -70,11 +84,25 @@
                     </div>
                     <div class="row mb-4">
                         <div class="col">
-                            Aparece as três últimas documentos recebidos
+                            <?php foreach ($docs as $doc): ?>
+                                <div class="row my-2" style="border: solid 1px rgb(0, 0, 0, 0.25);">
+                                    <div class="col py-2">
+                                        <div class="row"><b><?= $doc->getDocument()->getTitle() ?></b></div>
+                                        <div class="row my-1" style="font-size: 12px">
+                                            <i class="fa fa-calendar my-auto mr-1"></i> <?= $doc->getDocument()->getCreated()->format('d/m/Y') ?>
+                                            <i class="fa fa-clock ml-2 my-auto mr-1"></i> <?= $doc->getDocument()->getCreated()->format('H:i') ?>
+                                            <i class="fa fa-user ml-2 my-auto mr-1"></i><?= $doc->getDocument()->getResponsible()->getName() ?>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            <?php endforeach; ?>
                         </div>
                     </div>
-                    <div style="position: absolute; bottom: 0; right: 0">
-                        <a href="#" >View more</a>
+                    <div class="row" >
+                        <div class="col text-right mb-3 align-text-bottom" style="height: 100%">
+                            <a href="<?= BASEURL ?>documents/received">View more</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -177,45 +205,6 @@
         </div>
     </div>
 </div>
-
-
-
-
-
-<!--<div class="row">-->
-<!--    <div class="col">-->
-<!--        --><?php //if ($messages != null): ?>
-<!--        <div class="card p-3">-->
-<!--            <div class="row">-->
-<!--                <div class="col-md-8">-->
-<!--                    <h5 class="title">Messages</h5>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--            <div class="card-body" id="messagesDiv">-->
-<!---->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
-<?php //endif; ?>
-<!--<div class="row">-->
-<!--    <div class="col">-->
-<!--        --><?php //if ($tasks != null): ?>
-<!--            <div class="card p-3">-->
-<!--                <div class="row">-->
-<!--                    <div class="col-md-8">-->
-<!--                        <h5 class="title">Tasks</h5>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--                <div class="card-body">-->
-<!--                    <div class="row" id="tasksDiv"></div>-->
-<!---->
-<!--                </div>-->
-<!--            </div>-->
-<!--        --><?php //endif; ?>
-<!--    </div>-->
-<!--</div>-->
-
 <script>
 
     var index = 0;

@@ -132,14 +132,20 @@ class TransactionRepository extends EntityRepository
         $params = [];
         $limitSql = $this->generateLimit($limit, $offset);
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
-        $sql = "SELECT COUNT(transaction.id) AS accounts, SUM(transaction.withdrawals) AS totalCapture, 
-                SUM(transaction.deposit) AS totalDeposit,
-                (SUM(transaction.deposit) - SUM(transaction.withdrawals)) AS marginIn                  
+        $sql = "SELECT
+                    (SELECT manager.name FROM users AS manager WHERE manager.id =  users.manager) AS user,
+                    (SELECT countries.flag FROM countries 
+                     JOIN users AS manager ON countries.id = manager.country
+                     WHERE manager.id =  users.manager) AS country,
+                    COUNT(transaction.id) AS accounts, 
+                    SUM(transaction.withdrawals) AS totalCapture, 
+                    SUM(transaction.deposit) AS totalDeposit,
+                    (SUM(transaction.deposit) - SUM(transaction.withdrawals)) AS marginIn                 
                 FROM transaction
                 JOIN users ON users.id = transaction.user
                 JOIN countries ON countries.id = transaction.country
-                GROUP BY users.manager
-                ORDER BY marginIn DESC {$limitSql}
+                GROUP BY users.manager, country
+                ORDER BY marginIn desc {$limitSql}
                ";
 
         $sth = $pdo->prepare($sql);

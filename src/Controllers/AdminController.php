@@ -3,14 +3,11 @@
 
 namespace App\Controllers;
 
-use App\Helpers\Date;
 use App\Helpers\Validator;
 use App\Models\Entities\ActivityDeal;
 use App\Models\Entities\Deal;
-use App\Models\Entities\Document;
+use App\Models\Entities\DocumentDestiny;
 use App\Models\Entities\Message;
-use App\Models\Entities\Task;
-use App\Models\Entities\User;
 use \Psr\Http\Message\ResponseInterface as Response;
 use \Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -25,9 +22,10 @@ class AdminController extends Controller
         $date = \DateTime::createFromFormat('Y-m-d', $today);
         $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId(), 'type' => 0], ['name' => 'asc']);
         $tasks = $this->em->getRepository(ActivityDeal::class)->findBy(['date' => $date, 'status' => 1, 'user' => $user->getId()]);
-        $messages = $this->em->getRepository(Message::class)->findBy(['active' => 1]);
+        $messages = $this->em->getRepository(Message::class)->findBy(['active' => 1], ['date' => 'desc'], 3);
+        $docs = $this->em->getRepository(DocumentDestiny::class)->findBy(['destiny' => $user->getId()], ['id' => 'desc'], 3);
         return $this->renderer->render($response, 'default.phtml', ['page' => 'index.phtml', 'menuActive' => ['dashboard'],
-            'user' => $user, 'deals' => $deals, 'tasks' => $tasks, 'messages' => $messages]);
+            'user' => $user, 'deals' => $deals, 'tasks' => $tasks, 'messages' => $messages, 'docs' => $docs]);
     }
 
     public function taskStatus(Request $request, Response $response)

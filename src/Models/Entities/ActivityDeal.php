@@ -23,11 +23,6 @@ class ActivityDeal
     private \DateTime $date;
 
     /**
-     * @Column(type="time", nullable=true)
-     */
-    private ?\DateTime $time = null;
-
-    /**
      * @Column(type="integer")
      */
     private int $type;
@@ -106,17 +101,6 @@ class ActivityDeal
     public function setDeal(Deal $deal): ActivityDeal
     {
         $this->deal = $deal;
-        return $this;
-    }
-
-    public function getTime(): ?\DateTime
-    {
-        return $this->time;
-    }
-
-    public function setTime(?\DateTime $time): ActivityDeal
-    {
-        $this->time = $time;
         return $this;
     }
 

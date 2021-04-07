@@ -49,12 +49,17 @@
                         <i class="fa fa-crosshairs"></i> <b>Leads</b>
                     </a>
                 </li>
-                <?php if ($user->getType() == 1 || $user->getType() == 2 || $user->getType() == 3): ?>
-                <li <?= in_array('users', $menuActive) ? 'class="active"' : '' ?>>
-                    <a href="<?= BASEURL ?>users">
-                        <i class="fa fa-users"></i> <b>Users</b>
+                <li <?= in_array('calendar', $menuActive) ? 'class="active"' : '' ?>>
+                    <a href="<?= BASEURL ?>calendar">
+                        <i class="fa fa-calendar"></i> <b>Calendar</b>
                     </a>
                 </li>
+                <?php if ($user->getType() == 1 || $user->getType() == 2 || $user->getType() == 3): ?>
+                    <li <?= in_array('users', $menuActive) ? 'class="active"' : '' ?>>
+                        <a href="<?= BASEURL ?>users">
+                            <i class="fa fa-users"></i> <b>Users</b>
+                        </a>
+                    </li>
                 <?php endif; ?>
                 <?php if ($user->getType() == 4): ?>
                     <li <?= in_array('documents', $menuActive) ? 'class="active"' : '' ?>>
@@ -64,35 +69,35 @@
                     </li>
                 <?php endif; ?>
                 <?php if ($user->getType() != 4): ?>
-                <li data-toggle="collapse" href="#documentsGroup">
-                    <a
-                       aria-expanded="<?= isset($subMenu) && $subMenu == 'documentsGroup' ? 'true' : 'false' ?>">
-                        <i class="fa fa-file"></i>
-                        <p><b>Documents</b><b class="caret mt-2"></b></p>
-                    </a>
-                    <div class="collapse pl-3 <?= isset($subMenu) && $subMenu == 'documentsGroup' ? 'show' : '' ?>"
-                         id="documentsGroup">
-                        <ul class="nav">
-                            <?php if ($user->getType() == 1  || $user->getType() == 5): ?>
-                            <li class="<?= $section == 'DocumentsCategory' ? 'active' : '' ?>">
-                                <a href="<?= BASEURL ?>documents/category">
-                                    <i class="fa fa-plus"></i> Category
-                                </a>
-                            </li>
-                            <?php endif; ?>
-                            <li class="<?= $section == 'DocumentsReceived' ? 'active' : '' ?>">
-                                <a href="<?= BASEURL ?>documents/received">
-                                    <i class="fa fa-laptop"></i> Received
-                                </a>
-                            </li>
-                            <li class="<?= $section == 'DocumentsSubmit' ? 'active' : '' ?>">
-                                <a href="<?= BASEURL ?>documents/sent">
-                                    <i class="fa fa-share"></i> Sent
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
+                    <li data-toggle="collapse" href="#documentsGroup">
+                        <a
+                                aria-expanded="<?= isset($subMenu) && $subMenu == 'documentsGroup' ? 'true' : 'false' ?>">
+                            <i class="fa fa-file"></i>
+                            <p><b>Documents</b><b class="caret mt-2"></b></p>
+                        </a>
+                        <div class="collapse pl-3 <?= isset($subMenu) && $subMenu == 'documentsGroup' ? 'show' : '' ?>"
+                             id="documentsGroup">
+                            <ul class="nav">
+                                <?php if ($user->getType() == 1 || $user->getType() == 5): ?>
+                                    <li class="<?= $section == 'DocumentsCategory' ? 'active' : '' ?>">
+                                        <a href="<?= BASEURL ?>documents/category">
+                                            <i class="fa fa-plus"></i> Category
+                                        </a>
+                                    </li>
+                                <?php endif; ?>
+                                <li class="<?= $section == 'DocumentsReceived' ? 'active' : '' ?>">
+                                    <a href="<?= BASEURL ?>documents/received">
+                                        <i class="fa fa-laptop"></i> Received
+                                    </a>
+                                </li>
+                                <li class="<?= $section == 'DocumentsSubmit' ? 'active' : '' ?>">
+                                    <a href="<?= BASEURL ?>documents/sent">
+                                        <i class="fa fa-share"></i> Sent
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
                 <?php endif; ?>
                 <li <?= in_array('messages', $menuActive) ? 'class="active"' : '' ?>>
                     <a href="<?= BASEURL ?>messages">
@@ -199,8 +204,7 @@
                                         <div class="btn-group btn-group-toggle" data-toggle="buttons">
                                             <label class="btn btn-white active" title="Call">
                                                 <input type="radio" name="options" id="hatchback" autocomplete="off"
-                                                       value="2"
-                                                       checked>
+                                                       value="2" checked>
                                                 <i class="fa fa-phone text-gray"></i>
                                             </label>
                                             <label class="btn btn-white" title="Meeting">
@@ -227,24 +231,19 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col">
                                         <label for="date">Date</label>
-                                        <input name="date" id="date" placeholder="dd/mm/YYYY" data-mask="99/99/9999"
-                                               class="form-control mb-1">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="time">Time</label>
-                                        <input name="time" id="time" placeholder="HH:ii" data-mask="99:99"
+                                        <input name="date" id="date" type="datetime-local"
                                                class="form-control mb-1">
                                     </div>
                                 </div>
-                                <!--                                <div class="row">-->
-                                <!--                                    <div class="col">-->
-                                <!--                                        <label for="description">Description</label>-->
-                                <!--                                        <textarea name="description" id="description" placeholder="Description"-->
-                                <!--                                                  class="form-control mb-1"></textarea>-->
-                                <!--                                    </div>-->
-                                <!--                                </div>-->
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="description">Description</label>
+                                        <textarea name="description" id="description" placeholder="Description"
+                                                  class="form-control mb-1"></textarea>
+                                    </div>
+                                </div>
                                 <input name="status" id="status" type="hidden" value="1">
                                 <div class="row">
                                     <div class="col text-right">
