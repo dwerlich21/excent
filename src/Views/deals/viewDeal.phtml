@@ -335,7 +335,7 @@
 
     function generateActivities() {
         $('#loader').show();
-        fetch(`<?= BASEURL ?>deals/activities/api/?index=${index}&deal=${deal}&activity=${activity}`, {
+        fetch(`<?= BASEURL ?>api/deals/activities/?index=${index}&deal=${deal}&activity=${activity}`, {
             method: "GET",
             credentials: 'same-origin',
             headers: {

@@ -34,22 +34,29 @@ class CalendarController extends Controller
                     $id = $activity->getId();
                     $start = $activity->getDate()->format('Y-m-d H:i:s');
                     $title = $activity->getActivity();
+                    $description = $activity->getDescription();
                     $deal = $activity->getDeal()->getName();
                     $dealId = $activity->getDeal()->getId();
-                    if ($activity->getType() == 2) {
-                        $color = 'blue';
-                    } else if ($activity->getType() == 3) {
-                        $color = 'red';
-                    } else if ($activity->getType() == 4) {
-                        $color = 'green';
-                    } else if ($activity->getType() == 5) {
-                        $color = 'grey';
-                    } else if ($activity->getType() == 6) {
-                        $color = 'purple';
+                    if ($activity->getStatus() == 1) {
+                        if ($activity->getType() == 2) {
+                            $color = 'blue';
+                        } else if ($activity->getType() == 3) {
+                            $color = 'red';
+                        } else if ($activity->getType() == 4) {
+                            $color = 'gold';
+                        } else if ($activity->getType() == 5) {
+                            $color = 'grey';
+                        } else if ($activity->getType() == 6) {
+                            $color = 'purple';
+                        } else {
+                            $color = 'yellow';
+                        }
                     } else {
-                        $color = 'yellow';
+                        $color = '#6BD098';
                     }
-                    $eventsArray[] = ['id' => $id, 'start' => $start, 'title' => $title, 'deal' => $deal, 'color' => $color, 'dealId' => $dealId];
+
+                    $eventsArray[] = ['id' => $id, 'start' => $start, 'title' => $title, 'deal' => $deal,
+                        'color' => $color, 'dealId' => $dealId, 'description' => $description];
                 }
             }
             return $response->withJson(

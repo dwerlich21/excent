@@ -41,6 +41,25 @@ $app->group('/api/messages', function () use ($app) {
     });
 });
 
+$app->group('/api/deals', function () use ($app) {
+
+    $app->get('/[{id}/]', function (Request $request, Response $response) {
+        return $this->ApiController->dealsTable($request, $response);
+    });
+
+//    $app->get('/update/[{id}/]', function (Request $request, Response $response) {
+//        return $this->ApiController->statusUpdate($request, $response);
+//    });
+//
+//    $app->get('/activities/[{id}/]', function (Request $request, Response $response) {
+//        return $this->ApiController->ActivityDeal($request, $response);
+//    });
+
+    $app->get('/view/{id}/', function (Request $request, Response $response) {
+        return $this->DealController->viewDeal($request, $response);
+    });
+});
+
 $app->group('/api/dashboard', function () use ($app) {
 
     $app->get('/tasks/[{id}/]', function (Request $request, Response $response) {

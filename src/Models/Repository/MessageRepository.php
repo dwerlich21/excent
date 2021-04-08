@@ -50,7 +50,7 @@ class MessageRepository extends EntityRepository
         $where = $this->generateWhere($id, $title, $active, $params);
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
         $sql = "SELECT message.title, message.description, message.id, message.active, users.name AS user, 
-                DATE_FORMAT(message.date, '%d/%m/%Y') AS date, TIME_FORMAT(message.date, '%H:%i') AS time         
+                DATE_FORMAT(message.date, '%d/%m/%Y') AS date, TIME_FORMAT(message.date, '%H:%i') AS time, users.type AS type         
                 FROM message
                 JOIN users ON users.id = message.user
                 WHERE 1 = 1 {$where}

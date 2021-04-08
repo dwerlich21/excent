@@ -225,7 +225,7 @@
         } if (task.type == 3) {
             style = "style ='color: red'";
         } if (task.type == 4) {
-            style = "style ='color: green'";
+            style = "style ='color: gold'";
         } if (task.type == 5) {
             style = "style ='color: grey'";
         } if (task.type == 6) {
@@ -260,6 +260,11 @@
     function viewFlag(flag) {
         let destiny = `<?= BASEURL ?>${flag}`;
         return `<img src="${destiny}">`;
+    }
+
+    function colorMessage(id) {
+        console.log(id);
+
     }
 
     function generateRankingTable(transaction) {

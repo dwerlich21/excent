@@ -11,20 +11,46 @@
             </div>
             <div class="card-body" id="calendar">
 
-                <div id="fullCalModal" class="modal fade">
-                    <div class="modal-dialog">
+                <div class="modal fade" id="fullCalModal" tabindex="-1" role="dialog" aria-labelledby="subscriptionModal"
+                     aria-hidden="true">
+                    <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span> <span
-                                        class="sr-only">close</span></button>
-                                <h4 id="titulo" class="modal-title"></h4></div>
-                            <div class="modal-body">
-                                <b>Data/Hora: </b> <span id="data"></span>
-                                <br><b>Local: </b> <span id="local"></span>
-                                <br><b>Pauta: </b> <span id="descricao"></span><br></div>
-                            <div class="modal-footer"><a id="view" target="_blank" class="btn btn-primary">Visualizar</a>
-                                <button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+                                <h5 class="modal-title">Task Details</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
                             </div>
+                            <div class="row px-3 mt-3 mb-3">
+                                <div class="col">
+                                    <b>Deal/Lead: </b><span id="taskDeal"></span>
+                                </div>
+                            </div>
+                            <div class="row px-3 mb-3">
+                                <div class="col">
+                                    <b>Date: </b><span id="taskDate"></span>
+                                </div>
+                            </div>
+                            <div class="row px-3 mb-3">
+                                <div class="col">
+                                    <b>Activity: </b><span id="taskActivity"></span>
+                                </div>
+                            </div>
+                            <form id="statusTask" method="post">
+                                    <input type="hidden" name="taskId" id="taskId">
+                                    <div class="row">
+                                        <div class="col">
+                                            <label for="taskDescription">Description</label>
+                                            <input class="form-control" id="taskDescription" name="taskDescription" placeholder="Description">
+                                        </div>
+                                    </div>
+                                <div class="row">
+                                    <div class="col text-right">
+                                        <button type="submit" class="btn btn-primary">Task Completed</button>
+                                    </div>
+                                </div>
+                                <div style="display: none" id="transaction" class="alert alert-danger" role="alert"></div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -34,13 +60,14 @@
 </div>
 
 <link href='<?= BASEURL ?>assets/libs/fullcalendar/core/main.css' rel='stylesheet'/>
-<link href='<?= BASEURL ?>assets/libs/fullcalendar/daygrid/main.css' rel='stylesheet'/>
+<link href='<?= BASEURL ?>assets/libs/fullcalendar/list/main.css' rel='stylesheet'/>
 <script src='<?= BASEURL ?>assets/libs/fullcalendar/core/main.js'></script>
-<script src='<?= BASEURL ?>assets/libs/fullcalendar/core/locales/pt-br.js'></script>
+<script src='<?= BASEURL ?>assets/libs/fullcalendar/list/main.js'></script>
+<link href='<?= BASEURL ?>assets/libs/fullcalendar/daygrid/main.css' rel='stylesheet'/>
 <script src='<?= BASEURL ?>assets/libs/fullcalendar/interaction/main.js'></script>
 <script src='<?= BASEURL ?>assets/libs/fullcalendar/daygrid/main.js'></script>
-
 <script>
+
 
     function formatDate(date, type) {
         if (type == 2) {
@@ -55,17 +82,21 @@
 
 
     document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('calendar');
 
-        let calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            plugins: ['dayGrid', 'list', 'interaction'],
 
-        let calendar = new FullCalendar.Calendar(calendarEl, {
-            locale: 'en-us',
-            plugins: ['interaction', 'dayGrid'],
             header: {
-                left: 'prevYear,prev,next,nextYear today',
+                left: 'prev,next today',
                 center: 'title',
-                right: 'dayGridMonth,dayGridWeek,dayGridDay'
+                right: 'dayGridMonth,listWeek,listDay'
             },
+            views: {
+                listDay: {buttonText: 'list day'},
+                listWeek: {buttonText: 'list week'}
+            },
+            defaultView: 'dayGridMonth',
             navLinks: true, // can click day/week names to navigate views
             editable: true,
             eventLimit: true, // allow "more" link when too many events
@@ -73,14 +104,63 @@
                 let start = new Date(info.event.start);
                 let end = new Date(info.event.end);
                 end.setTime(end.getTime() + (60 * 60 * 1000));
-                $('#date').text(formatDate(info.event.start));
-                $('#dealId').text(info.event.extendedProps.deal);
-                $('#descricao').text(info.event.title);
-                $('#view').attr('href', '<?= BASEURL ?>eventos/visualizar/' + info.event.id);
-                $('#myModal').modal('show');
+                $('#taskDate').text(formatDate(info.event.start));
+                $('#taskDeal').text(info.event.extendedProps.deal);
+                $('#taskActivity').text(info.event.title);
+                document.getElementById('taskDescription').value = info.event.extendedProps.description;
+                document.getElementById('taskId').value = info.event.id;
+                $('#fullCalModal').modal('show');
             },
             events: '<?= BASEURL ?>calendar/view/',
+            eventTimeFormat:{
+                hour: 'numeric',
+                minute: '2-digit',
+                meridiem: false,
+                hour12: false
+            },
         });
         calendar.render();
     });
+
+    const formStatusTask = document.getElementById('statusTask');
+    const divMessage = document.getElementById('message');
+
+    formStatusTask.addEventListener('submit', e => {
+        let id = document.getElementById('taskId').value;
+        e.preventDefault();
+        showLoading();
+        let formData = formDataToJson('statusTask');
+        fetch(`<?= BASEURL ?>deals/activity/${id}`, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        }).then(response => {
+            closeLoading();
+            divMessage.classList.add("alert-danger");
+            divMessage.classList.remove("alert-success");
+            response.json().then(json => {
+                divMessage.textContent = json.message;
+                divMessage.style.display = 'block';
+                if (response.status === 201) {
+                    $('#modal').modal('hide');
+                    divMessage.classList.add("alert-success");
+                    divMessage.classList.remove("alert-danger");
+                    formStatusTask.reset();
+                    setTimeout(function () {
+                        // location.reload();
+                    }, 1500);
+                }
+            });
+        });
+        $('#fullCalModal').modal('hide');
+        openModalNew();
+    });
+
+    function openModalNew() {
+        $('#myModal').modal('show');
+    }
 </script>

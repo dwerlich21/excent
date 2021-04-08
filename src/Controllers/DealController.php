@@ -134,4 +134,25 @@ class DealController extends Controller
                 'message' => $e->getMessage(),])->withStatus(500);
         }
     }
+
+    public function updateActivityStatus(Request $request, Response $response)
+    {
+        try {
+            $user = $this->getLogged();
+            $data = (array)$request->getParams();
+            $id = $data['taskId'];
+            $task = $this->em->getRepository(ActivityDeal::class)->find($id);
+            $task->setStatus(0)
+                ->setDescription($data['taskDescription']);
+            $this->em->getRepository(ActivityDeal::class)->save($task);
+            return $response->withJson([
+                'status' => 'ok',
+                'message' => 'Congratulations! Task Completed!',
+            ], 201)
+                ->withHeader('Content-type', 'application/json');
+        } catch (\Exception $e) {
+            return $response->withJson(['status' => 'error',
+                'message' => $e->getMessage(),])->withStatus(500);
+        }
+    }
 }

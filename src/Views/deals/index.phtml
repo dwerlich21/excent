@@ -312,7 +312,7 @@
     }
 
     function updateStatus(deal, status) {
-        fetch(`<?= BASEURL ?>deals/update/api/?deal=${deal}&status=${status}`, {
+        fetch(`<?= BASEURL ?>api/deals/update/?deal=${deal}&status=${status}`, {
             method: "GET",
             credentials: 'same-origin',
             headers: {
@@ -323,13 +323,13 @@
     }
 
     function viewDeal(id) {
-        return `<?= BASEURL ?>deals/${id}`
+        return `<?= BASEURL ?>deals/view/${id}`
     }
 
     function generateDeals() {
         if (total > partial) {
             $('#loader').show();
-            fetch(`<?= BASEURL ?>deals/api/?index=${index}&name=${name}&country=${country}`, {
+            fetch(`<?= BASEURL ?>api/deals/?index=${index}&name=${name}&country=${country}`, {
                 method: "GET",
                 credentials: 'same-origin',
                 headers: {
