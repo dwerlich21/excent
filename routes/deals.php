@@ -20,4 +20,8 @@ $app->group('/deals', function () use ($app) {
     $app->post('/activity/{id}/', function (Request $request, Response $response) {
         return $this->DealController->updateActivityStatus($request, $response);
     });
+
+    $app->get('/view/{id}/', function (Request $request, Response $response) {
+        return $this->DealController->viewDeal($request, $response);
+    });
 });

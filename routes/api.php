@@ -43,20 +43,38 @@ $app->group('/api/messages', function () use ($app) {
 
 $app->group('/api/deals', function () use ($app) {
 
-    $app->get('/[{id}/]', function (Request $request, Response $response) {
+    $app->get('/', function (Request $request, Response $response) {
         return $this->ApiController->dealsTable($request, $response);
     });
 
-//    $app->get('/update/[{id}/]', function (Request $request, Response $response) {
-//        return $this->ApiController->statusUpdate($request, $response);
-//    });
-//
-//    $app->get('/activities/[{id}/]', function (Request $request, Response $response) {
-//        return $this->ApiController->ActivityDeal($request, $response);
-//    });
+    $app->get('/update/[{id}/]', function (Request $request, Response $response) {
+        return $this->ApiController->statusUpdate($request, $response);
+    });
 
-    $app->get('/view/{id}/', function (Request $request, Response $response) {
-        return $this->DealController->viewDeal($request, $response);
+    $app->get('/activities/[{id}/]', function (Request $request, Response $response) {
+        return $this->ApiController->ActivityDeal($request, $response);
+    });
+});
+
+$app->group('/api/leads', function () use ($app) {
+
+    $app->get('/delete/{id}/', function (Request $request, Response $response) {
+        return $this->ApiController->LeadDelete($request, $response);
+    });
+
+    $app->get('/[{id}/]', function (Request $request, Response $response) {
+        return $this->ApiController->leadsTable($request, $response);
+    });
+});
+
+$app->group('/api/transactions', function () use ($app) {
+
+    $app->get('/delete/{id}/', function (Request $request, Response $response) {
+        return $this->ApiController->transactionsDelete($request, $response);
+    });
+
+    $app->get('/', function (Request $request, Response $response) {
+        return $this->ApiController->transactionssTable($request, $response);
     });
 });
 

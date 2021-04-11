@@ -47,15 +47,17 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-8">
                             <label for="date">Date</label>
-                            <input name="date" id="date" placeholder="dd/mm/YYYY" data-mask="99/99/9999"
+                            <input name="date" id="date" type="datetime-local"
                                    class="form-control mb-1">
                         </div>
-                        <div class="col-md-6">
-                            <label for="time">Time</label>
-                            <input name="time" id="time" placeholder="HH:ii" data-mask="99:99"
-                                   class="form-control mb-1">
+                        <div class="col-md-4">
+                            <label for="statusDeal">Status</label>
+                            <select name="status" id="statusDeal" class="form-control">
+                                <option value="1">Scheduled</option>
+                                <option value="0">Fulfilled</option>
+                            </select>
                         </div>
                     </div>
                     <div class="row">
@@ -65,7 +67,6 @@
                                       class="form-control mb-1"></textarea>
                         </div>
                     </div>
-                    <input name="status" id="status" type="hidden" value="0">
                     <div class="row">
                         <div class="col text-right">
                             <button type="submit" class="btn btn-primary">Save Activity</button>
@@ -335,7 +336,7 @@
 
     function generateActivities() {
         $('#loader').show();
-        fetch(`<?= BASEURL ?>api/deals/activities/?index=${index}&deal=${deal}&activity=${activity}`, {
+        fetch(`<?= BASEURL ?>api/deals/activities/?index=${index}&deal=${deal}`, {
             method: "GET",
             credentials: 'same-origin',
             headers: {

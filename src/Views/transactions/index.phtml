@@ -218,7 +218,7 @@
 
     function deleteTransaction(id) {
         $('#loader').show();
-        fetch(`<?= BASEURL ?>transactions/delete/api/${id}`, {
+        fetch(`<?= BASEURL ?>api/transactions/delete/${id}`, {
             method: "GET",
             credentials: 'same-origin',
             headers: {
@@ -232,7 +232,7 @@
     function generateTable() {
         if (total > partial) {
             $('#loader').show();
-            fetch(`<?= BASEURL ?>transactions/api/?index=${index}&user=${user}&country=${country}`, {
+            fetch(`<?= BASEURL ?>api/transactions/?index=${index}&user=${user}&country=${country}`, {
                 method: "GET",
                 credentials: 'same-origin',
                 headers: {

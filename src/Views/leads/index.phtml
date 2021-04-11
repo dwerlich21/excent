@@ -307,7 +307,7 @@
         $('#message').hide();
         if (id > 0) {
             showLoading();
-            fetch(`<?= BASEURL ?>leads/api/${id}`, {
+            fetch(`<?= BASEURL ?>api/leads/${id}`, {
                 method: "GET",
                 credentials: 'same-origin',
                 headers: {
@@ -336,7 +336,7 @@
 
     function deleteLead(id) {
         $('#loader').show();
-        fetch(`<?= BASEURL ?>leads/delete/api/${id}`, {
+        fetch(`<?= BASEURL ?>api/leads/delete/${id}`, {
             method: "GET",
             credentials: 'same-origin',
             headers: {
@@ -350,7 +350,7 @@
     function generateTable() {
         if (total > partial) {
             $('#loader').show();
-            fetch(`<?= BASEURL ?>leads/api/?index=${index}&name=${name}&country=${country}`, {
+            fetch(`<?= BASEURL ?>api/leads/?index=${index}&name=${name}&country=${country}`, {
                 method: "GET",
                 credentials: 'same-origin',
                 headers: {

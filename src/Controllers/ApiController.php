@@ -62,10 +62,9 @@ class ApiController extends Controller
     {
         $this->getLogged(true);
         $deal = $request->getQueryParam('deal');
-        $id = $request->getQueryParam('activity');
         $index = $request->getQueryParam('index');
-        $activity = $this->em->getRepository(ActivityDeal::class)->list($id, $deal, 10, $index * 10);
-        $total = $this->em->getRepository(ActivityDeal::class)->listTotal($id, $deal)['total'];
+        $activity = $this->em->getRepository(ActivityDeal::class)->list($deal, 10, $index * 10);
+        $total = $this->em->getRepository(ActivityDeal::class)->listTotal($deal)['total'];
         $partial = ($index * 42) + sizeof($activity);
         $partial = $partial <= $total ? $partial : $total;
         return $response->withJson([

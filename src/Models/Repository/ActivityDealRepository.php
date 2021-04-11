@@ -26,13 +26,9 @@ class ActivityDealRepository extends EntityRepository
         return $limitSql;
     }
 
-    private function generateWhere($id = 0, $deal = null, &$params): string
+    private function generateWhere($deal, &$params): string
     {
         $where = '';
-        if ($id) {
-            $params[':id'] = $id;
-            $where .= " AND activityDeal.id = :id";
-        }
         if ($deal) {
             $params[':deal'] = $deal;
             $where .= " AND activityDeal.deal = :deal";
@@ -40,29 +36,29 @@ class ActivityDealRepository extends EntityRepository
         return $where;
     }
 
-    public function list($id = 0, $deal = null, $limit = null, $offset = null): array
+    public function list($deal = null, $limit = null, $offset = null): array
     {
         $params = [];
         $limitSql = $this->generateLimit($limit, $offset);
-        $where = $this->generateWhere($id, $deal,  $params);
+        $where = $this->generateWhere($deal,  $params);
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
-        $sql = "SELECT activityDeal.id, activityDeal.type, activityDeal.activity, 
-                users.name AS user, DATE_FORMAT(activityDeal.date, '%d/%m/%Y') AS date, TIME_FORMAT(activityDeal.time, '%H:%i') 
+        $sql = "SELECT activityDeal.id, activityDeal.type, activityDeal.activity, activityDeal.date AS dateTime,
+                users.name AS user, DATE_FORMAT(activityDeal.date, '%d/%m/%Y') AS date, TIME_FORMAT(activityDeal.date, '%H:%i') 
                 AS time, activityDeal.description               
                 FROM activityDeal
                 JOIN users ON users.id = activityDeal.user
                 WHERE 1 = 1 {$where}
-                ORDER BY id DESC {$limitSql}
+                ORDER BY dateTime DESC {$limitSql}
                ";
         $sth = $pdo->prepare($sql);
         $sth->execute($params);
         return $sth->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    public function listTotal($id = 0, $deal = null): array
+    public function listTotal($deal = null): array
     {
         $params = [];
-        $where = $this->generateWhere($id, $deal, $params);
+        $where = $this->generateWhere($deal, $params);
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
         $sql = "SELECT COUNT(activityDeal.id) AS total                  
                 FROM activityDeal
