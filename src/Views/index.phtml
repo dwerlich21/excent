@@ -6,12 +6,153 @@
                     <div class="row">
                         <i class=" fa fa-2x fa-medal"> </i> <h5 class="title ml-3"> Leader Board</h5>
                     </div>
-                    <div class="row mb-4">
-                        <div class="col">
-                            Resumo do Ranking
+                    <?php if ($user->getType() == 4): ?>
+                        <div class="row mb-4">
+                            <div class="col">
+                                <table class="table table-sm table-hover" id="advRanking">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col" class="text-center">#</th>
+                                        <th scope="col" class="text-center">Country</th>
+                                        <th class="text-center" scope="col">Net Margin In</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr class="<?= ($user->getId() == $advisors[0]['userId']) ? 'activeTable' : '' ?>">
+                                        <td class="text-center">1</td>
+                                        <td class="text-center">
+                                            <img src="<?= BASEURL ?><?= $advisors[0]['country'] ?>"
+                                                 alt="Img Country">
+                                        </td>
+                                        <td class="text-center">$
+                                            <?= number_format($advisors[0]['marginIn'], 2, ',', '.') ?>
+                                        </td>
+                                    </tr>
+                                    <?php
+                                    if ($user->getId() == $advisors[0]['userId']): ?>
+                                        <tr class="<?= ($user->getId() == $advisors[1]['userId']) ? 'activeTable' : '' ?>">
+                                            <td class="text-center">2</td>
+                                            <td class="text-center">
+                                                <img src="<?= BASEURL ?><?= $advisors[1]['country'] ?>"
+                                                     alt="Img Country">
+                                            </td>
+                                            <td class="text-center">$
+                                                <?= number_format($advisors[1]['marginIn'], 2, ',', '.') ?>
+                                            </td>
+                                        </tr>
+                                    <?php else:
+                                        $rank = 2;
+                                        for ($i = 1; $i < count($advisors); $i++): ?>
+                                            <?php if ($user->getId() == $advisors[$i]['userId']): ?>
+                                                <tr class="<?= ($user->getId() == $advisors[$i]['userId']) ? 'activeTable' : '' ?>">
+                                                    <td class="text-center"><?= $rank ?></td>
+                                                    <td class="text-center">
+                                                        <img src="<?= BASEURL ?><?= $advisors[$i]['country'] ?>"
+                                                             alt="Img Country">
+                                                    </td>
+                                                    <td class="text-center">$
+                                                        <?= number_format($advisors[$i]['marginIn'], 2, ',', '.') ?>
+                                                    </td>
+                                                </tr>
+                                            <?php endif; ?>
+                                            <?php $rank++ ?>
+                                        <?php endfor; ?>
+                                    <?php endif; ?>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                    </div>
-                    <div style="position: absolute; bottom: 0; right: 0">
+                    <?php endif; ?>
+                    <?php if ($user->getType() == 3): ?>
+                        <div class="row">
+                            <div class="col">
+                                <table class="table table-sm table-hover" id="managersTable">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col" class="text-center">#</th>
+                                        <th scope="col" class="text-center">User</th>
+                                        <th scope="col" class="text-center">Country</th>
+                                        <th class="text-center">Net Margin In</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr class="<?= ($user->getId() == $managers[0]['userId']) ? 'activeTable' : '' ?>">
+                                        <td class="text-center">1</td>
+                                        <td class="text-center"><?= $managers[0]['user'] ?></td>
+                                        <td class="text-center">
+                                            <img src="<?= BASEURL ?><?= $managers[0]['country'] ?>"
+                                                 alt="Img Country">
+                                        </td>
+                                        <td class="text-center">$
+                                            <?= number_format($managers[0]['marginIn'], 2, ',', '.') ?>
+                                        </td>
+                                    </tr>
+                                    <?php
+                                    if ($user->getId() == $managers[0]['userId']): ?>
+                                        <tr class="<?= ($user->getId() == $managers[1]['userId']) ? 'activeTable' : '' ?>">
+                                            <td class="text-center">2</td>
+                                            <td class="text-center"><?= $managers[1]['user'] ?></td>
+                                            <td class="text-center">
+                                                <img src="<?= BASEURL ?><?= $managers[1]['country'] ?>"
+                                                     alt="Img Country">
+                                            </td>
+                                            <td class="text-center">$
+                                                <?= number_format($managers[1]['marginIn'], 2, ',', '.') ?>
+                                            </td>
+                                        </tr>
+                                    <?php else:
+                                        $rank = 2;
+                                        for ($i = 1; $i < count($managers); $i++): ?>
+                                            <?php if ($user->getId() == $managers[$i]['userId']): ?>
+                                                <tr class="<?= ($user->getId() == $managers[$i]['userId']) ? 'activeTable' : '' ?>">
+                                                    <td class="text-center"><?= $rank ?></td>
+                                                    <td class="text-center"><?= $managers[$i]['user'] ?></td>
+                                                    <td class="text-center">
+                                                        <img src="<?= BASEURL ?><?= $managers[$i]['country'] ?>"
+                                                             alt="Img Country">
+                                                    </td>
+                                                    <td class="text-center">$
+                                                        <?= number_format($managers[$i]['marginIn'], 2, ',', '.') ?>
+                                                    </td>
+                                                </tr>
+                                                <?php $rank++ ?>
+                                            <?php endif; ?>
+                                        <?php endfor; ?>
+                                    <?php endif; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                    <?php if ($user->getType() < 3): ?>
+                        <div class="row">
+                            <div class="col">
+                                <table class="table table-sm table-hover" id="managersTable">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col" class="text-center">New Deposits</th>
+                                        <th scope="col" class="text-center">Withdrawals</th>
+                                        <th class="text-center">Net Margin In</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td class="text-center">$
+                                            <?= number_format($master[0]['totalDeposit'], 2, ',', '.') ?>
+                                        </td>
+                                        <td class="text-center">$
+                                            <?= number_format($master[0]['totalCapture'], 2, ',', '.') ?>
+                                        </td>
+                                        <td class="text-center">$
+                                            <?= number_format($master[0]['marginIn'], 2, ',', '.') ?>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                    <div class="col text-right mb-3">
                         <a onclick="openModalRanking()" href="#">View more</a>
                     </div>
                 </div>
@@ -52,22 +193,23 @@
                     <div class="row mb-4">
                         <div class="col">
                             <?php foreach ($messages as $message): ?>
-                            <a  href="<?= BASEURL ?>messages/received/<?= $message->getId() ?>" style="text-decoration: none; color: black">
-                                <div class="row my-2" style="border: solid 1px rgb(0, 0, 0, 0.25);">
-                                    <div class="col py-2">
-                                        <div class="row"><b><?= $message->getTitle() ?></b></div>
-                                        <div class="row my-1" style="font-size: 12px">
-                                            <i class="fa fa-calendar my-auto mr-1"></i> <?= $message->getDate()->format('d/m/Y') ?>
-                                            <i class="fa fa-clock ml-2 my-auto mr-1"></i> <?= $message->getDate()->format('H:i') ?>
-                                            <i class="fa fa-user ml-2 my-auto mr-1"></i><?= $message->getUser()->getName() ?>
+                                <a href="<?= BASEURL ?>messages/received/<?= $message->getId() ?>"
+                                   style="text-decoration: none; color: black">
+                                    <div class="row my-2" style="border: solid 1px rgb(0, 0, 0, 0.25);">
+                                        <div class="col py-2">
+                                            <div class="row"><b><?= $message->getTitle() ?></b></div>
+                                            <div class="row my-1" style="font-size: 12px">
+                                                <i class="fa fa-calendar my-auto mr-1"></i> <?= $message->getDate()->format('d/m/Y') ?>
+                                                <i class="fa fa-clock ml-2 my-auto mr-1"></i> <?= $message->getDate()->format('H:i') ?>
+                                                <i class="fa fa-user ml-2 my-auto mr-1"></i><?= $message->getUser()->getName() ?>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </a>
+                                </a>
                             <?php endforeach; ?>
                         </div>
                     </div>
-                    <div class="row" >
+                    <div class="row">
                         <div class="col text-right mb-3">
                             <a href="<?= BASEURL ?>messages">View more</a>
                         </div>
@@ -86,7 +228,8 @@
                     <div class="row mb-4">
                         <div class="col">
                             <?php foreach ($docs as $doc): ?>
-                                <a  href="<?= BASEURL ?>documents/received/<?= $doc->getDocument()->getId() ?>" style="text-decoration: none; color: black">
+                                <a href="<?= BASEURL ?>documents/received/<?= $doc->getDocument()->getId() ?>"
+                                   style="text-decoration: none; color: black">
                                     <div class="row my-2" style="border: solid 1px rgb(0, 0, 0, 0.25);">
                                         <div class="col py-2">
                                             <div class="row"><b><?= $doc->getDocument()->getTitle() ?></b></div>
@@ -101,7 +244,7 @@
                             <?php endforeach; ?>
                         </div>
                     </div>
-                    <div class="row" >
+                    <div class="row">
                         <div class="col text-right mb-3 align-text-bottom" style="height: 100%">
                             <a href="<?= BASEURL ?>documents/received">View more</a>
                         </div>
@@ -131,9 +274,9 @@
                                 <a class="nav-link" data-toggle="tab" href="#managers">Managers</a>
                             </li>
                             <?php if ($user->getType() == 3): ?>
-                            <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#managersGroup">Group of Manager</a>
-                            </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#managersGroup">Group of Manager</a>
+                                </li>
                             <?php endif; ?>
                             <li class="nav-item">
                                 <a class="nav-link active" data-toggle="tab" href="#advisors">Advisors</a>
@@ -151,7 +294,6 @@
                                     <thead>
                                     <tr>
                                         <th scope="col" class="text-center">#</th>
-                                        <th scope="col" class="text-center">User</th>
                                         <th scope="col" class="text-center">Country</th>
                                         <th scope="col" class="text-center">New Accounts</th>
                                         <th class="text-center" scope="col">New Deposits</th>
@@ -159,7 +301,30 @@
                                         <th class="text-center" scope="col">Net Margin In</th>
                                     </tr>
                                     </thead>
-                                    <tbody></tbody>
+                                    <tbody>
+                                    <?php
+                                    $rank = 1;
+                                    for ($i = 0; $i < count($advisors); $i++): ?>
+                                        <tr class="<?= ($user->getId() == $advisors[$i]['userId']) ? 'activeTable' : '' ?>">
+                                            <td class="text-center"><?= $rank ?></td>
+                                            <td class="text-center">
+                                                <img src="<?= BASEURL ?><?= $advisors[$i]['country'] ?>"
+                                                     alt="Img Country">
+                                            </td>
+                                            <td class="text-center"><?= $advisors[$i]['accounts'] ?></td>
+                                            <td class="text-center">$
+                                                <?= number_format($advisors[$i]['totalDeposit'], 2, ',', '.') ?>
+                                            </td>
+                                            <td class="text-center">$
+                                                <?= number_format($advisors[$i]['totalCapture'], 2, ',', '.') ?>
+                                            </td>
+                                            <td class="text-center">$
+                                                <?= number_format($advisors[$i]['marginIn'], 2, ',', '.') ?>
+                                            </td>
+                                        </tr>
+                                        <?php $rank++ ?>
+                                    <?php endfor; ?>
+                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -179,7 +344,31 @@
                                         <th class="text-center">Net Margin In</th>
                                     </tr>
                                     </thead>
-                                    <tbody></tbody>
+                                    <tbody>
+                                    <?php
+                                    $rank = 1;
+                                    for ($i = 0; $i < count($managers); $i++): ?>
+                                        <tr class="<?= ($user->getId() == $managers[$i]['userId']) ? 'activeTable' : '' ?>">
+                                            <td class="text-center"><?= $rank ?></td>
+                                            <td class="text-center"><?= $managers[$i]['user'] ?></td>
+                                            <td class="text-center">
+                                                <img src="<?= BASEURL ?><?= $managers[$i]['country'] ?>"
+                                                     alt="Img Country">
+                                            </td>
+                                            <td class="text-center"><?= $managers[$i]['accounts'] ?></td>
+                                            <td class="text-center">$
+                                                <?= number_format($managers[$i]['totalDeposit'], 2, ',', '.') ?>
+                                            </td>
+                                            <td class="text-center">$
+                                                <?= number_format($managers[$i]['totalCapture'], 2, ',', '.') ?>
+                                            </td>
+                                            <td class="text-center">$
+                                                <?= number_format($managers[$i]['marginIn'], 2, ',', '.') ?>
+                                            </td>
+                                        </tr>
+                                        <?php $rank++ ?>
+                                    <?php endfor; ?>
+                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -199,7 +388,31 @@
                                         <th class="text-center">Net Margin In</th>
                                     </tr>
                                     </thead>
-                                    <tbody></tbody>
+                                    <tbody>
+                                    <?php
+                                    $rank = 1;
+                                    for ($i = 0; $i < count($managersGroup); $i++): ?>
+                                        <tr>
+                                            <td class="text-center"><?= $rank ?></td>
+                                            <td class="text-center"><?= $managersGroup[$i]['user'] ?></td>
+                                            <td class="text-center">
+                                                <img src="<?= BASEURL ?><?= $managersGroup[$i]['country'] ?>"
+                                                     alt="Img Country">
+                                            </td>
+                                            <td class="text-center"><?= $managersGroup[$i]['accounts'] ?></td>
+                                            <td class="text-center">$
+                                                <?= number_format($managersGroup[$i]['totalDeposit'], 2, ',', '.') ?>
+                                            </td>
+                                            <td class="text-center">$
+                                                <?= number_format($managersGroup[$i]['totalCapture'], 2, ',', '.') ?>
+                                            </td>
+                                            <td class="text-center">$
+                                                <?= number_format($managersGroup[$i]['marginIn'], 2, ',', '.') ?>
+                                            </td>
+                                        </tr>
+                                        <?php $rank++ ?>
+                                    <?php endfor; ?>
+                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -222,15 +435,20 @@
 
         if (task.type == 2) {
             style = "style ='color: blue'";
-        } if (task.type == 3) {
+        }
+        if (task.type == 3) {
             style = "style ='color: red'";
-        } if (task.type == 4) {
+        }
+        if (task.type == 4) {
             style = "style ='color: gold'";
-        } if (task.type == 5) {
+        }
+        if (task.type == 5) {
             style = "style ='color: grey'";
-        } if (task.type == 6) {
+        }
+        if (task.type == 6) {
             style = "style ='color: purple'";
         }
+
         return `
             <div class="row">
                 <div class="col my-2" ${style}>
@@ -257,85 +475,6 @@
         }
     }
 
-    function viewFlag(flag) {
-        let destiny = `<?= BASEURL ?>${flag}`;
-        return `<img src="${destiny}">`;
-    }
-
-    function colorMessage(id) {
-        console.log(id);
-
-    }
-
-    function generateRankingTable(transaction) {
-
-        return `<tr>
-                    <td class="text-center" scope="row"></td>
-                    <td class="text-center">${transaction.user}</td>
-                    <td class="text-center">${viewFlag(transaction.country)}</td>
-                    <td class="text-center">${transaction.accounts}</td>
-                    <td class="text-center">${maskMoneyTable(transaction.totalDeposit)}</td>
-                    <td class="text-center">${maskMoneyTable(transaction.totalCapture)}</td>
-                    <td class="text-center">${maskMoneyTable(transaction.marginIn)}</td>
-                </tr>
-        `;
-    }
-
-    function generateRankingAdvisors() {
-        $('#loader').show();
-        fetch(`<?= BASEURL ?>api/dashboard/transations/advisors/?index=${index}`, {
-            method: "GET",
-            credentials: 'same-origin',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        }).then(response => {
-            response.json().then(json => {
-                $('#loader').hide();
-                let options = json.message.map(generateRankingTable);
-                $("#advRanking tbody").append(options);
-            });
-        });
-    }
-
-    function generateRankingManagers() {
-        $('#loader').show();
-        fetch(`<?= BASEURL ?>api/dashboard/transations/managers/?index=${index}`, {
-            method: "GET",
-            credentials: 'same-origin',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        }).then(response => {
-            response.json().then(json => {
-                $('#loader').hide();
-                let options = json.message.map(generateRankingTable);
-                $("#managersTable tbody").append(options);
-            });
-        });
-    }
-
-    function generateRankingManagersGroup() {
-        $('#loader').show();
-        fetch(`<?= BASEURL ?>api/dashboard/transations/managers/group/?index=${index}`, {
-            method: "GET",
-            credentials: 'same-origin',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        }).then(response => {
-            response.json().then(json => {
-                $('#loader').hide();
-                let options = json.message.map(generateRankingTable);
-                $("#managersGroupTable tbody").append(options);
-            });
-        });
-    }
-
-
     function generateTasks() {
         $('#loader').show();
         fetch(`<?= BASEURL ?>api/dashboard/tasks/?index=${index}`, {
@@ -349,28 +488,20 @@
             response.json().then(json => {
                 $('#loader').hide();
                 let options = json.message.map(generateTasksCard);
+                if (options == '') {
+                    options = `
+                        <div class="row mt-4">
+                            <b class="mr-2">Congratulations!</b>You have completed all the tasks!
+                        </div>
+                    `;
+                }
                 $("#tasksList").append(options);
             });
         });
     }
 
-    function dashboardData() {
-        generateRankingAdvisors();
-        generateRankingManagersGroup();
-        generateRankingManagers();
-        generateTasks();
-    }
-
     $(document).ready(function () {
-        dashboardData();
+        generateTasks();
     });
-
-    function maskMoneyTable(value) {
-        var money = parseFloat(value);
-
-        money = money.toLocaleString('en-us', {style: 'currency', currency: 'USD'});
-
-        return money;
-    }
 
 </script>

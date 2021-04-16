@@ -5,9 +5,10 @@ namespace App\Controllers;
 
 use App\Models\Entities\ActivityDeal;
 use App\Models\Entities\Deal;
-use App\Models\Entities\Document;
+use App\Models\Entities\DocumentMyFolder;
 use App\Models\Entities\DocumentCategory;
 use App\Models\Entities\DocumentDestiny;
+use App\Models\Entities\FolderAcess;
 use App\Models\Entities\Message;
 use App\Models\Entities\Transaction;
 use App\Models\Entities\User;
@@ -92,8 +93,7 @@ class ApiController extends Controller
     public function statusUpdate(Request $request, Response $response)
     {
         $user = $this->getLogged(true);
-        $date = date('Y-m-d');
-        $hour = \date('H:i');
+        $date = date('Y-m-d H:i');
         $id = $request->getQueryParam('deal');
         $newStatus = $request->getQueryParam('status');
         $deal = $this->em->getRepository(Deal::class)->find($id);
@@ -106,8 +106,7 @@ class ApiController extends Controller
         $activity = new ActivityDeal();
         $activity->setDeal($this->em->getReference(Deal::class, $id))
             ->setUser($user)
-            ->setDate(\DateTime::createFromFormat('Y-m-d', $date))
-            ->setTime(\DateTime::createFromFormat('H:i', $hour))
+            ->setDate(\DateTime::createFromFormat('Y-m-d H:i', $date))
             ->setType(0)
             ->setDescription('')
             ->setStatus(0)
@@ -120,16 +119,14 @@ class ApiController extends Controller
             ->withHeader('Content-type', 'application/json');
     }
 
-    public function documentsSentTable(Request $request, Response $response)
+    public function myFoldersTable(Request $request, Response $response)
     {
         $user = $this->getLogged(true);
-        $resposible = $user->getId();
-        $id = $request->getAttribute('route')->getArgument('id');
+        $responsible = $user->getId();
         $index = $request->getQueryParam('index');
         $title = $request->getQueryParam('title');
-        $type = $request->getQueryParam('type');
-        $documents = $this->em->getRepository(Document::class)->list($id, $resposible, $title, $type, 20, $index * 20);
-        $total = $this->em->getRepository(Document::class)->listTotal($id, $resposible, $title, $type)['total'];
+        $documents = $this->em->getRepository(DocumentMyFolder::class)->list($responsible, $title, 20, $index * 20);
+        $total = $this->em->getRepository(DocumentMyFolder::class)->listTotal($responsible, $title)['total'];
         $partial = ($index * 20) + sizeof($documents);
         $partial = $partial <= $total ? $partial : $total;
 
@@ -142,74 +139,34 @@ class ApiController extends Controller
             ->withHeader('Content-type', 'application/json');
     }
 
-    public function documentsReceivedTable(Request $request, Response $response)
-    {
-        $user = $this->getLogged(true);
-        $destiny = $user->getId();
-        $id = $request->getAttribute('route')->getArgument('id');
-        $index = $request->getQueryParam('index');
-        $title = $request->getQueryParam('title');
-        $type = $request->getQueryParam('type');
-        $documents = $this->em->getRepository(DocumentDestiny::class)->list($id, $destiny, $title, $type, 20, $index * 20);
-        $total = $this->em->getRepository(DocumentDestiny::class)->listTotal($id, $destiny, $title, $type)['total'];
-        $partial = ($index * 20) + sizeof($documents);
-        $partial = $partial <= $total ? $partial : $total;
-
-        return $response->withJson([
-            'status' => 'ok',
-            'message' => $documents,
-            'total' => (int)$total,
-            'partial' => $partial,
-        ], 200)
-            ->withHeader('Content-type', 'application/json');
-    }
-
-    public function documentsCategoryTable(Request $request, Response $response)
-    {
-        $this->getLogged(true);
-        $index = $request->getQueryParam('index');
-        $categories = $this->em->getRepository(DocumentCategory::class)->list(20, $index * 20);
-        $total = $this->em->getRepository(DocumentCategory::class)->listTotal()['total'];
-        $partial = ($index * 20) + sizeof($categories);
-        $partial = $partial <= $total ? $partial : $total;
-
-        return $response->withJson([
-            'status' => 'ok',
-            'message' => $categories,
-            'total' => (int)$total,
-            'partial' => $partial,
-        ], 200)
-            ->withHeader('Content-type', 'application/json');
-    }
-
-    public function categoryDelete(Request $request, Response $response)
+    public function myFolderDeleteDoc(Request $request, Response $response)
     {
         $this->getLogged(true);
         $id = $request->getAttribute('route')->getArgument('id');
-        $this->em->getRepository(DocumentCategory::class)->categoryDelete($id);
+        $this->em->getRepository(DocumentMyFolder::class)->delDocument($id);
         die();
     }
 
-    public function updateStatus(Request $request, Response $response)
+    public function foldersTable(Request $request, Response $response)
     {
-        try {
-            $id = $request->getAttribute('route')->getArgument('id');
+        $user = $this->getLogged(true);
+        $responsible = $user->getId();
+        $id = $request->getAttribute('route')->getArgument('id');
+        $index = $request->getQueryParam('index');
+        $name = $request->getQueryParam('name');
+        $documents = $this->em->getRepository(FolderAcess::class)->list($id, $responsible, $name, 20, $index * 20);
+        $total = $this->em->getRepository(FolderAcess::class)->listTotal($id, $responsible, $name)['total'];
+        $partial = ($index * 20) + sizeof($documents);
+        $partial = $partial <= $total ? $partial : $total;
 
-            $destiny = $this->em->getRepository(DocumentDestiny::class)->find($id);
-            $destiny->setStatus(0);
-            $this->em->getRepository(DocumentDestiny::class)->save($destiny);
-            return $response->withJson([
-                'status' => 'ok',
-                'message' => 'Successfully Update Status!',
-            ], 201)
-                ->withHeader('Content-type', 'application/json');
-        } catch (\Exception $e) {
-            return $response->withJson(['status' => 'error',
-                'message' => $e->getMessage(),])->withStatus(500);
-        }
+        return $response->withJson([
+            'status' => 'ok',
+            'message' => $documents,
+            'total' => (int)$total,
+            'partial' => $partial,
+        ], 200)
+            ->withHeader('Content-type', 'application/json');
     }
-
-
 
     public function messagesTable(Request $request, Response $response)
     {
@@ -309,48 +266,6 @@ class ApiController extends Controller
             'message' => $transactions,
             'total' => (int)$total,
             'partial' => $partial,
-        ], 200)
-            ->withHeader('Content-type', 'application/json');
-    }
-
-    public function rankingAdvisors(Request $request, Response $response)
-    {
-        $this->getLogged(true);
-        $id = $request->getAttribute('route')->getArgument('id');
-        $index = $request->getQueryParam('index');
-        $transactions = $this->em->getRepository(Transaction::class)->rankingAdvisors(20, $index * 20);
-
-        return $response->withJson([
-            'status' => 'ok',
-            'message' => $transactions,
-        ], 200)
-            ->withHeader('Content-type', 'application/json');
-    }
-
-    public function rankingManagers(Request $request, Response $response)
-    {
-        $this->getLogged(true);
-        $id = $request->getAttribute('route')->getArgument('id');
-        $index = $request->getQueryParam('index');
-        $transactions = $this->em->getRepository(Transaction::class)->rankingManagers(20, $index * 20);
-
-        return $response->withJson([
-            'status' => 'ok',
-            'message' => $transactions,
-        ], 200)
-            ->withHeader('Content-type', 'application/json');
-    }
-
-    public function rankingManagersGroup(Request $request, Response $response)
-    {
-        $user = $this->getLogged(true);
-        $id = $user->getId();
-        $index = $request->getQueryParam('index');
-        $transactions = $this->em->getRepository(Transaction::class)->rankingManagersGroup($id, 20, $index * 20);
-
-        return $response->withJson([
-            'status' => 'ok',
-            'message' => $transactions,
         ], 200)
             ->withHeader('Content-type', 'application/json');
     }

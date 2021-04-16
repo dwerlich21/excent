@@ -3,11 +3,13 @@
         <div class="card p-3">
             <form id="filter">
                 <div class="row">
-                    <div class="col-md-2">
-                        <a class="btn btn-primary text-white" href="#" onclick="openModal()"><i
-                                    class="fa fa-plus"></i> Message</a>
+                    <div class="col-md-3">
+                        <div class="row">
+                            <a class="btn btn-primary text-white" href="#" onclick="openModal()"><i
+                                    class="fa fa-plus"></i> Document</a>
+                        </div>
                     </div>
-                    <div class="col-md-7 my-auto">
+                    <div class="col-md-6 my-auto">
                         <div class="form-group mt-2">
                             <input class="form-control" id="titleFilter" name="title" type="text" placeholder="Title">
                         </div>
@@ -24,12 +26,12 @@
 <div class="row">
     <div class="col">
         <div class="card p-3">
-            <p>Showing <span id="partial"></span> of <span id="total"></span></p>
-            <table class="table table-sm table-hover table-bordered" id="messagesTable" width="100%" cellspacing="0">
-                <thead>
+            <p id="text">Showing <span id="partial"></span> of <span id="total"></span></p>
+            <table class="table table-sm table-hover" id="documentsTable" width="100%" cellspacing="0">
+                <thead class="thead-light">
                 <tr>
-                    <th class="text-center">Description</th>
-                    <th class="text-center">Status</th>
+                    <th class="text-center">Date</th>
+                    <th class="text-center">Title</th>
                     <th class="text-center">Actions</th>
                 </tr>
                 </thead>
@@ -39,20 +41,20 @@
     </div>
 </div>
 
-<!-- Modal Cadastro-->
+<!------------------------- Modal Cadastro-------------------------------------->
 <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="subscriptionModal"
      aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Message registration</h5>
+                <h5 class="modal-title">Document Registration</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form class="form-control" id="addMessage" method="post">
+            <form class="form-control" id="addDocument" method="post">
                 <div class="form-group">
-                    <input type="hidden" name="messageId" id="messageId">
+                    <input type="hidden" name="documentId" id="documentId">
                     <div class="row">
                         <div class="col">
                             <label for="title">Title</label>
@@ -60,23 +62,9 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col">
-                            <label for="description">Description</label>
-                            <textarea id="description" name="description" class="form-control" type="text"
-                                      placeholder="Description"></textarea>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label for="active">Status</label>
-                            <select id="active" name="active" class="form-control">
-                                <option value="1">Active</option>
-                                <option value="0">Inactive</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4 mt-4">
-                            <div class="form-group mt-2">
-                                <span class="fileselector mt-1">
+                        <div class="col-md-6">
+                            <div class="form-group mt-3">
+                                <span class="fileselector">
                                     <label class="btn btn-block btn-danger text-white" style="margin-top: 5px"
                                            for="projectFile">
                                         <input class="upload-file-selector" id="projectFile" type="file"
@@ -91,14 +79,15 @@
                 </div>
                 <div class="row">
                     <div class="col text-right">
-                        <button type="submit" class="btn btn-primary">Save Message</button>
+                        <button type="submit" class="btn btn-primary">Save Document</button>
                     </div>
                 </div>
-                <div style="display: none" id="message" class="alert alert-danger" role="alert"></div>
+                <div style="display: none" id="messageDocument" class="alert alert-danger" role="alert"></div>
             </form>
         </div>
     </div>
 </div>
+
 
 <script src="<?= BASEURL ?>assets/js/plugins/tinymce/jquery.tinymce.min.js"></script>
 <script src="<?= BASEURL ?>assets/js/plugins/tinymce/tinymce.min.js"></script>
@@ -124,43 +113,40 @@
     var partial = 0;
     var total = 1;
     var title = 0;
-    var active = -1;
 
     function openModal() {
         $('#modal').modal('show');
         $('#message').hide();
-        document.getElementById('addMessage').reset();
+        document.getElementById('addDocument').reset();
     }
 
-    const formAdd = document.getElementById('addMessage');
-    const divMessage = document.getElementById('message');
+    const formAddDocument = document.getElementById('addDocument');
+    const divMessageDocument = document.getElementById('messageDocument');
 
-    formAdd.addEventListener('submit', e => {
-        var teste = document.getElementById('projectFile');
-        console.log(teste);
+    formAddDocument.addEventListener('submit', e => {
         e.preventDefault();
         showLoading();
         let method = 'POST';
-        let formData = formDataToJson('addMessage');
-        fetch("<?= BASEURL ?>messages/register", {
+        let formData = formDataToJson('addDocument');
+        fetch("<?= BASEURL ?>documents/my-folder/register", {
             method: method,
             credentials: 'same-origin',
             headers: {
                 'Accept': 'application/json',
             },
-            body: new FormData(formAdd)
+            body: new FormData(formAddDocument)
         }).then(response => {
             closeLoading();
-            divMessage.classList.add("alert-danger");
-            divMessage.classList.remove("alert-success");
+            divMessageDocument.classList.add("alert-danger");
+            divMessageDocument.classList.remove("alert-success");
             $('#save').removeClass('disabled');
             response.json().then(json => {
-                divMessage.textContent = json.message;
-                divMessage.style.display = 'block';
+                divMessageDocument.textContent = json.message;
+                divMessageDocument.style.display = 'block';
                 if (response.status === 201) {
-                    divMessage.classList.add("alert-success");
-                    divMessage.classList.remove("alert-danger");
-                    formAdd.reset();
+                    divMessageDocument.classList.add("alert-success");
+                    divMessageDocument.classList.remove("alert-danger");
+                    formAddDocument.reset();
                     setTimeout(function () {
                         location.reload();
                     }, 1500);
@@ -177,9 +163,8 @@
         partial = 0;
         index = 0;
         total = 1;
-        active = -1;
         title = formData.title;
-        $("#messagesTable tbody").empty();
+        $("#documentsTable tbody").empty();
         generateTable();
     });
 
@@ -188,68 +173,48 @@
         partial = 0;
         total = 1;
         title = 0;
-        active = -1;
-        $("#messagesTable tbody").empty();
+        $("#documentsTable tbody").empty();
         generateTable();
     }
 
 
-    function generateMessagesTable(message) {
+    function generateDocumentsTable(document) {
         let actions = '';
-        actions += `<i class="fa fa-pencil text-info" title="Edit" onclick="openModalEdit(${message.id})"></i> `
-        actions += `<i class="fa fa-times text-danger ml-2" title="Delete" onclick="deleteMessage(${message.id})"></i> `;
+        actions += `<i class="fa fa-times text-danger" title="Delete" onclick="openModalEdit(${document.id})"></i> `
         actions = `<td class="text-center">${actions} </td>`;
         return `<tr>
-                    <td ><b>${message.title}</b><br>${message.description}</td>
-                    <td class="text-center">${activeStr(message.active)}</td>
+                    <td class="text-center">${document.date}</td>
+                    <td class="text-center"><a href="${documentView(document.documentFile)}" target="_blank">${document.title}<a></td>
                     ${actions}
                 </tr>`;
     }
 
-    function activeStr(active) {
-        if (active == 1) {
-            return 'Active';
-        } else {
-            return 'Inactive';
-        }
+    function documentView(id) {
+        return `<?= BASEURL ?>uploads/my-folder/${id}`;
     }
 
-    function deleteMessage(id) {
+    function generateTable() {
+
         $('#loader').show();
-        fetch(`<?= BASEURL ?>api/messages/delete/${id}`, {
+        fetch(`<?= BASEURL ?>api/documents/my-folder/?index=${index}&title=${title}`, {
             method: "GET",
             credentials: 'same-origin',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             }
-        });
-        location.reload();
-    }
+        }).then(response => {
+            response.json().then(json => {
+                $('#loader').hide();
+                $('#total').text(json.total);
+                $('#partial').text(json.partial);
+                total = json.total;
+                partial = json.partial;
+                let options = json.message.map(generateDocumentsTable);
+                $("#documentsTable tbody").append(options);
 
-    function generateTable() {
-        if (total > partial) {
-            $('#loader').show();
-            fetch(`<?= BASEURL ?>api/messages/?index=${index}&title=${title}&active=${active}`, {
-                method: "GET",
-                credentials: 'same-origin',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            }).then(response => {
-                response.json().then(json => {
-                    $('#loader').hide();
-                    $('#total').text(json.total);
-                    $('#partial').text(json.partial);
-                    total = json.total;
-                    partial = json.partial;
-                    let options = json.message.map(generateMessagesTable);
-                    $("#messagesTable tbody").append(options);
-
-                });
             });
-        }
+        });
     }
 
     $(document).ready(function () {
@@ -261,33 +226,6 @@
             }
         });
     });
-
-    function openModalEdit(id) {
-
-        document.getElementById('addMessage').reset();
-        document.getElementById('messageId').value = id;
-        $('#modal').modal('show');
-        $('#message').hide();
-        if (id > 0) {
-            showLoading();
-            fetch(`<?= BASEURL ?>api/messages/${id}`, {
-                method: "GET",
-                credentials: 'same-origin',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            }).then(response => {
-                response.json().then(json => {
-                    json = json.message[0];
-                    closeLoading();
-                    document.getElementById('title').value = json.title;
-                    document.getElementById('active').value = json.active;
-                    document.getElementById('descriptionMessage').text(json.description);
-                });
-            });
-        }
-    }
 
     $(document).ready(function () {
         $('input:file').change(function (e) {

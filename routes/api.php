@@ -5,28 +5,12 @@ use \Psr\Http\Message\ServerRequestInterface as Request;
 
 $app->group('/api/documents', function () use ($app) {
 
-    $app->get('/delete/{id}/', function (Request $request, Response $response) {
-        return $this->ApiController->documentDelete($request, $response);
+    $app->get('/my-folder/', function (Request $request, Response $response) {
+        return $this->ApiController->myFoldersTable($request, $response);
     });
 
-    $app->get('/update/{id}/', function (Request $request, Response $response) {
-        return $this->ApiController->updateStatus($request, $response);
-    });
-
-    $app->get('/category/delete/{id}/', function (Request $request, Response $response) {
-        return $this->ApiController->categoryDelete($request, $response);
-    });
-
-    $app->get('/sent/[{id}/]', function (Request $request, Response $response) {
-        return $this->ApiController->documentsSentTable($request, $response);
-    });
-
-    $app->get('/received/[{id}/]', function (Request $request, Response $response) {
-        return $this->ApiController->documentsReceivedTable($request, $response);
-    });
-
-    $app->get('/category/[{id}/]', function (Request $request, Response $response) {
-        return $this->ApiController->documentsCategoryTable($request, $response);
+    $app->get('/my-folder/delete/{id}/', function (Request $request, Response $response) {
+        return $this->ApiController->myFolderDeleteDoc($request, $response);
     });
 });
 

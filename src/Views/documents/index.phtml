@@ -26,36 +26,17 @@
 <div class="row">
     <div class="col">
         <div class="card p-3">
-            <div class="row">
-                <div class="col">
-                    <ul class="nav nav-tabs nav-justified">
-                        <li class="nav-item">
-                            <a class="nav-link active" data-toggle="tab" href="#all" onclick="selectCategory(0)">All</a>
-                        </li>
-                        <?php foreach ($categories as $category): ?>
-                            <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#all"
-                                   onclick="selectCategory(<?= $category->getId() ?>)"><?= $category->getNameCategory() ?></a>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
-            </div>
-            <div class="row mt-5">
-                <div class="col">
-                    <p id="text">Showing <span id="partial"></span> of <span id="total"></span></p>
-                    <table class="table table-bordered table-striped" id="documentsTable" width="100%" cellspacing="0">
-                        <thead>
-                        <tr>
-                            <th class="text-center"></th>
-                            <th class="text-center">Description</th>
-                            <th class="text-center">Actions</th>
-                        </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
+            <p id="text">Showing <span id="partial"></span> of <span id="total"></span></p>
+            <table class="table table-sm table-hover" id="documentsTable" width="100%" cellspacing="0">
+                <thead class="thead-light">
+                <tr>
+                    <th class="text-center">Date</th>
+                    <th class="text-center">Title</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
     </div>
 </div>
@@ -63,7 +44,7 @@
 <!------------------------- Modal Cadastro-------------------------------------->
 <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="subscriptionModal"
      aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Document Registration</h5>
@@ -79,42 +60,9 @@
                             <label for="title">Title</label>
                             <input id="title" name="title" class="form-control" type="text" placeholder="Title">
                         </div>
-                    </div>
+                        </div>
                     <div class="row">
-                        <div class="col">
-                            <label for="descriptionDocument">Description</label>
-                            <textarea id="descriptionDocument" name="description" class="form-control" type="text"
-                                      placeholder="Description"></textarea>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4 mt-1">
-                            <label for="type">Category</label>
-                            <select id="type" name="type" class="form-control">
-                                <option value="0">Select Category</option>
-                                <?php foreach ($categories as $category): ?>
-                                    <option value="<?= $category->getId() ?>"><?= $category->getNameCategory() ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <?php if ($user->getType() == 1 || $user->getType() == 2): ?>
-                        <div class="col-md-4 mt-1">
-                            <label for="destiny">Destiny</label>
-                            <select id="destiny" name="destiny" class="form-control">
-                                <option value="0">Select Destiny</option>
-                                <?php if ($user->getType() == 1): ?>
-                                <option value="2">Admin</option>
-                                <?php endif; ?>
-                                <option value="3">Manager</option>
-                                <option value="4">Advisor</option>
-                                <option value="5">Human Resources</option>
-                            </select>
-                        </div>
-                        <?php endif; ?>
-                        <?php if ($user->getType() == 3): ?>
-                        <input type="hidden" name="destiny" id="destiny" value="4">
-                        <?php endif; ?>
-                        <div class="col-md-4 mt-4">
+                        <div class="col-md-6">
                             <div class="form-group mt-3">
                                 <span class="fileselector">
                                     <label class="btn btn-block btn-danger text-white" style="margin-top: 5px"
@@ -165,7 +113,6 @@
     var partial = 0;
     var total = 1;
     var title = 0;
-    var type = 0;
 
     function openModal() {
         $('#modal').modal('show');
@@ -181,7 +128,7 @@
         showLoading();
         let method = 'POST';
         let formData = formDataToJson('addDocument');
-        fetch("<?= BASEURL ?>documents/register", {
+        fetch("<?= BASEURL ?>documents/my-folder/register", {
             method: method,
             credentials: 'same-origin',
             headers: {
@@ -201,37 +148,12 @@
                     divMessageDocument.classList.remove("alert-danger");
                     formAddDocument.reset();
                     setTimeout(function () {
-                        // location.reload();
+                        location.reload();
                     }, 1500);
                 }
             });
         });
     });
-
-    function openModalEdit(id) {
-
-        $('#modal').modal('show');
-        $('#message').hide();
-        if (id > 0) {
-            showLoading();
-            fetch(`<?= BASEURL ?>api/documents/${id}`, {
-                method: "GET",
-                credentials: 'same-origin',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            }).then(response => {
-                response.json().then(json => {
-                    json = json.message[0];
-                    closeLoading();
-                    document.getElementById('title').value = json.title;
-                    document.getElementById('descriptionDocument').value = json.description;
-                    document.getElementById('type').value = json.type;
-                });
-            });
-        }
-    }
 
     const form = document.getElementById('filter');
 
@@ -258,32 +180,36 @@
 
     function generateDocumentsTable(document) {
         let actions = '';
-        actions += `<i class="fa fa-pencil text-info" title="Edit" onclick="openModalEdit(${document.id})"></i> `
+        actions += `<i class="fa fa-times text-danger" title="Delete" onclick="deleteDoc(${document.id})"></i> `
         actions = `<td class="text-center">${actions} </td>`;
         return `<tr>
-                    <td class="text-center px-4"><a href="${documentView(document.documentFile)}" target="_blank"><i class="fa fa-3x fa-file-pdf-o"></i><a></td>
-                    <td ><b>${document.title}</b><br>${document.description}
-                    <div class="float-right" style="font-size: 12px"><i class="fa fa-calendar py-2"></i> ${document.date}
-                            <i class="fa fa-clock ml-2 py-2"> </i> ${document.time}</div></td>
+                    <td class="text-center">${document.date}</td>
+                    <td class="text-center"><a href="${documentView(document.documentFile)}" target="_blank">${document.title}<a></td>
                     ${actions}
                 </tr>`;
     }
 
     function documentView(id) {
-        return `<?= BASEURL ?>uploads/${id}`;
+        return `<?= BASEURL ?>uploads/my-folder/${id}`;
     }
 
-    function selectCategory(id) {
-        index = 0;
-        type = id;
-        $("#documentsTable tbody").empty();
-        generateTable();
+    function deleteDoc(id) {
+        $('#loader').show();
+        fetch(`<?= BASEURL ?>api/documents/my-folder/delete/${id}`, {
+            method: "GET",
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+        location.reload();
     }
 
     function generateTable() {
 
         $('#loader').show();
-        fetch(`<?= BASEURL ?>api/documents/sent/?index=${index}&title=${title}&type=${type}`, {
+        fetch(`<?= BASEURL ?>api/documents/my-folder/?index=${index}&title=${title}`, {
             method: "GET",
             credentials: 'same-origin',
             headers: {

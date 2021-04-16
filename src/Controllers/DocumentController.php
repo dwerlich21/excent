@@ -6,68 +6,36 @@ namespace App\Controllers;
 use App\Helpers\Validator;
 use App\Models\Entities\ActivityDeal;
 use App\Models\Entities\Deal;
-use App\Models\Entities\Document;
-use App\Models\Entities\DocumentCategory;
-use App\Models\Entities\DocumentDestiny;
-use App\Models\Entities\User;
+use App\Models\Entities\DocumentMyFolder;
 use \Psr\Http\Message\ResponseInterface as Response;
 use \Psr\Http\Message\ServerRequestInterface as Request;
 
 class DocumentController extends Controller
 {
-    public function document(Request $request, Response $response)
+    public function myFolder(Request $request, Response $response)
     {
         $user = $this->getLogged();
         $today = date('Y-m-d');
         $activities = $this->em->getRepository(ActivityDeal::class)->totalCalendar(0, $user, $today);
         $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId(), 'type' => 0], ['name' => 'asc']);
-        $categories = $this->em->getRepository(DocumentCategory::class)->findBy([], ['nameCategory' => 'asc']);
         return $this->renderer->render($response, 'default.phtml', ['page' => 'documents/index.phtml', 'menuActive' => 'documents',
-            'section' => 'DocumentsSubmit', 'subMenu' => 'documentsGroup', 'user' => $user, 'deals' => $deals,
-            'categories' => $categories, 'activities' => $activities]);
-    }
-
-    public function category(Request $request, Response $response)
-    {
-        $user = $this->getLogged();
-        $today = date('Y-m-d');
-        $activities = $this->em->getRepository(ActivityDeal::class)->totalCalendar(0, $user, $today);
-        $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId(), 'type' => 0], ['name' => 'asc']);
-        return $this->renderer->render($response, 'default.phtml', ['page' => 'documents/category.phtml', 'menuActive' => 'documents',
-            'section' => 'DocumentsCategory', 'subMenu' => 'documentsGroup', 'user' => $user, 'deals' => $deals, 'activities' => $activities]);
-    }
-
-    public function received(Request $request, Response $response)
-    {
-        $user = $this->getLogged();
-        $today = date('Y-m-d');
-        $activities = $this->em->getRepository(ActivityDeal::class)->totalCalendar(0, $user, $today);
-        $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId(), 'type' => 0], ['name' => 'asc']);
-        $categories = $this->em->getRepository(DocumentCategory::class)->findBy([], ['nameCategory' => 'asc']);
-        return $this->renderer->render($response, 'default.phtml', ['page' => 'documents/received.phtml', 'menuActive' => ['documents'],
-            'section' => 'DocumentsReceived', 'subMenu' => 'documentsGroup', 'user' => $user, 'deals' => $deals, 'categories' => $categories,
+            'section' => 'myFolder', 'subMenu' => 'documentsGroup', 'user' => $user, 'deals' => $deals,
             'activities' => $activities]);
     }
 
-    public function viewReceived(Request $request, Response $response)
+    public function companyFiles(Request $request, Response $response)
     {
         $user = $this->getLogged();
-        $id = $request->getAttribute('route')->getArgument('id');
         $today = date('Y-m-d');
         $activities = $this->em->getRepository(ActivityDeal::class)->totalCalendar(0, $user, $today);
         $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId(), 'type' => 0], ['name' => 'asc']);
-        $categories = $this->em->getRepository(DocumentCategory::class)->findBy([], ['nameCategory' => 'asc']);
-        $doc = $this->em->getRepository(Document::class)->find($id);
-        $destiny = $this->em->getRepository(DocumentDestiny::class)->findBy(['document' => $id]);
-//        if ($destiny->getDestiny()->getId() != $user->getId()) $this->redirect('documents');
-        return $this->renderer->render($response, 'default.phtml', ['page' => 'documents/view.phtml', 'menuActive' => 'documents',
-            'section' => 'DocumentsReceived', 'subMenu' => 'documentsGroup', 'user' => $user, 'deals' => $deals,
-            'categories' => $categories, 'activities' => $activities, 'doc' => $doc]);
+        return $this->renderer->render($response, 'default.phtml', ['page' => 'documents/companyFiles.phtml', 'menuActive' => 'documents',
+            'section' => 'companyFiles', 'subMenu' => 'documentsGroup', 'user' => $user, 'deals' => $deals, 'activities' => $activities]);
     }
 
-    private function saveDocumentFile($files, Document $document): Document
+    private function saveDocumentFile($files, DocumentMyFolder $document): DocumentMyFolder
     {
-        $folder = UPLOAD_FOLDER;
+        $folder = UPLOAD_FOLDER . 'my-folder/';
         $documentFile = $files['projectFile'];
         if ($documentFile && $documentFile->getClientFilename()) {
             $time = time();
@@ -80,39 +48,23 @@ class DocumentController extends Controller
         return $document;
     }
 
-    public function saveDocument(Request $request, Response $response)
+    public function saveDocumentMyFolder(Request $request, Response $response)
     {
         try {
             $user = $this->getLogged();
-            $date = date('Y-m-d H:i');
             $this->em->beginTransaction();
             $data = (array)$request->getParams();
             $files = $request->getUploadedFiles();
             $fields = [
-                'title' => 'Title',
-                'description' => 'Description',
-                'type' => 'Type'
+                'title' => 'Title'
             ];
             Validator::requireValidator($fields, $data);
-            $document = new Document();
+            $document = new DocumentMyFolder();
             $document = $this->saveDocumentFile($files, $document);
             $document->setTitle($data['title'])
-                ->setType($this->em->getReference(DocumentCategory::class, $data['type']))
-                ->setResponsible($user)
-                ->setCreated(\DateTime::createFromFormat('Y-m-d H:i', $date))
-                ->setDescription($data['description']);
-            $this->em->getRepository(Document::class)->save($document);
+                ->setResponsible($user);
+            $this->em->getRepository(DocumentMyFolder::class)->save($document);
             $this->em->commit();
-            if ($user->getType() != 3) $destinations = $this->em->getRepository(User::class)->findBy(['type' => $data['destiny']]);
-            if ($user->getType() == 3) $destinations = $this->em->getRepository(User::class)->findBy(['type' => $data['destiny'], 'manager' => $user->getId()]);
-            $oldDocument = $this->em->getRepository(Document::class)->findOneBy(['responsible' => $user->getId()], ['id' => 'desc']);
-            foreach ($destinations as $destiny):
-                $documentDestiny = new DocumentDestiny;
-                $documentDestiny->setDocument($oldDocument)
-                    ->setStatus(1)
-                    ->setDestiny($destiny);
-                $this->em->getRepository(DocumentDestiny::class)->save($documentDestiny);
-            endforeach;
             return $response->withJson([
                 'status' => 'ok',
                 'message' => 'Successfully Registered Document!',
@@ -124,23 +76,26 @@ class DocumentController extends Controller
         }
     }
 
-    public function saveCategory(Request $request, Response $response)
+    public function saveFolder(Request $request, Response $response)
     {
-
         try {
-            $this->getLogged();
+            $user = $this->getLogged();
             $data = (array)$request->getParams();
             $fields = [
-                'nameCategory' => 'Name Category'
+                'nameFolder' => 'Name Folders'
             ];
             Validator::requireValidator($fields, $data);
-            $category = new DocumentCategory();
-            $category->setNameCategory($data['nameCategory']);
-            $category->setActive($data['active']);
-            $this->em->getRepository(DocumentCategory::class)->save($category);
+            $folder = new Folders();
+            $folder->setName($data['nameFolder']);
+            $folder->setResponsible($user);
+            $this->em->getRepository(Folders::class)->save($folder);
+            $acess = new FolderAcess();
+            $acess->setUser($user)
+                ->setName($data['NameFolder']);
+            $this->em->getRepository(Folders::class)->save($acess);
             return $response->withJson([
                 'status' => 'ok',
-                'message' => 'Successfully Registered Document Category!',
+                'message' => 'Successfully Registered Folders!',
             ], 201)
                 ->withHeader('Content-type', 'application/json');
         } catch (\Exception $e) {

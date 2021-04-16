@@ -106,6 +106,7 @@ class DealController extends Controller
     {
         try {
             $user = $this->getLogged();
+            $date = \date('Y-m-d');
             $data = (array)$request->getParams();
             $fields = [
                 'date' => 'Date',
@@ -113,6 +114,8 @@ class DealController extends Controller
                 'options' => 'Type'
             ];
             Validator::requireValidator($fields, $data);
+            $pendence = $this->em->getRepository(ActivityDeal::class)->activityVerify($user, $date);
+//            if ($pendence != '') throw new Exception('You have pending tasks, finish them beforehand!');
             $task = new ActivityDeal();
             $description = '';
             if ($data['description']) $description = $data['description'];

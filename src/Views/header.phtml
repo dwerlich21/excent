@@ -81,21 +81,14 @@
                         <div class="collapse pl-3 <?= isset($subMenu) && $subMenu == 'documentsGroup' ? 'show' : '' ?>"
                              id="documentsGroup">
                             <ul class="nav">
-                                <?php if ($user->getType() == 1 || $user->getType() == 5): ?>
-                                    <li class="<?= $section == 'DocumentsCategory' ? 'active' : '' ?>">
-                                        <a href="<?= BASEURL ?>documents/category">
-                                            <i class="fa fa-plus"></i> Category
-                                        </a>
-                                    </li>
-                                <?php endif; ?>
-                                <li class="<?= $section == 'DocumentsReceived' ? 'active' : '' ?>">
-                                    <a href="<?= BASEURL ?>documents/received">
-                                        <i class="fa fa-laptop"></i> Received
+                                <li class="<?= $section == 'companyFiles' ? 'active' : '' ?>">
+                                    <a href="<?= BASEURL ?>documents/company-files">
+                                        <i class="fa fa-folder-open"></i> Company Files
                                     </a>
                                 </li>
-                                <li class="<?= $section == 'DocumentsSubmit' ? 'active' : '' ?>">
-                                    <a href="<?= BASEURL ?>documents/sent">
-                                        <i class="fa fa-share"></i> Sent
+                                <li class="<?= $section == 'myFolder' ? 'active' : '' ?>">
+                                    <a href="<?= BASEURL ?>documents/my-folder">
+                                        <i class="fa fa-folder"></i> My Folder
                                     </a>
                                 </li>
                             </ul>

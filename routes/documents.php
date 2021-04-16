@@ -5,27 +5,23 @@ use \Psr\Http\Message\ServerRequestInterface as Request;
 
 $app->group('/documents', function () use ($app) {
 
-    $app->get('/sent/', function (Request $request, Response $response) {
-        return $this->DocumentController->document($request, $response);
+    $app->get('/folders/', function (Request $request, Response $response) {
+        return $this->DocumentController->companyFiles($request, $response);
     });
 
-    $app->get('/received/', function (Request $request, Response $response) {
-        return $this->DocumentController->received($request, $response);
+    $app->get('/my-folder/', function (Request $request, Response $response) {
+        return $this->DocumentController->myFolder($request, $response);
     });
 
-    $app->get('/category/', function (Request $request, Response $response) {
-        return $this->DocumentController->category($request, $response);
+    $app->get('/company-files/', function (Request $request, Response $response) {
+        return $this->DocumentController->companyFiles($request, $response);
+    });
+
+    $app->post('/my-folder/register/', function (Request $request, Response $response) {
+        return $this->DocumentController->saveDocumentMyFolder($request, $response);
     });
 
     $app->post('/register/', function (Request $request, Response $response) {
         return $this->DocumentController->saveDocument($request, $response);
-    });
-
-    $app->post('/register/category/', function (Request $request, Response $response) {
-        return $this->DocumentController->saveCategory($request, $response);
-    });
-
-    $app->get('/received/{id}/', function (Request $request, Response $response) {
-        return $this->DocumentController->viewReceived($request, $response);
     });
 });

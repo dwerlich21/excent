@@ -93,6 +93,9 @@
 
 .active {
     background-color: #004FC5;!important;
+}
+
+.activeTable {
     font-weight: bold;
 }
 
@@ -223,10 +226,6 @@ html, body {
 
 .tab-pane{
     background: white;!important;
-}
-
-.table>tbody>tr>td {
-    font-weight: normal;!important;
 }
 
 .bg_video{

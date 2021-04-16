@@ -69,14 +69,23 @@ class ActivityDealRepository extends EntityRepository
         return $sth->fetch(\PDO::FETCH_ASSOC);
     }
 
-    private function generateWhereTask($id = 0, $date = null, &$params): string
+    private function generateWhereTask($id = 0, string $date = null, &$params): string
     {
         $where = '';
         if ($id) {
             $params[':id'] = $id;
             $where .= " AND activityDeal.id = :id";
         }
+        if ($date) {
+            $params[':date'] = "%$date%";
+            $where .= " AND activityDeal.date LIKE :date";
+        }
+        return $where;
+    }
 
+    private function generateWhereVerify($date = null, &$params): string
+    {
+        $where = '';
         if ($date) {
             $params[':date'] = "%$date%";
             $where .= " AND activityDeal.date LIKE :date";
@@ -87,9 +96,11 @@ class ActivityDealRepository extends EntityRepository
     public function listDashboard($id = 0, User $user, $date = null, $limit = null, $offset = null): array
     {
         $params = [];
+        $date = \DateTime::createFromFormat('Y-m-d', $date);
+        $dateStr= $date->format('Y-m-d');
         $params[':user'] = $user->getId();
         $limitSql = $this->generateLimit($limit, $offset);
-        $where = $this->generateWhereTask($id, $date, $params);
+        $where = $this->generateWhereTask($id, $dateStr, $params);
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
         $sql = "SELECT COUNT(activityDeal.id) AS total, activityDeal.type, activityDeal.status           
                 FROM activityDeal 
@@ -114,6 +125,22 @@ class ActivityDealRepository extends EntityRepository
                 WHERE activityDeal.user =  :user
                 AND activityDeal.status = 1 
                 AND activityDeal.type > 1 {$where}
+               ";
+        $sth = $pdo->prepare($sql);
+        $sth->execute($params);
+        return $sth->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function activityVerify(User $user, $date): array
+    {
+        $params = [];
+        $params[':user'] = $user->getId();
+        $where = $this->generateWhereVerify($date, $params);
+        $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
+        $sql = "SELECT COUNT(activityDeal.id) AS total          
+                FROM activityDeal 
+                WHERE activityDeal.user =  :user
+                AND activityDeal.status = 1 {$where}
                ";
         $sth = $pdo->prepare($sql);
         $sth->execute($params);
