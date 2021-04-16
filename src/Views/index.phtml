@@ -9,146 +9,152 @@
                     <?php if ($user->getType() == 4): ?>
                         <div class="row mb-4">
                             <div class="col">
-                                <table class="table table-sm table-hover" id="advRanking">
-                                    <thead>
-                                    <tr>
-                                        <th scope="col" class="text-center">#</th>
-                                        <th scope="col" class="text-center">Country</th>
-                                        <th class="text-center" scope="col">Net Margin In</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr class="<?= ($user->getId() == $advisors[0]['userId']) ? 'activeTable' : '' ?>">
-                                        <td class="text-center">1</td>
-                                        <td class="text-center">
-                                            <img src="<?= BASEURL ?><?= $advisors[0]['country'] ?>"
-                                                 alt="Img Country">
-                                        </td>
-                                        <td class="text-center">$
-                                            <?= number_format($advisors[0]['marginIn'], 2, ',', '.') ?>
-                                        </td>
-                                    </tr>
-                                    <?php
-                                    if ($user->getId() == $advisors[0]['userId']): ?>
-                                        <tr class="<?= ($user->getId() == $advisors[1]['userId']) ? 'activeTable' : '' ?>">
-                                            <td class="text-center">2</td>
+                                <div class="table-responsive-lg">
+                                    <table class="table table-sm table-hover" id="advRanking">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" class="text-center">#</th>
+                                            <th scope="col" class="text-center">Country</th>
+                                            <th class="text-center" scope="col">Net Margin In</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr class="<?= ($user->getId() == $advisors[0]['userId']) ? 'activeTable' : '' ?>">
+                                            <td class="text-center">1</td>
                                             <td class="text-center">
-                                                <img src="<?= BASEURL ?><?= $advisors[1]['country'] ?>"
+                                                <img src="<?= BASEURL ?><?= $advisors[0]['country'] ?>"
                                                      alt="Img Country">
                                             </td>
                                             <td class="text-center">$
-                                                <?= number_format($advisors[1]['marginIn'], 2, ',', '.') ?>
+                                                <?= number_format($advisors[0]['marginIn'], 2, ',', '.') ?>
                                             </td>
                                         </tr>
-                                    <?php else:
-                                        $rank = 2;
-                                        for ($i = 1; $i < count($advisors); $i++): ?>
-                                            <?php if ($user->getId() == $advisors[$i]['userId']): ?>
-                                                <tr class="<?= ($user->getId() == $advisors[$i]['userId']) ? 'activeTable' : '' ?>">
-                                                    <td class="text-center"><?= $rank ?></td>
-                                                    <td class="text-center">
-                                                        <img src="<?= BASEURL ?><?= $advisors[$i]['country'] ?>"
-                                                             alt="Img Country">
-                                                    </td>
-                                                    <td class="text-center">$
-                                                        <?= number_format($advisors[$i]['marginIn'], 2, ',', '.') ?>
-                                                    </td>
-                                                </tr>
-                                            <?php endif; ?>
-                                            <?php $rank++ ?>
-                                        <?php endfor; ?>
-                                    <?php endif; ?>
-                                    </tbody>
-                                </table>
+                                        <?php
+                                        if ($user->getId() == $advisors[0]['userId']): ?>
+                                            <tr class="<?= ($user->getId() == $advisors[1]['userId']) ? 'activeTable' : '' ?>">
+                                                <td class="text-center">2</td>
+                                                <td class="text-center">
+                                                    <img src="<?= BASEURL ?><?= $advisors[1]['country'] ?>"
+                                                         alt="Img Country">
+                                                </td>
+                                                <td class="text-center">$
+                                                    <?= number_format($advisors[1]['marginIn'], 2, ',', '.') ?>
+                                                </td>
+                                            </tr>
+                                        <?php else:
+                                            $rank = 2;
+                                            for ($i = 1; $i < count($advisors); $i++): ?>
+                                                <?php if ($user->getId() == $advisors[$i]['userId']): ?>
+                                                    <tr class="<?= ($user->getId() == $advisors[$i]['userId']) ? 'activeTable' : '' ?>">
+                                                        <td class="text-center"><?= $rank ?></td>
+                                                        <td class="text-center">
+                                                            <img src="<?= BASEURL ?><?= $advisors[$i]['country'] ?>"
+                                                                 alt="Img Country">
+                                                        </td>
+                                                        <td class="text-center">$
+                                                            <?= number_format($advisors[$i]['marginIn'], 2, ',', '.') ?>
+                                                        </td>
+                                                    </tr>
+                                                <?php endif; ?>
+                                                <?php $rank++ ?>
+                                            <?php endfor; ?>
+                                        <?php endif; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     <?php endif; ?>
                     <?php if ($user->getType() == 3): ?>
                         <div class="row">
                             <div class="col">
-                                <table class="table table-sm table-hover" id="managersTable">
-                                    <thead>
-                                    <tr>
-                                        <th scope="col" class="text-center">#</th>
-                                        <th scope="col" class="text-center">User</th>
-                                        <th scope="col" class="text-center">Country</th>
-                                        <th class="text-center">Net Margin In</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr class="<?= ($user->getId() == $managers[0]['userId']) ? 'activeTable' : '' ?>">
-                                        <td class="text-center">1</td>
-                                        <td class="text-center"><?= $managers[0]['user'] ?></td>
-                                        <td class="text-center">
-                                            <img src="<?= BASEURL ?><?= $managers[0]['country'] ?>"
-                                                 alt="Img Country">
-                                        </td>
-                                        <td class="text-center">$
-                                            <?= number_format($managers[0]['marginIn'], 2, ',', '.') ?>
-                                        </td>
-                                    </tr>
-                                    <?php
-                                    if ($user->getId() == $managers[0]['userId']): ?>
-                                        <tr class="<?= ($user->getId() == $managers[1]['userId']) ? 'activeTable' : '' ?>">
-                                            <td class="text-center">2</td>
-                                            <td class="text-center"><?= $managers[1]['user'] ?></td>
+                                <div class="table-responsive-lg">
+                                    <table class="table table-sm table-hover" id="managersTable">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" class="text-center">#</th>
+                                            <th scope="col" class="text-center">User</th>
+                                            <th scope="col" class="text-center">Country</th>
+                                            <th class="text-center">Net Margin In</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr class="<?= ($user->getId() == $managers[0]['userId']) ? 'activeTable' : '' ?>">
+                                            <td class="text-center">1</td>
+                                            <td class="text-center"><?= $managers[0]['user'] ?></td>
                                             <td class="text-center">
-                                                <img src="<?= BASEURL ?><?= $managers[1]['country'] ?>"
+                                                <img src="<?= BASEURL ?><?= $managers[0]['country'] ?>"
                                                      alt="Img Country">
                                             </td>
                                             <td class="text-center">$
-                                                <?= number_format($managers[1]['marginIn'], 2, ',', '.') ?>
+                                                <?= number_format($managers[0]['marginIn'], 2, ',', '.') ?>
                                             </td>
                                         </tr>
-                                    <?php else:
-                                        $rank = 2;
-                                        for ($i = 1; $i < count($managers); $i++): ?>
-                                            <?php if ($user->getId() == $managers[$i]['userId']): ?>
-                                                <tr class="<?= ($user->getId() == $managers[$i]['userId']) ? 'activeTable' : '' ?>">
-                                                    <td class="text-center"><?= $rank ?></td>
-                                                    <td class="text-center"><?= $managers[$i]['user'] ?></td>
-                                                    <td class="text-center">
-                                                        <img src="<?= BASEURL ?><?= $managers[$i]['country'] ?>"
-                                                             alt="Img Country">
-                                                    </td>
-                                                    <td class="text-center">$
-                                                        <?= number_format($managers[$i]['marginIn'], 2, ',', '.') ?>
-                                                    </td>
-                                                </tr>
-                                                <?php $rank++ ?>
-                                            <?php endif; ?>
-                                        <?php endfor; ?>
-                                    <?php endif; ?>
-                                    </tbody>
-                                </table>
+                                        <?php
+                                        if ($user->getId() == $managers[0]['userId']): ?>
+                                            <tr class="<?= ($user->getId() == $managers[1]['userId']) ? 'activeTable' : '' ?>">
+                                                <td class="text-center">2</td>
+                                                <td class="text-center"><?= $managers[1]['user'] ?></td>
+                                                <td class="text-center">
+                                                    <img src="<?= BASEURL ?><?= $managers[1]['country'] ?>"
+                                                         alt="Img Country">
+                                                </td>
+                                                <td class="text-center">$
+                                                    <?= number_format($managers[1]['marginIn'], 2, ',', '.') ?>
+                                                </td>
+                                            </tr>
+                                        <?php else:
+                                            $rank = 2;
+                                            for ($i = 1; $i < count($managers); $i++): ?>
+                                                <?php if ($user->getId() == $managers[$i]['userId']): ?>
+                                                    <tr class="<?= ($user->getId() == $managers[$i]['userId']) ? 'activeTable' : '' ?>">
+                                                        <td class="text-center"><?= $rank ?></td>
+                                                        <td class="text-center"><?= $managers[$i]['user'] ?></td>
+                                                        <td class="text-center">
+                                                            <img src="<?= BASEURL ?><?= $managers[$i]['country'] ?>"
+                                                                 alt="Img Country">
+                                                        </td>
+                                                        <td class="text-center">$
+                                                            <?= number_format($managers[$i]['marginIn'], 2, ',', '.') ?>
+                                                        </td>
+                                                    </tr>
+                                                    <?php $rank++ ?>
+                                                <?php endif; ?>
+                                            <?php endfor; ?>
+                                        <?php endif; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     <?php endif; ?>
                     <?php if ($user->getType() < 3): ?>
                         <div class="row">
                             <div class="col">
-                                <table class="table table-sm table-hover" id="managersTable">
-                                    <thead>
-                                    <tr>
-                                        <th scope="col" class="text-center">New Deposits</th>
-                                        <th scope="col" class="text-center">Withdrawals</th>
-                                        <th class="text-center">Net Margin In</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td class="text-center">$
-                                            <?= number_format($master[0]['totalDeposit'], 2, ',', '.') ?>
-                                        </td>
-                                        <td class="text-center">$
-                                            <?= number_format($master[0]['totalCapture'], 2, ',', '.') ?>
-                                        </td>
-                                        <td class="text-center">$
-                                            <?= number_format($master[0]['marginIn'], 2, ',', '.') ?>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
+                                <div class="table-responsive-lg">
+                                    <table class="table table-sm table-hover" id="managersTable">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" class="text-center">New Deposits</th>
+                                            <th scope="col" class="text-center">Withdrawals</th>
+                                            <th class="text-center">Net Margin In</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td class="text-center">$
+                                                <?= number_format($master[0]['totalDeposit'], 2, ',', '.') ?>
+                                            </td>
+                                            <td class="text-center">$
+                                                <?= number_format($master[0]['totalCapture'], 2, ',', '.') ?>
+                                            </td>
+                                            <td class="text-center">$
+                                                <?= number_format($master[0]['marginIn'], 2, ',', '.') ?>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     <?php endif; ?>
@@ -166,7 +172,7 @@
                     <div class="row">
                         <i class=" fa fa-2x fa-clock"> </i> <h5 class="title ml-3"> Tasks</h5>
                     </div>
-                    <div class="row mb-4">
+                    <div class="row mb-5">
                         <div class="col">
                             <div class="row">
                                 Pending tasks for today:
@@ -174,7 +180,7 @@
                             <div class="row" id="tasksList"></div>
                         </div>
                     </div>
-                    <div style="position: absolute; bottom: 0; right: 0">
+                    <div style="position: absolute; bottom: 0; right: 0" class="mt-3">
                         <a href="<?= BASEURL ?>calendar">View more</a>
                     </div>
                 </div>
@@ -290,42 +296,44 @@
                     <div class="tab-pane container active" id="advisors">
                         <div class="row">
                             <div class="col">
-                                <table class="table table-sm table-hover" id="advRanking">
-                                    <thead>
-                                    <tr>
-                                        <th scope="col" class="text-center">#</th>
-                                        <th scope="col" class="text-center">Country</th>
-                                        <th scope="col" class="text-center">New Accounts</th>
-                                        <th class="text-center" scope="col">New Deposits</th>
-                                        <th scope="col" class="text-center">Withdrawals</th>
-                                        <th class="text-center" scope="col">Net Margin In</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <?php
-                                    $rank = 1;
-                                    for ($i = 0; $i < count($advisors); $i++): ?>
-                                        <tr class="<?= ($user->getId() == $advisors[$i]['userId']) ? 'activeTable' : '' ?>">
-                                            <td class="text-center"><?= $rank ?></td>
-                                            <td class="text-center">
-                                                <img src="<?= BASEURL ?><?= $advisors[$i]['country'] ?>"
-                                                     alt="Img Country">
-                                            </td>
-                                            <td class="text-center"><?= $advisors[$i]['accounts'] ?></td>
-                                            <td class="text-center">$
-                                                <?= number_format($advisors[$i]['totalDeposit'], 2, ',', '.') ?>
-                                            </td>
-                                            <td class="text-center">$
-                                                <?= number_format($advisors[$i]['totalCapture'], 2, ',', '.') ?>
-                                            </td>
-                                            <td class="text-center">$
-                                                <?= number_format($advisors[$i]['marginIn'], 2, ',', '.') ?>
-                                            </td>
+                                <div class="table-responsive-lg">
+                                    <table class="table table-sm table-hover" id="advRanking">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" class="text-center">#</th>
+                                            <th scope="col" class="text-center">Country</th>
+                                            <th scope="col" class="text-center">New Accounts</th>
+                                            <th class="text-center" scope="col">New Deposits</th>
+                                            <th scope="col" class="text-center">Withdrawals</th>
+                                            <th class="text-center" scope="col">Net Margin In</th>
                                         </tr>
-                                        <?php $rank++ ?>
-                                    <?php endfor; ?>
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                        <?php
+                                        $rank = 1;
+                                        for ($i = 0; $i < count($advisors); $i++): ?>
+                                            <tr class="<?= ($user->getId() == $advisors[$i]['userId']) ? 'activeTable' : '' ?>">
+                                                <td class="text-center"><?= $rank ?></td>
+                                                <td class="text-center">
+                                                    <img src="<?= BASEURL ?><?= $advisors[$i]['country'] ?>"
+                                                         alt="Img Country">
+                                                </td>
+                                                <td class="text-center"><?= $advisors[$i]['accounts'] ?></td>
+                                                <td class="text-center">$
+                                                    <?= number_format($advisors[$i]['totalDeposit'], 2, ',', '.') ?>
+                                                </td>
+                                                <td class="text-center">$
+                                                    <?= number_format($advisors[$i]['totalCapture'], 2, ',', '.') ?>
+                                                </td>
+                                                <td class="text-center">$
+                                                    <?= number_format($advisors[$i]['marginIn'], 2, ',', '.') ?>
+                                                </td>
+                                            </tr>
+                                            <?php $rank++ ?>
+                                        <?php endfor; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>

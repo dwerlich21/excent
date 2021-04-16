@@ -25,11 +25,6 @@
     }
 }
 
-.modal .modal-dialog {
-    width: 60%;
-}
-
-
 .modal.right .modal-dialog {
     position: fixed;
     margin: auto;

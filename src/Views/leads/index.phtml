@@ -31,19 +31,21 @@
         </div>
         <div class="card p-3">
             <p>Showing <span id="partial"></span> of <span id="total"></span></p>
-            <table class="table table-sm table-hover table-bordered" id="leadsTable" width="100%" cellspacing="0">
-                <thead>
-                <tr>
-                    <th class="text-center">Name</th>
-                    <th class="text-center">Email</th>
-                    <th class="text-center">Phone</th>
-                    <th class="text-center">Owner</th>
-                    <th class="text-center">Country</th>
-                    <th class="text-center">Actions</th>
-                </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+            <div class="table-responsive-sm">
+                <table class="table table-sm table-hover table-bordered" id="leadsTable" width="100%" cellspacing="0">
+                    <thead>
+                    <tr>
+                        <th class="text-center">Name</th>
+                        <th class="text-center">Email</th>
+                        <th class="text-center">Phone</th>
+                        <th class="text-center">Owner</th>
+                        <th class="text-center">Country</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -71,7 +73,8 @@
                     <div class="row">
                         <div class="col">
                             <label for="emailLead">Email</label>
-                            <input id="emailLead" name="emailLead" class="form-control" type="email" placeholder="Email">
+                            <input id="emailLead" name="emailLead" class="form-control" type="email"
+                                   placeholder="Email">
                         </div>
                     </div>
                     <div class="row">
@@ -301,7 +304,7 @@
                     ${actions}
                 </tr>`;
     }
-    
+
     function openModalToDeal(id) {
         $('#modalToDeal').modal('show');
         $('#message').hide();
