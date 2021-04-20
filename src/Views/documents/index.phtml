@@ -1,47 +1,83 @@
 <div class="row">
     <div class="col">
         <div class="card p-3">
-            <form id="filter">
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="row">
-                            <a class="btn btn-primary text-white" href="#" onclick="openModal()"><i
-                                        class="fa fa-plus"></i> Document</a>
-                        </div>
-                    </div>
-                    <div class="col-md-6 my-auto">
-                        <div class="form-group mt-2">
-                            <input class="form-control" id="titleFilter" name="title" type="text" placeholder="Title">
-                        </div>
-                    </div>
-                    <div class="col-md-3 text-right">
-                        <button class="btn btn-danger" type="reset" onclick="resetTable()">Cancel</button>
-                        <button class="btn btn-primary" type="submit">Search</button>
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="title my-auto">My Folder</h5>
+                </div>
+                <div class="col-md-6 text-right my-auto">
+                    <a class="btn btn-primary text-white" href="#" onclick="openModal()"><i
+                                class="fa fa-plus"></i> Document</a>
+                    <a class="btn btn-primary text-white ml-2" href="#" onclick="openModalFolder()"><i
+                                class="fa fa-plus"></i> Folder</a>
+                </div>
+            </div>
+<!--            <div class="row">-->
+<!--                <div class="col-md-2">-->
+<!--                    <label for="orderBy">Order By:</label>-->
+<!--                    <select id="orderBy" name="orderBy" class="form-control">-->
+<!--                        <option value="1" selected>Type</option>-->
+<!--                        <option value="2">Name</option>-->
+<!--                    </select>-->
+<!--                </div>-->
+<!--            </div>-->
+            <div class="row mt-4" id="orderByType">
+                <?php for ($i = 0; $i < count($types); $i++): ?>
+                <div class="col-md-2 mt-3 text-center">
+                    <div class="col test" onmouseover="mostraLixeira('<?= $types[$i] ?>')"
+                         onmouseout="escondeLixeira('<?= $types[$i] ?>')">
+                        <?php if (is_dir($baseDir . $types[$i])): ?>
+                            <a href="<?= BASEURL ?>documents/my-folder/?dir=<?= $baseDir . $types[$i] ?>/"
+                           style="text-decoration: none; color: black">
+                            <img
+                                        src="<?= BASEURL ?>assets/img/pasta.png" alt="word"
+                                        ><br> <?= $types[$i] ?>
+                        </a>
+                            <br><i class="fa fa-trash-o p-2" style="color: white" id="<?= $types[$i] ?>"
+                                   onclick="deleteFolder('<?= $baseDir . $types[$i]?>')"></i>
+                            <?php else: ?>
+                            <a href="<?= BASEURL ?><?= $baseDir . $types[$i] ?>" target="_blank"
+                               style="text-decoration: none; color: black">
+                                <img
+                                <?php if (substr($types[$i], -3) == 'ocx'): ?>
+                                    src="<?= BASEURL ?>assets/img/word.png" alt="word"
+                                <?php elseif (substr($types[$i], -3) == 'pdf'): ?>
+                                    src="<?= BASEURL ?>assets/img/pdf.png" alt="pdf"
+                                <?php elseif (substr($types[$i], -3) == 'lsx' || substr($types[$i], -3) == 'csv'): ?>
+                                    src="<?= BASEURL ?>assets/img/excel.png" alt="excel"
+                                <?php elseif (substr($types[$i], -3) == 'peg' || substr($types[$i], -3) == 'jpg' || substr($types[$i], -3) == 'png'): ?>
+                                    src="<?= BASEURL ?>assets/img/imagem.png" alt="image"
+                                <?php else: ?>
+                                    src="<?= BASEURL ?>assets/img/arquivo.png" alt="arquivo"
+                                <?php endif; ?>
+                            ><br> <?= $types[$i] ?>
+                        </a>
+                        <br><i class="fa fa-trash-o p-2" style="color: white" id="<?= $types[$i] ?>"
+                               onclick="deleteFolder('<?= $baseDir . $types[$i]?>')"></i>
+                        <?php endif; ?>
                     </div>
                 </div>
-            </form>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col">
-        <div class="card p-3">
-            <p id="text">Showing <span id="partial"></span> of <span id="total"></span></p>
-            <table class="table table-sm table-hover" id="documentsTable" width="100%" cellspacing="0">
-                <thead class="thead-light">
-                <tr>
-                    <th class="text-center">Date</th>
-                    <th class="text-center">Title</th>
-                    <th class="text-center">Actions</th>
-                </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+                <?php endfor; ?>
+            </div>
+            <div class="row mt-3">
+                <div class="col">
+                    <div style="display: none" id="messageFolderDelete" class="alert alert-danger" role="alert"></div>
+                </div>
+            </div>
+            <?php if ($baseDir != 'uploads/my-folder/' . $user->getFolder() . '/'): ?>
+                <div class="row">
+                    <div class="col text-right">
+                        <a class="btn btn-danger text-white ml-2"
+                           href="<?= BASEURL ?>documents/my-folder/?dir=<?= $backDir ?>"><i
+                                    class="fa fa-chevron-circle-left"></i> Back</a>
+                    </div>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 </div>
 
-<!------------------------- Modal Cadastro-------------------------------------->
+<!------------------------- Modal Cadastro Document-------------------------------------->
 <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="subscriptionModal"
      aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -59,8 +95,10 @@
                         <div class="col">
                             <label for="title">Title</label>
                             <input id="title" name="title" class="form-control" type="text" placeholder="Title">
+                            <input id="destiny" name="destiny" class="form-control" type="hidden"
+                                   value="<?= $baseDir ?>">
                         </div>
-                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group mt-3">
@@ -83,6 +121,41 @@
                     </div>
                 </div>
                 <div style="display: none" id="messageDocument" class="alert alert-danger" role="alert"></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!------------------------- Modal Cadastro Folder-------------------------------------->
+<div class="modal fade" id="modalFolder" tabindex="-1" role="dialog" aria-labelledby="subscriptionModal"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Folder Registration</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form class="form-control" id="addFolder" method="post">
+                <div class="form-group">
+                    <input type="hidden" name="FolderId" id="FolderId">
+                    <div class="row">
+                        <div class="col">
+                            <label for="title">Title</label>
+                            <input id="titleFolder" name="title" class="form-control" type="text"
+                                   placeholder="Title">
+                            <input id="destinyFolder" name="destiny" class="form-control" type="hidden"
+                                   value="<?= $baseDir ?>">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col text-right">
+                        <button type="submit" class="btn btn-primary">Save Folder</button>
+                    </div>
+                </div>
+                <div style="display: none" id="messageFolder" class="alert alert-danger" role="alert"></div>
             </form>
         </div>
     </div>
@@ -113,6 +186,54 @@
     var partial = 0;
     var total = 1;
     var title = 0;
+    const formAddDocument = document.getElementById('addDocument');
+    const formAddFolder = document.getElementById('addFolder');
+    const divMessageDocument = document.getElementById('messageDocument');
+    const divMessageFolderDelete = document.getElementById('messageFolderDelete');
+    const divMessageFolder = document.getElementById('messageFolder');
+
+
+    function mostraLixeira(id) {
+        document.getElementById(id).style.color = 'black';
+    }
+
+    function escondeLixeira(id) {
+        document.getElementById(id).style.color = 'white';
+    }
+
+    function deleteFolder(id) {
+
+        var result = confirm('Are you sure about that?\n Your action will be permanent and you will not be able to recover the deleted data!');
+        if (result == true) {
+            showLoading();
+            fetch(`<?= BASEURL ?>documents/delete/?dir=${id}`, {
+                method: 'DELETE',
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+            }).then(response => {
+                closeLoading();
+                divMessageFolderDelete.classList.add("alert-danger");
+                divMessageFolderDelete.classList.remove("alert-success");
+                response.json().then(json => {
+                    divMessageFolderDelete.textContent = json.message;
+                    divMessageFolderDelete.style.display = 'block';
+                    if (response.status === 201) {
+                        divMessageFolderDelete.classList.add("alert-success");
+                        divMessageFolderDelete.classList.remove("alert-danger");
+                    }
+                });
+                setTimeout(function () {
+                    location.reload();
+                }, 1500);
+            });
+        } else {
+            return false;
+        }
+
+    }
 
     function openModal() {
         $('#modal').modal('show');
@@ -120,15 +241,18 @@
         document.getElementById('addDocument').reset();
     }
 
-    const formAddDocument = document.getElementById('addDocument');
-    const divMessageDocument = document.getElementById('messageDocument');
+    function openModalFolder() {
+        $('#modalFolder').modal('show');
+        $('#message').hide();
+        document.getElementById('addDocument').reset();
+    }
 
     formAddDocument.addEventListener('submit', e => {
         e.preventDefault();
         showLoading();
         let method = 'POST';
         let formData = formDataToJson('addDocument');
-        fetch("<?= BASEURL ?>documents/my-folder/register", {
+        fetch("<?= BASEURL ?>documents/register-document", {
             method: method,
             credentials: 'same-origin',
             headers: {
@@ -155,88 +279,35 @@
         });
     });
 
-    const form = document.getElementById('filter');
-
-    form.addEventListener('submit', e => {
+    formAddFolder.addEventListener('submit', e => {
         e.preventDefault();
-        let formData = formDataToJson('filter');
-        partial = 0;
-        index = 0;
-        total = 1;
-        title = formData.title;
-        $("#documentsTable tbody").empty();
-        generateTable();
-    });
-
-    function resetTable() {
-        index = 0;
-        partial = 0;
-        total = 1;
-        title = 0;
-        $("#documentsTable tbody").empty();
-        generateTable();
-    }
-
-
-    function generateDocumentsTable(document) {
-        let actions = '';
-        actions += `<i class="fa fa-times text-danger" title="Delete" onclick="deleteDoc(${document.id})"></i> `
-        actions = `<td class="text-center">${actions} </td>`;
-        return `<tr>
-                    <td class="text-center">${document.date}</td>
-                    <td class="text-center"><a href="${documentView(document.documentFile)}" target="_blank">${document.title}<a></td>
-                    ${actions}
-                </tr>`;
-    }
-
-    function documentView(id) {
-        return `<?= BASEURL ?>uploads/my-folder/${id}`;
-    }
-
-    function deleteDoc(id) {
-        $('#loader').show();
-        fetch(`<?= BASEURL ?>api/documents/my-folder/delete/${id}`, {
-            method: "GET",
+        showLoading();
+        let method = 'POST';
+        let formData = formDataToJson('addFolder');
+        fetch("<?= BASEURL ?>documents/register-folder", {
+            method: method,
             credentials: 'same-origin',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        });
-        location.reload();
-    }
-
-    function generateTable() {
-
-        $('#loader').show();
-        fetch(`<?= BASEURL ?>api/documents/my-folder/?index=${index}&title=${title}`, {
-            method: "GET",
-            credentials: 'same-origin',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
+            },
+            body: new FormData(formAddFolder)
         }).then(response => {
+            closeLoading();
+            divMessageFolder.classList.add("alert-danger");
+            divMessageFolder.classList.remove("alert-success");
+            $('#save').removeClass('disabled');
             response.json().then(json => {
-                $('#loader').hide();
-                $('#total').text(json.total);
-                $('#partial').text(json.partial);
-                total = json.total;
-                partial = json.partial;
-                let options = json.message.map(generateDocumentsTable);
-                $("#documentsTable tbody").append(options);
-
+                divMessageFolder.textContent = json.message;
+                divMessageFolder.style.display = 'block';
+                if (response.status === 201) {
+                    divMessageFolder.classList.add("alert-success");
+                    divMessageFolder.classList.remove("alert-danger");
+                    formAddFolder.reset();
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1500);
+                }
             });
-        });
-    }
-
-    $(document).ready(function () {
-        generateTable();
-        $(window).scroll(function () {
-            if ($(window).scrollTop() + $(window).height() >= $(document).height() - 1) {
-                index++;
-                generateTable();
-            }
         });
     });
 

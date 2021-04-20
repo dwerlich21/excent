@@ -9,6 +9,10 @@ $app->group('/api/documents', function () use ($app) {
         return $this->ApiController->myFoldersTable($request, $response);
     });
 
+    $app->get('/company-files/', function (Request $request, Response $response) {
+        return $this->ApiController->companyFilesTable($request, $response);
+    });
+
     $app->get('/my-folder/delete/{id}/', function (Request $request, Response $response) {
         return $this->ApiController->myFolderDeleteDoc($request, $response);
     });

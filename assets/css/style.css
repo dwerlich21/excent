@@ -103,11 +103,6 @@ label{
     padding-top: 10px !important;
 }
 
-nav {
-    position: fixed;!important;
-    z-index: 2;!important;
-}
-
 .card-task {
     border: solid 1px rgb(0, 0, 0, 0.25);
 }
@@ -253,4 +248,12 @@ video {
     -moz-transform: translateX(-50%) translateY(-50%);
     -webkit-transform: translateX(-50%) translateY(-50%);
     transform: translateX(-50%) translateY(-50%);
+}
+
+.test:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.sub-active{
+    font-weight: bold;!important;
 }

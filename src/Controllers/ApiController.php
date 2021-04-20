@@ -4,6 +4,7 @@
 namespace App\Controllers;
 
 use App\Models\Entities\ActivityDeal;
+use App\Models\Entities\CompanyFiles;
 use App\Models\Entities\Deal;
 use App\Models\Entities\DocumentMyFolder;
 use App\Models\Entities\DocumentCategory;
@@ -145,6 +146,26 @@ class ApiController extends Controller
         $id = $request->getAttribute('route')->getArgument('id');
         $this->em->getRepository(DocumentMyFolder::class)->delDocument($id);
         die();
+    }
+
+    public function companyFilesTable(Request $request, Response $response)
+    {
+        $user = $this->getLogged(true);
+        $responsible = $user->getId();
+        $index = $request->getQueryParam('index');
+        $name = $request->getQueryParam('name');
+        $documents = $this->em->getRepository(CompanyFiles::class)->list($responsible, $name, 20, $index * 20);
+        $total = $this->em->getRepository(CompanyFiles::class)->listTotal($responsible, $name)['total'];
+        $partial = ($index * 20) + sizeof($documents);
+        $partial = $partial <= $total ? $partial : $total;
+
+        return $response->withJson([
+            'status' => 'ok',
+            'message' => $documents,
+            'total' => (int)$total,
+            'partial' => $partial,
+        ], 200)
+            ->withHeader('Content-type', 'application/json');
     }
 
     public function foldersTable(Request $request, Response $response)

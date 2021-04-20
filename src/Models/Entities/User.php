@@ -54,6 +54,11 @@ class User
      */
     private ?User $manager = null;
 
+    /**
+     * @Column(type="string")
+     */
+    private string $folder;
+
     public function getId(): int
     {
         return $this->id;
@@ -142,6 +147,17 @@ class User
     public function setManager(?User $manager): User
     {
         $this->manager = $manager;
+        return $this;
+    }
+
+    public function getFolder(): string
+    {
+        return $this->folder;
+    }
+
+    public function setFolder(string $folder): User
+    {
+        $this->folder = $folder;
         return $this;
     }
 

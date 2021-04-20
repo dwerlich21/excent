@@ -11,6 +11,7 @@ use App\Models\Entities\Countries;
 use App\Models\Entities\Deal;
 use App\Models\Entities\Transaction;
 use App\Models\Entities\User;
+use App\Services\Email;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -51,6 +52,13 @@ class TransactionsController extends Controller
                 ->setUser($this->em->getReference(User::class, ($data['user'])))
                 ->setResponsible($user)
                 ->setCountry($this->em->getReference(Countries::class, $country));
+            $managers = $this->em->getRepository(User::class)->findBy(['type' => 3]);
+            foreach ($managers as $manager) {
+                $msg = "<p>Dear {$manager->getName()}.</p>
+                    <p>The Leader Board has been updated with new numbers!</p>
+                    <p>Sent by Excent Capital</p>";
+                Email::send($manager->getEmail(), $manager->getName(), 'Leader Board', $msg);
+            }
             $this->em->getRepository(Transaction::class)->save($message);
             return $response->withJson([
                 'status' => 'ok',

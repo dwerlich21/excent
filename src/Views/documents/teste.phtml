@@ -1,0 +1,43 @@
+<div class="row mt-4" id="orderByName" >
+    <?php while ($arq = $openDir->read()): ?>
+        <?php if ($arq != '.' && $arq != '..'): ?>
+            <?php if (is_dir($baseDir . $arq)): ?>
+                <div class="col-md-2 mt-3 text-center">
+                    <div class="col  test" onmouseover="mostraLixeira('<?= $arq ?>')"
+                         onmouseout="escondeLixeira('<?= $arq ?>')">
+                        <a href="<?= BASEURL ?>documents/my-folder/?dir=<?= $baseDir . $arq ?>/"
+                           style="text-decoration: none; color: black">
+                            <img src="<?= BASEURL ?>assets/img/pasta.png" alt="pasta"><br> <?= $arq ?>
+                        </a>
+                        <br><i class="fa fa-trash-o p-2" style="display: none" id="<?= $arq ?>"
+                               onclick="deleteFolder('<?= $baseDir . $arq ?>')"></i>
+                    </div>
+                </div>
+            <?php else: ?>
+                <div class="col-md-2 mt-3 text-center">
+                    <div class="col test" onmouseover="mostraLixeira('<?= $arq ?>')"
+                         onmouseout="escondeLixeira('<?= $arq ?>')">
+                        <a href="<?= BASEURL ?><?= $baseDir . $arq ?>" target="_blank"
+                           style="text-decoration: none; color: black">
+                            <img
+                                <?php if (substr($arq, -3) == 'ocx'): ?>
+                                    src="<?= BASEURL ?>assets/img/word.png" alt="word"
+                                <?php elseif (substr($arq, -3) == 'pdf'): ?>
+                                    src="<?= BASEURL ?>assets/img/pdf.png" alt="pdf"
+                                <?php elseif (substr($arq, -3) == 'lsx' || substr($arq, -3) == 'csv'): ?>
+                                    src="<?= BASEURL ?>assets/img/excel.png" alt="excel"
+                                <?php elseif (substr($arq, -3) == 'peg' || substr($arq, -3) == 'jpg' || substr($arq, -3) == 'png'): ?>
+                                    src="<?= BASEURL ?>assets/img/imagem.png" alt="image"
+                                <?php else: ?>
+                                    src="<?= BASEURL ?>assets/img/arquivo.png" alt="arquivo"
+                                <?php endif; ?>
+                            ><br> <?= $arq ?>
+                        </a>
+                        <br><i class="fa fa-trash-o p-2" style="display: none" id="<?= $arq ?>"
+                               onclick="deleteFolder('<?= $baseDir . $arq ?>')"></i>
+                    </div>
+                </div>
+            <?php endif; ?>
+        <?php endif; ?>
+    <?php endwhile; ?>
+</div>

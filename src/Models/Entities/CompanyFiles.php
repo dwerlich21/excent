@@ -29,6 +29,11 @@ class CompanyFiles
     private string $name;
 
     /**
+     * @Column(type="string")
+     */
+    private string $folder;
+
+    /**
      * @Column(type="datetime")
      */
     private $created;
@@ -48,7 +53,7 @@ class CompanyFiles
         return $this->responsible;
     }
 
-    public function setResponsible(User $responsible): Folders
+    public function setResponsible(User $responsible): CompanyFiles
     {
         $this->responsible = $responsible;
         return $this;
@@ -59,7 +64,7 @@ class CompanyFiles
         return $this->name;
     }
 
-    public function setName(string $name): Folders
+    public function setName(string $name): CompanyFiles
     {
         $this->name = $name;
         return $this;
@@ -69,4 +74,17 @@ class CompanyFiles
     {
         return $this->created;
     }
+
+    public function getFolder(): string
+    {
+        return $this->folder;
+    }
+
+    public function setFolder(string $folder): CompanyFiles
+    {
+        $this->folder = $folder;
+        return $this;
+    }
+
+
 }

@@ -80,13 +80,18 @@ class UserController extends Controller
             }
             $manager = null;
             if ($data['manager'] != 0) $manager = $this->em->getReference(User::class, $data['manager']);
+            $time = date('d');
+            $name = str_replace(' ', '', $data['name']);
+            $folderName = "{$name}{$time}";
             $users->setEmail($data['email'])
                 ->setName($data['name'])
                 ->setActive($data['active'])
                 ->setType($data['type'])
                 ->setCountry($this->em->getReference(Countries::class, $data['country']))
                 ->setManager($manager)
+                ->setFolder($folderName)
                 ->setPassword(password_hash($data['password'], PASSWORD_ARGON2I));
+            mkdir(UPLOAD_FOLDER . 'my-folder/' . $folderName);
             $this->em->getRepository(User::class)->save($users);
             return $response->withJson([
                 'status' => 'ok',

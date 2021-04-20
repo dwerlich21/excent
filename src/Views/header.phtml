@@ -52,49 +52,41 @@
                 <li <?= in_array('calendar', $menuActive) ? 'class="active"' : '' ?>>
                     <a href="<?= BASEURL ?>calendar">
                         <i class="fa fa-calendar"></i> <b>Calendar</b>
-                    <?php if ($activities[0]['total'] != 0): ?>
-                        <span class="p-1 ml-3" style="background: #F24B39; border-radius: 5px"><b><?= $activities[0]['total'] ?></b></span>
-                    <?php endif; ?>
+                        <?php if ($activities[0]['total'] != 0): ?>
+                            <span class="p-1 ml-3"
+                                  style="background: #F24B39; border-radius: 5px"><b><?= $activities[0]['total'] ?></b></span>
+                        <?php endif; ?>
                     </a>
                 </li>
-                <?php if ($user->getType() == 1 || $user->getType() == 2 || $user->getType() == 3): ?>
+                <?php if ($user->getType() < 4): ?>
                     <li <?= in_array('users', $menuActive) ? 'class="active"' : '' ?>>
                         <a href="<?= BASEURL ?>users">
                             <i class="fa fa-users"></i> <b>Users</b>
                         </a>
                     </li>
                 <?php endif; ?>
-                <?php if ($user->getType() == 4): ?>
-                    <li <?= in_array('documents', $menuActive) ? 'class="active"' : '' ?>>
-                        <a href="<?= BASEURL ?>documents/received">
-                            <i class="fa fa-file"></i> <b>Documents</b>
-                        </a>
-                    </li>
-                <?php endif; ?>
-                <?php if ($user->getType() != 4): ?>
-                    <li data-toggle="collapse" href="#documentsGroup">
-                        <a
-                                aria-expanded="<?= isset($subMenu) && $subMenu == 'documentsGroup' ? 'true' : 'false' ?>">
-                            <i class="fa fa-file"></i>
-                            <p><b>Documents</b><b class="caret mt-2"></b></p>
-                        </a>
-                        <div class="collapse pl-3 <?= isset($subMenu) && $subMenu == 'documentsGroup' ? 'show' : '' ?>"
-                             id="documentsGroup">
-                            <ul class="nav">
-                                <li class="<?= $section == 'companyFiles' ? 'active' : '' ?>">
-                                    <a href="<?= BASEURL ?>documents/company-files">
-                                        <i class="fa fa-folder-open"></i> Company Files
-                                    </a>
-                                </li>
-                                <li class="<?= $section == 'myFolder' ? 'active' : '' ?>">
-                                    <a href="<?= BASEURL ?>documents/my-folder">
-                                        <i class="fa fa-folder"></i> My Folder
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                <?php endif; ?>
+                <li data-toggle="collapse" href="#documentsGroup" <?= in_array('documents', $menuActive) ? 'class="active"' : '' ?>>
+                    <a
+                            aria-expanded="<?= isset($subMenu) && $subMenu == 'documentsGroup' ? 'true' : 'false' ?>">
+                        <i class="fa fa-file"></i>
+                        <p><b>Documents</b><b class="caret mt-2"></b></p>
+                    </a>
+                    <div class="collapse pl-3 <?= isset($subMenu) && $subMenu == 'documentsGroup' ? 'show' : '' ?>"
+                         id="documentsGroup">
+                        <ul class="nav">
+                            <li class="<?= $section == 'companyFiles' ? 'sub-active' : '' ?>">
+                                <a href="<?= BASEURL ?>documents/company-files">
+                                    <i class="fa fa-folder-open"></i> Company Files
+                                </a>
+                            </li>
+                            <li class="<?= $section == 'myFolder' ? 'sub-active' : '' ?>">
+                                <a href="<?= BASEURL ?>documents/my-folder">
+                                    <i class="fa fa-folder"></i> My Folder
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
                 <li <?= in_array('messages', $menuActive) ? 'class="active"' : '' ?>>
                     <a href="<?= BASEURL ?>messages">
                         <i class="fa fa-envelope"></i> <b>Messages</b>
@@ -273,7 +265,8 @@
                             <form id="editUser" method="post">
                                 <div class="form-group">
                                     <input type="hidden" name="userId" id="userId" value="<?= $user->getId() ?>">
-                                    <input type="hidden" name="userCountry" id="userCountry" value="<?= $user->getCountry()->getId() ?>">
+                                    <input type="hidden" name="userCountry" id="userCountry"
+                                           value="<?= $user->getCountry()->getId() ?>">
                                     <div class="row">
                                         <div class="col">
                                             <label for="name">Name</label>

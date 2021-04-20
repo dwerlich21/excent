@@ -49,9 +49,12 @@ class DealRepository extends EntityRepository
         $limitSql = $this->generateLimit($limit, $offset);
         $where = $this->generateWhere($id, $name, $country, $params);
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
-        $sql = "SELECT deal.id, deal.name, deal.company, deal.status, deal.phone, deal.email, 
-                deal.status, deal.office               
+        $sql = "SELECT 
+                    (SELECT manager.name FROM users AS manager WHERE manager.id =  users.manager) AS manager,
+                    deal.id, deal.name, deal.company, deal.status, deal.phone, deal.email, deal.responsible, 
+                    deal.status, deal.office               
                 FROM deal
+                JOIN users ON users.id = deal.responsible
                 WHERE 1 = 1 AND deal.type = 1 {$where}
                 ORDER BY name ASC {$limitSql}
                ";
