@@ -5,8 +5,6 @@
                 <div class="row">
                     <div class="col-md-2">
                         <div class="row">
-<!--                            <a class="btn btn-primary text-white" href="#" onclick="openModal()"><i-->
-<!--                                    class="fa fa-plus"></i> Document</a>-->
                             <a class="btn btn-primary text-white ml-2" href="#" onclick="openModalFolder()"><i
                                         class="fa fa-plus"></i> Folder</a>
                         </div>
@@ -45,53 +43,6 @@
     </div>
 </div>
 
-<!------------------------- Modal Cadastro Document-------------------------------------->
-<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="subscriptionModal"
-     aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Document Registration</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form class="form-control" id="addDocument" method="post">
-                <div class="form-group">
-                    <input type="hidden" name="documentId" id="documentId">
-                    <div class="row">
-                        <div class="col">
-                            <label for="title">Title</label>
-                            <input id="title" name="title" class="form-control" type="text" placeholder="Title">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group mt-3">
-                                <span class="fileselector">
-                                    <label class="btn btn-block btn-danger text-white" style="margin-top: 5px"
-                                           for="projectFile">
-                                        <input class="upload-file-selector" id="projectFile" type="file"
-                                               name="projectFile">
-                                        <i class="fa fa-paperclip margin-correction"></i>
-                                            <span id="projectFileLabel" default="Attach File">Attach File</span>
-                                    </label>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col text-right">
-                        <button type="submit" class="btn btn-primary">Save Document</button>
-                    </div>
-                </div>
-                <div style="display: none" id="messageDocument" class="alert alert-danger" role="alert"></div>
-            </form>
-        </div>
-    </div>
-</div>
-
 <!------------------------- Modal Cadastro Folder-------------------------------------->
 <div class="modal fade" id="modalFolder" tabindex="-1" role="dialog" aria-labelledby="subscriptionModal"
      aria-hidden="true">
@@ -109,6 +60,8 @@
                         <div class="col">
                             <label for="nameFolder">Name</label>
                             <input id="nameFolder" name="nameFolder" class="form-control" type="text" placeholder="Name">
+                            <input id="destinyFolder" name="destiny" class="form-control" type="hidden"
+                            value="<?= $baseDir ?>">
                         </div>
                     </div>
                 </div>
@@ -122,26 +75,6 @@
         </div>
     </div>
 </div>
-
-
-<script src="<?= BASEURL ?>assets/js/plugins/tinymce/jquery.tinymce.min.js"></script>
-<script src="<?= BASEURL ?>assets/js/plugins/tinymce/tinymce.min.js"></script>
-<script>tinymce.init({
-        selector: "textarea",
-        menubar: false,
-        statusbar: false,
-        toolbar: 'styleselect | bold italic | fontsizeselect | alignleft aligncenter alignright alignjustify | bullist numlist | link image media | forecolor backcolor table',
-        plugins: ["lists link image media textcolor table"],
-        browser_spellcheck: true,
-        imagetools_cors_hosts: ['www.tinymce.com', 'codepen.io'],
-        setup: function (editor) {
-            editor.on('change', function () {
-                editor.save();
-            });
-        }
-    });
-</script>
-
 <script>
 
     var index = 0;
@@ -149,54 +82,14 @@
     var total = 1;
     var title = 0;
 
-    function openModal() {
-        $('#modal').modal('show');
-        $('#message').hide();
-        document.getElementById('addDocument').reset();
-    }
-
     function openModalFolder() {
         $('#modalFolder').modal('show');
         $('#message').hide();
         document.getElementById('addDocument').reset();
     }
 
-    const formAddDocument = document.getElementById('addDocument');
-    const divMessageDocument = document.getElementById('messageDocument');
     const formAddFolder = document.getElementById('addFolder');
     const divMessageFolder = document.getElementById('messageFolder');
-
-    formAddDocument.addEventListener('submit', e => {
-        e.preventDefault();
-        showLoading();
-        let method = 'POST';
-        let formData = formDataToJson('addDocument');
-        fetch("<?= BASEURL ?>documents/my-folder/register", {
-            method: method,
-            credentials: 'same-origin',
-            headers: {
-                'Accept': 'application/json',
-            },
-            body: new FormData(formAddDocument)
-        }).then(response => {
-            closeLoading();
-            divMessageDocument.classList.add("alert-danger");
-            divMessageDocument.classList.remove("alert-success");
-            $('#save').removeClass('disabled');
-            response.json().then(json => {
-                divMessageDocument.textContent = json.message;
-                divMessageDocument.style.display = 'block';
-                if (response.status === 201) {
-                    divMessageDocument.classList.add("alert-success");
-                    divMessageDocument.classList.remove("alert-danger");
-                    formAddDocument.reset();
-                    setTimeout(function () {
-                        location.reload();
-                    }, 1500);
-                }
-            });
-        });
-    });
 
     formAddFolder.addEventListener('submit', e => {
         e.preventDefault();
@@ -253,21 +146,22 @@
     }
 
 
-    function generateDocumentsTable(document) {
+    function generateDocumentsTable(folder) {
         let actions = '';
-        actions += `<i class="fa fa-times text-danger" title="Delete" onclick="openModalEdit(${document.id})"></i> `
+        actions += `<i class="fa fa-times text-danger" title="Delete" onclick="openModalEdit(${folder.id})"></i> `
         actions = `<td class="text-center">${actions} </td>`;
+        let view = `${folder.id}/?dir=${folder.folder}`;
         return `<tr>
                     <td class="text-center"><i class="fa fa-folder"></i></td>
-                    <td class="text-center">${document.date}</td>
-                    <td class="text-center"><a href="${documentView(document.folder)}" target="_blank">${document.name}<a></td>
+                    <td class="text-center">${folder.date}</td>
+                    <td class="text-center"><a href="${folderView(view)}">${folder.name}<a></td>
                     <td class="text-center"><button class="btn btn-primary btn-sm">Users</button></td>
                     ${actions}
                 </tr>`;
     }
 
-    function documentView(id) {
-        return `<?= BASEURL ?>uploads/my-folder/${id}`;
+    function folderView(id) {
+        return `<?= BASEURL ?>documents/company-files/${id}`;
     }
 
     function generateTable() {
@@ -300,26 +194,6 @@
             if ($(window).scrollTop() + $(window).height() >= $(document).height() - 1) {
                 index++;
                 generateTable();
-            }
-        });
-    });
-
-    $(document).ready(function () {
-        $('input:file').change(function (e) {
-            let input = e.target;
-
-            if (input.files.length > 0) {
-                input.parentElement.classList.remove('btn-primary');
-                input.parentElement.classList.remove('btn-danger');
-                input.parentElement.classList.add('btn-success');
-                input.text = input.value;
-                let labelId = input.getAttribute('id') + 'Label';
-                document.getElementById(labelId).textContent = input.value;
-            } else {
-                input.parentElement.classList.remove('btn-success');
-                input.parentElement.classList.add('btn-danger');
-                let labelId = input.getAttribute('id') + 'Label';
-                document.getElementById(labelId).textContent = document.getElementById(labelId).getAttribute('default');
             }
         });
     });

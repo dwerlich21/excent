@@ -8,6 +8,8 @@ use App\Models\Entities\ActivityDeal;
 use App\Models\Entities\CompanyFiles;
 use App\Models\Entities\Deal;
 use App\Models\Entities\DocumentMyFolder;
+use App\Models\Entities\FolderAccess;
+use App\Models\Entities\User;
 use \Psr\Http\Message\ResponseInterface as Response;
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use RecursiveDirectoryIterator;
@@ -17,10 +19,12 @@ use FilesystemIterator;
 class DocumentController extends Controller
 {
 
-    public function myFolder(Request $request, Response $response)
+    public function myFolder(Request $request, Response $response, $typeAccess)
     {
         $user = $this->getLogged();
         $dir = $request->getQueryParam('dir');
+        if ($dir == 'uploads/my-folder/') $this->redirect('documents/my-folder');
+        if ($dir == 'uploads/company-files/') $this->redirect('documents/my-folder');
         $today = date('Y-m-d');
         $activities = $this->em->getRepository(ActivityDeal::class)->totalCalendar(0, $user, $today);
         $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId(), 'type' => 0], ['name' => 'asc']);
@@ -30,8 +34,9 @@ class DocumentController extends Controller
         $strDir = strrpos(substr($dir, 0, -1), '/');
         $backDir = substr($dir, 0, $strDir + 1);
         $typesOrder = $this->folderByType($openDir, $baseDir);
-        return $this->renderer->render($response, 'default.phtml', ['page' => 'documents/index.phtml', 'menuActive' => ['documents'],
-            'section' => 'myFolder', 'subMenu' => 'documentsGroup', 'user' => $user, 'deals' => $deals,
+        $folder = 'my-folder';
+        return $this->renderer->render($response, 'default.phtml', ['page' => 'documents/index.phtml', 'menuActive' => ['documents'], 'folder' => $folder,
+            'section' => 'myFolder', 'subMenu' => 'documentsGroup', 'user' => $user, 'deals' => $deals,  'typeAccess' => $typeAccess,
             'activities' => $activities, 'openDir' => $openDir, 'baseDir' => $baseDir, 'backDir' => $backDir, 'types' => $typesOrder]);
     }
 
@@ -59,20 +64,47 @@ class DocumentController extends Controller
         return $types;
     }
 
+    public function folders(Request $request, Response $response, $typeAccess)
+    {
+        $user = $this->getLogged();
+        $dir = $request->getQueryParam('dir');
+        $today = date('Y-m-d');
+        $activities = $this->em->getRepository(ActivityDeal::class)->totalCalendar(0, $user, $today);
+        $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId(), 'type' => 0], ['name' => 'asc']);
+        $baseDir = 'uploads/my-folder/';
+        if ($dir != null) $baseDir = $dir;
+        $openDir = dir($baseDir);
+        $strDir = strrpos(substr($dir, 0, -1), '/');
+        $backDir = substr($dir, 0, $strDir + 1);
+        $typesOrder = $this->folderByType($openDir, $baseDir);
+        $folder = 'folders';
+        return $this->renderer->render($response, 'default.phtml', ['page' => 'documents/index.phtml', 'menuActive' => ['documents'], 'folder' => $folder,
+            'section' => 'folders', 'subMenu' => 'documentsGroup', 'user' => $user, 'deals' => $deals, 'typeAccess' => $typeAccess,
+            'activities' => $activities, 'openDir' => $openDir, 'baseDir' => $baseDir, 'backDir' => $backDir, 'types' => $typesOrder]);
+    }
+
     public function companyFiles(Request $request, Response $response)
     {
         $user = $this->getLogged();
+        $dir = $request->getQueryParam('dir');
+        if ($dir == 'uploads/my-folder/') $this->redirect('documents/company-files');
+        if ($dir == 'uploads/company-files/') $this->redirect('documents/company-files');
         $today = date('Y-m-d');
         $activities = $this->em->getRepository(ActivityDeal::class)->totalCalendar(0, $user, $today);
         $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId(), 'type' => 0], ['name' => 'asc']);
         $baseDir = 'uploads/company-files/';
+        if ($dir != null) $baseDir = $dir;
+        $openDir = dir($baseDir);
+        $strDir = strrpos(substr($dir, 0, -1), '/');
+        $backDir = substr($dir, 0, $strDir + 1);
+        $typesOrder = $this->folderByType($openDir, $baseDir);
 
-
-        return $this->renderer->render($response, 'default.phtml', ['page' => 'documents/companyFiles.phtml', 'menuActive' => 'documents',
-            'section' => 'companyFiles', 'subMenu' => 'documentsGroup', 'user' => $user, 'deals' => $deals, 'activities' => $activities]);
+        return $this->renderer->render($response, 'default.phtml', ['page' => 'documents/companyFiles.phtml', 'menuActive' => ['documents'],
+            'section' => 'companyFiles', 'subMenu' => 'documentsGroup', 'user' => $user, 'deals' => $deals, 'activities' => $activities,
+            'baseDir' => $baseDir, 'backDir' => $backDir, 'types' => $typesOrder]);
     }
 
-    private function saveDocumentFile($files, DocumentMyFolder $document, $destiny, $title): DocumentMyFolder
+    private function saveDocumentFile($files, $destiny, $title)
     {
         $folder = UPLOAD_FOLDER . $destiny;
         $documentFile = $files['projectFile'];
@@ -81,9 +113,7 @@ class DocumentController extends Controller
             $extension = end($extension);
             $target = "{$folder}{$title}.{$extension}";
             $documentFile->moveTo($target);
-            $document->setDocumentFile($target);
         }
-        return $document;
     }
 
     public function saveDocument(Request $request, Response $response)
@@ -98,11 +128,7 @@ class DocumentController extends Controller
             ];
             Validator::requireValidator($fields, $data);
             $title = str_replace(' ', '-', $data['title']);
-            $document = new DocumentMyFolder();
-            $document = $this->saveDocumentFile($files, $document, $data['destiny'], $title);
-            $document->setTitle($data['title'])
-                ->setResponsible($user);
-            $this->em->getRepository(DocumentMyFolder::class)->save($document);
+            $this->saveDocumentFile($files, $data['destiny'], $title);
             $this->em->commit();
             return $response->withJson([
                 'status' => 'ok',
@@ -158,6 +184,34 @@ class DocumentController extends Controller
             return $response->withJson([
                 'status' => $status,
                 'message' => $message,
+            ], 201)
+                ->withHeader('Content-type', 'application/json');
+        } catch (\Exception $e) {
+            return $response->withJson(['status' => 'error',
+                'message' => $e->getMessage(),])->withStatus(500);
+        }
+    }
+
+    public function saveFolder(Request $request, Response $response)
+    {
+        try {
+            $user = $this->getLogged();
+            $data = (array)$request->getParams();
+            $fields = [
+                'nameFolder' => 'Name Folders'
+            ];
+            Validator::requireValidator($fields, $data);
+            $title = str_replace(' ', '-', $data['nameFolder']);
+            $destiny = $data['destiny'] . $title;
+            $folder = new CompanyFiles();
+            $folder->setName($data['nameFolder'])
+                ->setResponsible($user)
+                ->setFolder($destiny);
+            mkdir(UPLOAD_FOLDER . $data['destiny'] . $title);
+            $this->em->getRepository(CompanyFiles::class)->save($folder);
+            return $response->withJson([
+                'status' => 'ok',
+                'message' => 'Successfully Registered Folder!',
             ], 201)
                 ->withHeader('Content-type', 'application/json');
         } catch (\Exception $e) {

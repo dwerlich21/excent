@@ -233,52 +233,10 @@
         generateDeals();
     }
 
-    function generateDealsCard1(deal) {
-        if (deal.status == 1)
-
+    function generateDealsCard(deal) {
             return `<div id="${deal.id}" draggable="true" class="mx-2" ondragstart="drag(event)" style="width: 100%">
                         <a href="${viewDeal(deal.id)}" style="text-decoration: none">
                             <div class="bg-white mt-3 p-2">
-                                <div class="row">
-                                    <div class="col-md-10">
-                                        <div class="row deal-title"><b>${deal.name}</b></div>
-                                        <div class="row deal-sub">${deal.company}</div>
-                                    </div>
-                                    <div class="col-md-2 my-auto">
-                                        <i class="fa fa-check-circle"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>`;
-    }
-
-    function generateDealsCard2(deal) {
-        if (deal.status == 2)
-
-            return `<div id="${deal.id}" draggable="true" class="mx-2" ondragstart="drag(event)" style="width: 100%">
-                        <a href="${viewDeal(deal.id)}" style="text-decoration: none">
-                            <div class="bg-white mx-1 mt-3 p-2" >
-                                <div class="row">
-                                    <div class="col-md-10">
-                                        <div class="row deal-title"><b>${deal.name}</b></div>
-                                        <div class="row deal-sub" style="color: grey">${deal.company}</div>
-                                    </div>
-                                    <div class="col-md-2 my-auto">
-                                        <i class="fa fa-check-circle"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    <div>`;
-    }
-
-    function generateDealsCard3(deal) {
-        if (deal.status == 3)
-
-            return `<div id="${deal.id}" draggable="true" class="mx-2" ondragstart="drag(event)" style="width: 100%">
-                        <a href="${viewDeal(deal.id)}" style="text-decoration: none">
-                            <div class="bg-white mx-1 mt-3 p-2">
                                 <div class="row">
                                     <div class="col-md-10">
                                         <div class="row deal-title"><b>${deal.name}</b></div>
@@ -339,9 +297,9 @@
             }).then(response => {
                 response.json().then(json => {
                     $('#loader').hide();
-                    let status1 = json.message.map(generateDealsCard1);
-                    let status2 = json.message.map(generateDealsCard2);
-                    let status3 = json.message.map(generateDealsCard3);
+                    let status1 = json.message1.map(generateDealsCard);
+                    let status2 = json.message2.map(generateDealsCard);
+                    let status3 = json.message3.map(generateDealsCard);
                     $("#cardDeal1").append(status1);
                     $("#cardDeal2").append(status2);
                     $("#cardDeal3").append(status3);

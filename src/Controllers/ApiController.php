@@ -42,20 +42,26 @@ class ApiController extends Controller
 
     public function dealsTable(Request $request, Response $response)
     {
-        $this->getLogged(true);
+        $user = $this->getLogged(true);
         $id = $request->getAttribute('route')->getArgument('id');
+        $responsible = null;
+        $manager = null;
+        if ($user->getType() == 4) $responsible = $user->getId();
+        if ($user->getType() == 3) {
+            $responsible = $user->getId();
+            $manager = $user->getId();
+        }
         $name = $request->getQueryParam('name');
         $country = $request->getQueryParam('country');
         $index = $request->getQueryParam('index');
-        $deals = $this->em->getRepository(Deal::class)->list($id, $name, $country, 42, $index * 42);
-        $total = $this->em->getRepository(Deal::class)->listTotal($id, $name, $country)['total'];
-        $partial = ($index * 42) + sizeof($deals);
-        $partial = $partial <= $total ? $partial : $total;
+        $deals1 = $this->em->getRepository(Deal::class)->list($id, 1, $responsible, $manager, $name, $country, 50, $index * 50);
+        $deals2 = $this->em->getRepository(Deal::class)->list($id, 2, $responsible, $manager, $name, $country, 50, $index * 50);
+        $deals3 = $this->em->getRepository(Deal::class)->list($id, 3, $responsible, $manager, $name, $country, 50, $index * 50);
         return $response->withJson([
             'status' => 'ok',
-            'message' => $deals,
-            'total' => (int)$total,
-            'partial' => $partial,
+            'message1' => $deals1,
+            'message2' => $deals2,
+            'message3' => $deals3,
         ], 200)
             ->withHeader('Content-type', 'application/json');
     }
@@ -120,34 +126,6 @@ class ApiController extends Controller
             ->withHeader('Content-type', 'application/json');
     }
 
-    public function myFoldersTable(Request $request, Response $response)
-    {
-        $user = $this->getLogged(true);
-        $responsible = $user->getId();
-        $index = $request->getQueryParam('index');
-        $title = $request->getQueryParam('title');
-        $documents = $this->em->getRepository(DocumentMyFolder::class)->list($responsible, $title, 20, $index * 20);
-        $total = $this->em->getRepository(DocumentMyFolder::class)->listTotal($responsible, $title)['total'];
-        $partial = ($index * 20) + sizeof($documents);
-        $partial = $partial <= $total ? $partial : $total;
-
-        return $response->withJson([
-            'status' => 'ok',
-            'message' => $documents,
-            'total' => (int)$total,
-            'partial' => $partial,
-        ], 200)
-            ->withHeader('Content-type', 'application/json');
-    }
-
-    public function myFolderDeleteDoc(Request $request, Response $response)
-    {
-        $this->getLogged(true);
-        $id = $request->getAttribute('route')->getArgument('id');
-        $this->em->getRepository(DocumentMyFolder::class)->delDocument($id);
-        die();
-    }
-
     public function companyFilesTable(Request $request, Response $response)
     {
         $user = $this->getLogged(true);
@@ -156,27 +134,6 @@ class ApiController extends Controller
         $name = $request->getQueryParam('name');
         $documents = $this->em->getRepository(CompanyFiles::class)->list($responsible, $name, 20, $index * 20);
         $total = $this->em->getRepository(CompanyFiles::class)->listTotal($responsible, $name)['total'];
-        $partial = ($index * 20) + sizeof($documents);
-        $partial = $partial <= $total ? $partial : $total;
-
-        return $response->withJson([
-            'status' => 'ok',
-            'message' => $documents,
-            'total' => (int)$total,
-            'partial' => $partial,
-        ], 200)
-            ->withHeader('Content-type', 'application/json');
-    }
-
-    public function foldersTable(Request $request, Response $response)
-    {
-        $user = $this->getLogged(true);
-        $responsible = $user->getId();
-        $id = $request->getAttribute('route')->getArgument('id');
-        $index = $request->getQueryParam('index');
-        $name = $request->getQueryParam('name');
-        $documents = $this->em->getRepository(FolderAcess::class)->list($id, $responsible, $name, 20, $index * 20);
-        $total = $this->em->getRepository(FolderAcess::class)->listTotal($id, $responsible, $name)['total'];
         $partial = ($index * 20) + sizeof($documents);
         $partial = $partial <= $total ? $partial : $total;
 

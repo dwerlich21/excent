@@ -25,12 +25,24 @@ class DealRepository extends EntityRepository
         return $limitSql;
     }
 
-    private function generateWhere($id = 0, $name = null, $country= null, &$params): string
+    private function generateWhere($id = 0, $status = null, $responsible = null, $manager = null, $name = null, $country = null, &$params): string
     {
         $where = '';
         if ($id) {
             $params[':id'] = $id;
             $where .= " AND deal.id = :id";
+        }
+        if ($responsible) {
+            $params[':responsible'] = $responsible;
+            $where .= " AND deal.responsible = :responsible";
+        }
+        if ($manager) {
+            $params[':manager'] = $manager;
+            $where .= " AND manager = :manager";
+        }
+        if ($status) {
+            $params[':status'] = $status;
+            $where .= " AND deal.status = :status";
         }
         if ($name) {
             $params[':name'] = "%$name%";
@@ -43,11 +55,11 @@ class DealRepository extends EntityRepository
         return $where;
     }
 
-    public function list($id = 0, $name = null, $country= null, $limit = null, $offset = null): array
+    public function list($id = 0, $status = null, $responsible = null, $manager = null, $name = null, $country = null, $limit = null, $offset = null): array
     {
         $params = [];
         $limitSql = $this->generateLimit($limit, $offset);
-        $where = $this->generateWhere($id, $name, $country, $params);
+        $where = $this->generateWhere($id, $status, $responsible, $manager, $name, $country, $params);
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
         $sql = "SELECT 
                     (SELECT manager.name FROM users AS manager WHERE manager.id =  users.manager) AS manager,
@@ -63,25 +75,11 @@ class DealRepository extends EntityRepository
         return $sth->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    public function listTotal($id = 0, $name = null, $country= null): array
-    {
-        $params = [];
-        $where = $this->generateWhere($id, $name, $country, $params);
-        $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
-        $sql = "SELECT COUNT(deal.id) AS total                  
-                FROM deal
-                WHERE 1 = 1 AND deal.type = 1 {$where}
-               ";
-        $sth = $pdo->prepare($sql);
-        $sth->execute($params);
-        return $sth->fetch(\PDO::FETCH_ASSOC);
-    }
-
-    public function listLead($id = 0, $name = null, $country= null, $limit = null, $offset = null): array
+    public function listLead($id = 0, $name = null, $country = null, $limit = null, $offset = null): array
     {
         $params = [];
         $limitSql = $this->generateLimit($limit, $offset);
-        $where = $this->generateWhere($id, $name, $country, $params);
+        $where = $this->generateWhereLead($id, $name, $country, $params);
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
         $sql = "SELECT deal.id, deal.status, deal.phone, deal.email, deal.name, deal.email, 
                 deal.status, deal.office, users.name AS user, countries.name AS country, deal.type, deal.country AS countryID               
@@ -97,10 +95,10 @@ class DealRepository extends EntityRepository
         return $sth->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    public function listTotalLead($id = 0, $name = null, $country= null): array
+    public function listTotalLead($id = 0, $name = null, $country = null): array
     {
         $params = [];
-        $where = $this->generateWhere($id, $name, $country, $params);
+        $where = $this->generateWhereLead($id, $name, $country, $params);
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
         $sql = "SELECT COUNT(deal.id) AS total                  
                 FROM deal
@@ -124,4 +122,21 @@ class DealRepository extends EntityRepository
         return $sth->fetch(\PDO::FETCH_ASSOC);
     }
 
+    private function generateWhereLead($id = 0, $name = null, $country = null, &$params): string
+    {
+        $where = '';
+        if ($id) {
+            $params[':id'] = $id;
+            $where .= " AND deal.id = :id";
+        }
+        if ($name) {
+            $params[':name'] = "%$name%";
+            $where .= " AND deal.name LIKE :name";
+        }
+        if ($country) {
+            $params[':country'] = $country;
+            $where .= " AND deal.country LIKE :country";
+        }
+        return $where;
+    }
 }

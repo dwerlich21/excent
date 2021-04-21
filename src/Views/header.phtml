@@ -26,7 +26,6 @@
         </div>
         <div class="sidebar-wrapper">
             <ul class="nav" style="overflow-x: hidden">
-
                 <li <?= in_array('dashboard', $menuActive) ? 'class="active"' : '' ?>>
                     <a href="<?= BASEURL ?>">
                         <i class="fa fa-dashboard"></i> <b>Dashboard</b>
@@ -79,6 +78,13 @@
                                     <i class="fa fa-folder-open"></i> Company Files
                                 </a>
                             </li>
+                            <?php if ($user->getType() < 3): ?>
+                            <li class="<?= $section == 'folders' ? 'sub-active' : '' ?>">
+                                <a href="<?= BASEURL ?>documents/folders">
+                                    <i class="fa fa-folder-plus"></i> Folders
+                                </a>
+                            </li>
+                            <?php endif; ?>
                             <li class="<?= $section == 'myFolder' ? 'sub-active' : '' ?>">
                                 <a href="<?= BASEURL ?>documents/my-folder">
                                     <i class="fa fa-folder"></i> My Folder
