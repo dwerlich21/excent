@@ -36,37 +36,14 @@ class DocumentController extends Controller
         $typesOrder = $this->folderByType($openDir, $baseDir);
         $folder = 'my-folder';
         return $this->renderer->render($response, 'default.phtml', ['page' => 'documents/index.phtml', 'menuActive' => ['documents'], 'folder' => $folder,
-            'section' => 'myFolder', 'subMenu' => 'documentsGroup', 'user' => $user, 'deals' => $deals,  'typeAccess' => $typeAccess,
+            'section' => 'myFolder', 'subMenu' => 'documentsGroup', 'user' => $user, 'deals' => $deals, 'typeAccess' => $typeAccess,
             'activities' => $activities, 'openDir' => $openDir, 'baseDir' => $baseDir, 'backDir' => $backDir, 'types' => $typesOrder]);
-    }
-
-    public function folderByType($openDir, $baseDir)
-    {
-        $type = $pdf = $excel = $word = $image = $outer = [];
-        while ($document = $openDir->read()) {
-            if ($document != '.' && $document != '..'){
-                if (is_dir($baseDir . $document)) {
-                    $type[] = $document;
-                } elseif (substr($document, -3) == 'pdf') {
-                    $pdf[] = $document;
-                } elseif (substr($document, -3) == 'lsx' || substr($document, -3) == 'csv') {
-                    $excel[] = $document;
-                } elseif (substr($document, -3) == 'ocx') {
-                    $word[] = $document;
-                } elseif (substr($document, -3) == 'peg' || substr($document, -3) == 'jpg' || substr($document, -3) == 'png') {
-                    $image[] = $document;
-                } else {
-                    $outer[] = $document;
-                }
-            }
-        }
-        $types = array_merge($type, $pdf, $excel, $word, $image, $outer);
-        return $types;
     }
 
     public function folders(Request $request, Response $response, $typeAccess)
     {
         $user = $this->getLogged();
+        if ($user->getType() > 2) $this->redirect('');
         $dir = $request->getQueryParam('dir');
         $today = date('Y-m-d');
         $activities = $this->em->getRepository(ActivityDeal::class)->totalCalendar(0, $user, $today);
@@ -98,10 +75,56 @@ class DocumentController extends Controller
         $strDir = strrpos(substr($dir, 0, -1), '/');
         $backDir = substr($dir, 0, $strDir + 1);
         $typesOrder = $this->folderByType($openDir, $baseDir);
-
+        $folders = $this->em->getRepository(CompanyFiles::class)->findBy([], ['name' => 'asc']);
         return $this->renderer->render($response, 'default.phtml', ['page' => 'documents/companyFiles.phtml', 'menuActive' => ['documents'],
             'section' => 'companyFiles', 'subMenu' => 'documentsGroup', 'user' => $user, 'deals' => $deals, 'activities' => $activities,
-            'baseDir' => $baseDir, 'backDir' => $backDir, 'types' => $typesOrder]);
+            'baseDir' => $baseDir, 'backDir' => $backDir, 'types' => $typesOrder, 'folders' => $folders]);
+    }
+
+    public function viewCompanyFiles(Request $request, Response $response)
+    {
+        $user = $this->getLogged();
+        $dir = $request->getQueryParam('dir');
+        $id = $request->getAttribute('route')->getArgument('id');
+        if ($dir == 'uploads/my-folder/') $this->redirect('documents/my-folder');
+        if ($dir == 'uploads/company-files/') $this->redirect('documents/company-files');
+        $baseDir = $dir;
+        $openDir = dir($baseDir);
+        $strDir = strrpos(substr($dir, 0, -1), '/');
+        $backDir = substr($dir, 0, $strDir + 1);
+        $typesOrder = $this->folderByType($openDir, $baseDir);
+        $folder = 'my-folder';
+        $today = date('Y-m-d');
+        $activities = $this->em->getRepository(ActivityDeal::class)->totalCalendar(0, $user, $today);
+        $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId(), 'type' => 0], ['name' => 'asc']);
+        return $this->renderer->render($response, 'default.phtml', ['page' => 'documents/index.phtml', 'menuActive' => ['documents'], 'folder' => $folder,
+            'section' => 'myFolder', 'subMenu' => 'documentsGroup', 'user' => $user, 'deals' => $deals,
+            'activities' => $activities, 'openDir' => $openDir, 'baseDir' => $baseDir, 'backDir' => $backDir, 'types' => $typesOrder]);
+    }
+
+    public function folderByType($openDir, $baseDir)
+    {
+        die(var_dump($openDir));
+        $type = $pdf = $excel = $word = $image = $outer = [];
+        while ($document = $openDir->read()) {
+            if ($document != '.' && $document != '..') {
+                if (is_dir($baseDir . $document)) {
+                    $type[] = $document;
+                } elseif (substr($document, -3) == 'pdf') {
+                    $pdf[] = $document;
+                } elseif (substr($document, -3) == 'lsx' || substr($document, -3) == 'csv') {
+                    $excel[] = $document;
+                } elseif (substr($document, -3) == 'ocx') {
+                    $word[] = $document;
+                } elseif (substr($document, -3) == 'peg' || substr($document, -3) == 'jpg' || substr($document, -3) == 'png') {
+                    $image[] = $document;
+                } else {
+                    $outer[] = $document;
+                }
+            }
+        }
+        $types = array_merge($type, $pdf, $excel, $word, $image, $outer);
+        return $types;
     }
 
     private function saveDocumentFile($files, $destiny, $title)
@@ -167,19 +190,23 @@ class DocumentController extends Controller
     {
         try {
             $dir = $request->getQueryParam('dir');
+            $id = $request->getQueryParam('id');
             $dir = UPLOAD_FOLDER . $dir;
             if (dir($dir)) {
-                rmdir($dir);
-                if (rmdir($dir) == false) {
-                   throw new \Exception('Folder must be empty to be deleted!');
-                } else {
+                if (rmdir($dir) == true) {
+                    rmdir($dir);
                     $status = 'ok';
                     $message = 'Folder successfully deleted!';
+                } else {
+                    throw new \Exception('Folder must be empty to be deleted!');
                 }
             } else {
                 unlink($dir);
                 $status = 'ok';
                 $message = 'File successfully deleted!';
+            }
+            if ($id) {
+                $this->em->getRepository(CompanyFiles::class)->deleteFolder($id);
             }
             return $response->withJson([
                 'status' => $status,
@@ -218,5 +245,17 @@ class DocumentController extends Controller
             return $response->withJson(['status' => 'error',
                 'message' => $e->getMessage(),])->withStatus(500);
         }
+    }
+
+    public function filectime(Request $request, Response $response)
+    {
+        $this->getLogged();
+        $route = $request->getQueryParam('time');
+        $time = date('d/m/Y H:i:s', filectime($route));
+        return $response->withJson([
+            'status' => 'ok',
+            'message' => $time,
+        ], 200)
+            ->withHeader('Content-type', 'application/json');
     }
 }

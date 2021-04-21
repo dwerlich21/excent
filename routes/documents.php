@@ -17,6 +17,10 @@ $app->group('/documents', function () use ($app) {
         return $this->DocumentController->saveFolder($request, $response);
     });
 
+    $app->get('/company-files/filectime/', function (Request $request, Response $response) {
+        return $this->DocumentController->filectime($request, $response);
+    });
+
     $app->get('/folders/', function (Request $request, Response $response) {
         return $this->DocumentController->folders($request, $response, 1);
     });
@@ -29,7 +33,15 @@ $app->group('/documents', function () use ($app) {
         return $this->DocumentController->saveDocument($request, $response);
     });
 
-    $app->delete('/delete/', function (Request $request, Response $response) {
+    $app->get('/delete/', function (Request $request, Response $response) {
         return $this->DocumentController->deleteFolder($request, $response);
+    });
+
+    $app->get('/company-files/delete/', function (Request $request, Response $response) {
+        return $this->DocumentController->deleteFolderCompanyFiles($request, $response);
+    });
+
+    $app->get('/company-files/{id}/', function (Request $request, Response $response) {
+        return $this->DocumentController->viewCompanyFiles($request, $response);
     });
 });

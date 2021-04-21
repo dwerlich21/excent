@@ -1,44 +1,41 @@
 <div class="row">
     <div class="col">
         <div class="card p-3">
-            <form id="filter">
-                <div class="row">
-                    <div class="col-md-2">
-                        <div class="row">
-                            <a class="btn btn-primary text-white ml-2" href="#" onclick="openModalFolder()"><i
-                                        class="fa fa-plus"></i> Folder</a>
-                        </div>
-                    </div>
-                    <div class="col-md-7 my-auto">
-                        <div class="form-group mt-2">
-                            <input class="form-control" id="titleFilter" name="title" type="text" placeholder="Name">
-                        </div>
-                    </div>
-                    <div class="col-md-3 text-right">
-                        <button class="btn btn-danger" type="reset" onclick="resetTable()">Cancel</button>
-                        <button class="btn btn-primary" type="submit">Search</button>
-                    </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="title my-auto">Company Files</h5>
                 </div>
-            </form>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col">
-        <div class="card p-3">
-            <p id="text">Showing <span id="partial"></span> of <span id="total"></span></p>
-            <table class="table table-sm table-hover" id="documentsTable" width="100%" cellspacing="0">
-                <thead class="thead-light">
-                <tr>
-                    <th class="text-center">#</th>
-                    <th class="text-center">Date</th>
-                    <th class="text-center">Name</th>
-                    <th class="text-center">Manage</th>
-                    <th class="text-center">Actions</th>
-                </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+                <div class="col-md-6 text-right my-auto">
+                    <a class="btn btn-primary text-white ml-2" href="#" onclick="openModalFolder()"><i
+                                class="fa fa-plus"></i> Folder</a>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <?php foreach ($folders as $folder): ?>
+                    <div class="col-md-6 ">
+                        <div class="col test p-3 d-flex justify-content-between"
+                             onmouseover="mostraLixeira('<?= $folder->getFolder() ?>')"
+                             onmouseout="escondeLixeira('<?= $folder->getFolder() ?>')">
+                            <a href="<?= BASEURL ?>documents/company-files/<?= $folder->getId() ?>/?dir=<?= $folder->getFolder() ?>/"
+                               style="text-decoration: none; color: black">
+                                <img src="<?= BASEURL ?>assets/img/pasta16.png" alt="folder">
+                                <?= $folder->getName() ?>
+                                <span class="text-muted" style="font-size: 10px">
+                                    <?= date('d/m/Y H:i:s', filectime($folder->getFolder())) ?>
+                                </span>
+                                <a>
+                                    <i class="fa fa-trash-o" style="color: white" id="<?= $folder->getFolder() ?>"
+                                       onclick="deleteFolder('<?= $folder->getId() ?>','<?= $folder->getFolder() ?>')"></i>
+
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+            <div class="row mt-3">
+                <div class="col">
+                    <div style="display: none" id="messageFolderDelete" class="alert alert-danger" role="alert"></div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -59,9 +56,10 @@
                     <div class="row">
                         <div class="col">
                             <label for="nameFolder">Name</label>
-                            <input id="nameFolder" name="nameFolder" class="form-control" type="text" placeholder="Name">
+                            <input id="nameFolder" name="nameFolder" class="form-control" type="text"
+                                   placeholder="Name">
                             <input id="destinyFolder" name="destiny" class="form-control" type="hidden"
-                            value="<?= $baseDir ?>">
+                                   value="<?= $baseDir ?>">
                         </div>
                     </div>
                 </div>
@@ -77,11 +75,6 @@
 </div>
 <script>
 
-    var index = 0;
-    var partial = 0;
-    var total = 1;
-    var title = 0;
-
     function openModalFolder() {
         $('#modalFolder').modal('show');
         $('#message').hide();
@@ -90,6 +83,7 @@
 
     const formAddFolder = document.getElementById('addFolder');
     const divMessageFolder = document.getElementById('messageFolder');
+    const divMessageFolderDelete = document.getElementById('messageFolderDelete');
 
     formAddFolder.addEventListener('submit', e => {
         e.preventDefault();
@@ -114,7 +108,7 @@
                 if (response.status === 201) {
                     divMessageFolder.classList.add("alert-success");
                     divMessageFolder.classList.remove("alert-danger");
-                    formAddDocument.reset();
+                    formAddFolder.reset();
                     setTimeout(function () {
                         location.reload();
                     }, 1500);
@@ -123,78 +117,46 @@
         });
     });
 
-    const form = document.getElementById('filter');
-
-    form.addEventListener('submit', e => {
-        e.preventDefault();
-        let formData = formDataToJson('filter');
-        partial = 0;
-        index = 0;
-        total = 1;
-        title = formData.title;
-        $("#documentsTable tbody").empty();
-        generateTable();
-    });
-
-    function resetTable() {
-        index = 0;
-        partial = 0;
-        total = 1;
-        title = 0;
-        $("#documentsTable tbody").empty();
-        generateTable();
+    function mostraLixeira(id) {
+        document.getElementById(id).style.color = 'black';
     }
 
-
-    function generateDocumentsTable(folder) {
-        let actions = '';
-        actions += `<i class="fa fa-times text-danger" title="Delete" onclick="openModalEdit(${folder.id})"></i> `
-        actions = `<td class="text-center">${actions} </td>`;
-        let view = `${folder.id}/?dir=${folder.folder}`;
-        return `<tr>
-                    <td class="text-center"><i class="fa fa-folder"></i></td>
-                    <td class="text-center">${folder.date}</td>
-                    <td class="text-center"><a href="${folderView(view)}">${folder.name}<a></td>
-                    <td class="text-center"><button class="btn btn-primary btn-sm">Users</button></td>
-                    ${actions}
-                </tr>`;
+    function escondeLixeira(id) {
+        document.getElementById(id).style.color = 'white';
     }
 
-    function folderView(id) {
-        return `<?= BASEURL ?>documents/company-files/${id}`;
-    }
+    function deleteFolder(id, dir) {
 
-    function generateTable() {
-
-        $('#loader').show();
-        fetch(`<?= BASEURL ?>api/documents/company-files/?index=${index}&title=${title}`, {
-            method: "GET",
-            credentials: 'same-origin',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        }).then(response => {
-            response.json().then(json => {
-                $('#loader').hide();
-                $('#total').text(json.total);
-                $('#partial').text(json.partial);
-                total = json.total;
-                partial = json.partial;
-                let options = json.message.map(generateDocumentsTable);
-                $("#documentsTable tbody").append(options);
-
+        var result = confirm('Are you sure about that?\nYour action will be permanent and you will not be able to recover the deleted data!');
+        if (result == true) {
+            showLoading();
+            fetch(`<?= BASEURL ?>documents/delete/?id=${id}&dir=${dir}`, {
+                method: 'get',
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+            }).then(response => {
+                closeLoading();
+                divMessageFolderDelete.classList.add("alert-danger");
+                divMessageFolderDelete.classList.remove("alert-success");
+                response.json().then(json => {
+                    divMessageFolderDelete.textContent = json.message;
+                    divMessageFolderDelete.style.display = 'block';
+                    if (response.status === 201) {
+                        divMessageFolderDelete.classList.add("alert-success");
+                        divMessageFolderDelete.classList.remove("alert-danger");
+                    }
+                });
+                setTimeout(function () {
+                    location.reload();
+                }, 1500);
             });
-        });
+        } else {
+            return false;
+        }
+
     }
 
-    $(document).ready(function () {
-        generateTable();
-        $(window).scroll(function () {
-            if ($(window).scrollTop() + $(window).height() >= $(document).height() - 1) {
-                index++;
-                generateTable();
-            }
-        });
-    });
 </script>

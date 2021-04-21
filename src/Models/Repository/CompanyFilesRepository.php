@@ -73,7 +73,7 @@ class CompanyFilesRepository extends EntityRepository
         return $sth->fetch(\PDO::FETCH_ASSOC);
     }
 
-    public function delDocument($id): array
+    public function deleteFolder($id): array
     {
         $params = [];
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();

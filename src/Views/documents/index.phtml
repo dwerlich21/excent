@@ -195,11 +195,11 @@
 
     function deleteFolder(id) {
 
-        var result = confirm('Are you sure about that?\n Your action will be permanent and you will not be able to recover the deleted data!');
+        var result = confirm('Are you sure about that?\nYour action will be permanent and you will not be able to recover the deleted data!');
         if (result == true) {
             showLoading();
             fetch(`<?= BASEURL ?>documents/delete/?dir=${id}`, {
-                method: 'DELETE',
+                method: 'get',
                 credentials: 'same-origin',
                 headers: {
                     'Accept': 'application/json',
