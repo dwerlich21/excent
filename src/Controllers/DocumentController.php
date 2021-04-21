@@ -104,7 +104,7 @@ class DocumentController extends Controller
 
     public function folderByType($openDir, $baseDir)
     {
-        die(var_dump($openDir));
+//        die(var_dump($openDir));
         $type = $pdf = $excel = $word = $image = $outer = [];
         while ($document = $openDir->read()) {
             if ($document != '.' && $document != '..') {
