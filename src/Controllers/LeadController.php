@@ -32,8 +32,7 @@ class LeadController extends Controller
             $user = $this->getLogged();
             $data = (array)$request->getParams();
             $data['leadId'] ?? 0;
-            $date = date('Y-m-d');
-            $hour = \date('H:i');
+            $date = date('Y-m-d H:i');
 
             $fields = [
                 'emailLead' => 'Email',
@@ -68,8 +67,7 @@ class LeadController extends Controller
                 ->setDate(\DateTime::createFromFormat('Y-m-d', $date))
                 ->setDescription('')
                 ->setType(0)
-                ->setDeal($this->em->getReference(Deal::class, $id))
-                ->setTime(\DateTime::createFromFormat('H:i', $hour));
+                ->setDeal($this->em->getReference(Deal::class, $id));
             $this->em->getRepository(ActivityDeal::class)->save($activity);
             return $response->withJson([
                 'status' => 'ok',

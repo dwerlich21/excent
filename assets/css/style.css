@@ -256,4 +256,9 @@ video {
 
 .sub-active{
     font-weight: bold;!important;
+    color: white;!important;
+}
+
+@media screen and (max-width:767px) {
+    .fc-toolbar.fc-header-toolbar {font-size: 60%}
 }

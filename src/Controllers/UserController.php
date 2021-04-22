@@ -91,7 +91,7 @@ class UserController extends Controller
                 ->setManager($manager)
                 ->setFolder($folderName)
                 ->setPassword(password_hash($data['password'], PASSWORD_ARGON2I));
-            mkdir(UPLOAD_FOLDER . 'my-folder/' . $folderName);
+            mkdir(UPLOAD_FOLDER . 'uploads/my-folder/' . $folderName);
             $this->em->getRepository(User::class)->save($users);
             return $response->withJson([
                 'status' => 'ok',

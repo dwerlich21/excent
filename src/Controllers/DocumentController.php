@@ -23,8 +23,7 @@ class DocumentController extends Controller
     {
         $user = $this->getLogged();
         $dir = $request->getQueryParam('dir');
-        if ($dir == 'uploads/my-folder/') $this->redirect('documents/my-folder');
-        if ($dir == 'uploads/company-files/') $this->redirect('documents/my-folder');
+        if ($dir == 'uploads/my-folder/' || $dir == 'uploads/company-files/' || $dir == 'uploads/') $this->redirect('documents/my-folder');
         $today = date('Y-m-d');
         $activities = $this->em->getRepository(ActivityDeal::class)->totalCalendar(0, $user, $today);
         $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId(), 'type' => 0], ['name' => 'asc']);
@@ -64,8 +63,7 @@ class DocumentController extends Controller
     {
         $user = $this->getLogged();
         $dir = $request->getQueryParam('dir');
-        if ($dir == 'uploads/my-folder/') $this->redirect('documents/company-files');
-        if ($dir == 'uploads/company-files/') $this->redirect('documents/company-files');
+//        if ($dir == 'uploads/my-folder/' || $dir == 'uploads/company-files/' || $dir == 'uploads/') $this->redirect('documents/company-files');
         $today = date('Y-m-d');
         $activities = $this->em->getRepository(ActivityDeal::class)->totalCalendar(0, $user, $today);
         $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId(), 'type' => 0], ['name' => 'asc']);
@@ -86,19 +84,19 @@ class DocumentController extends Controller
         $user = $this->getLogged();
         $dir = $request->getQueryParam('dir');
         $id = $request->getAttribute('route')->getArgument('id');
-        if ($dir == 'uploads/my-folder/') $this->redirect('documents/my-folder');
+        if ($dir == 'uploads/my-folder/') $this->redirect('documents/company-files');
         if ($dir == 'uploads/company-files/') $this->redirect('documents/company-files');
+        if ($dir == 'uploads/') $this->redirect('documents/company-files');
         $baseDir = $dir;
         $openDir = dir($baseDir);
         $strDir = strrpos(substr($dir, 0, -1), '/');
         $backDir = substr($dir, 0, $strDir + 1);
         $typesOrder = $this->folderByType($openDir, $baseDir);
-        $folder = 'my-folder';
         $today = date('Y-m-d');
         $activities = $this->em->getRepository(ActivityDeal::class)->totalCalendar(0, $user, $today);
         $deals = $this->em->getRepository(Deal::class)->findBy(['responsible' => $user->getId(), 'type' => 0], ['name' => 'asc']);
-        return $this->renderer->render($response, 'default.phtml', ['page' => 'documents/index.phtml', 'menuActive' => ['documents'], 'folder' => $folder,
-            'section' => 'myFolder', 'subMenu' => 'documentsGroup', 'user' => $user, 'deals' => $deals,
+        return $this->renderer->render($response, 'default.phtml', ['page' => 'documents/companyFilesView.phtml', 'menuActive' => ['documents'],
+            'section' => 'companyFiles', 'subMenu' => 'documentsGroup', 'user' => $user, 'deals' => $deals, 'id' => $id,
             'activities' => $activities, 'openDir' => $openDir, 'baseDir' => $baseDir, 'backDir' => $backDir, 'types' => $typesOrder]);
     }
 

@@ -39,9 +39,9 @@ class ActivityDeal
 
     /**
      * @ManyToOne(targetEntity="Deal")
-     * @JoinColumn(name="deal", referencedColumnName="id")
+     * @JoinColumn(name="deal", referencedColumnName="id", nullable=true)
      */
-    private Deal $deal;
+    private ?Deal $deal = null;
 
     /**
      * @ManyToOne(targetEntity="User")
@@ -93,12 +93,12 @@ class ActivityDeal
         return $this;
     }
 
-    public function getDeal(): Deal
+    public function getDeal(): ?Deal
     {
         return $this->deal;
     }
 
-    public function setDeal(Deal $deal): ActivityDeal
+    public function setDeal(?Deal $deal): ActivityDeal
     {
         $this->deal = $deal;
         return $this;

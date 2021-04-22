@@ -44,8 +44,7 @@ class DealController extends Controller
             $user = $this->getLogged();
             $data = (array)$request->getParams();
             $data['dealId'] ?? 0;
-            $date = date('Y-m-d');
-            $hour = \date('H:i');
+            $date = date('Y-m-d H:i:s');
             $fields = [
                 'name' => 'Name',
                 'company' => 'Company',
@@ -85,11 +84,10 @@ class DealController extends Controller
             $activity->setActivity($data['activityDeal'])
                 ->setStatus(0)
                 ->setUser($user)
-                ->setDate(\DateTime::createFromFormat('Y-m-d', $date))
+                ->setDate(\DateTime::createFromFormat('Y-m-d H:i:s', $date))
                 ->setDescription('')
                 ->setType($type)
-                ->setDeal($this->em->getReference(Deal::class, $id))
-                ->setTime(\DateTime::createFromFormat('H:i', $hour));
+                ->setDeal($this->em->getReference(Deal::class, $id));
             $this->em->getRepository(ActivityDeal::class)->save($activity);
             return $response->withJson([
                 'status' => 'ok',

@@ -86,7 +86,7 @@ class DealRepository extends EntityRepository
                 FROM deal
                 JOIN users ON users.id = deal.responsible
                 JOIN countries ON countries.id = deal.country
-                WHERE 1 = 1 AND deal.type = 0 {$where}
+                WHERE 1 = 1 AND deal.type = 0 AND deal.id > 1 {$where}
                 ORDER BY deal.name ASC {$limitSql}
                ";
 
@@ -102,7 +102,7 @@ class DealRepository extends EntityRepository
         $pdo = $this->getEntityManager()->getConnection()->getWrappedConnection();
         $sql = "SELECT COUNT(deal.id) AS total                  
                 FROM deal
-                WHERE 1 = 1 AND deal.type = 0 {$where}
+                WHERE 1 = 1 AND deal.type = 0 AND deal.id > 1 {$where}
                ";
         $sth = $pdo->prepare($sql);
         $sth->execute($params);

@@ -2,15 +2,21 @@
     <div class="col">
         <div class="card p-3">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col">
+                    <?php if ($typeAccess == 0): ?>
                     <h5 class="title my-auto">My Folder</h5>
+                    <?php else: ?>
+                    <h5 class="title my-auto">Folders</h5>
+                    <?php endif; ?>
                 </div>
-                <div class="col-md-6 text-right my-auto">
+                <?php if ($typeAccess == 0): ?>
+                <span class="float-right">
                     <a class="btn btn-primary text-white" href="#" onclick="openModal()"><i
                                 class="fa fa-plus"></i> Document</a>
                     <a class="btn btn-primary text-white ml-2" href="#" onclick="openModalFolder()"><i
                                 class="fa fa-plus"></i> Folder</a>
-                </div>
+                </span>
+                <?php endif; ?>
             </div>
             <!--            <div class="row">-->
             <!--                <div class="col-md-2">-->

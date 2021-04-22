@@ -338,16 +338,21 @@
     }
 
     function deleteLead(id) {
-        $('#loader').show();
-        fetch(`<?= BASEURL ?>api/leads/delete/${id}`, {
-            method: "GET",
-            credentials: 'same-origin',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        });
-        location.reload();
+        var result = confirm('Are you sure about that?\nYour action will be permanent and you will not be able to recover the deleted data!');
+        if (result == true) {
+            $('#loader').show();
+            fetch(`<?= BASEURL ?>api/leads/delete/${id}`, {
+                method: "GET",
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            });
+            location.reload();
+        } else {
+            return false;
+        }
     }
 
     function generateTable() {
